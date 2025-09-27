@@ -32,21 +32,13 @@ describe("VOICEVOX Client Integration Tests", () => {
     globalThis.fetch = createCustomFetch(VOICEVOX_BASE_URL);
 
     // VOICEVOX エンジンの起動確認（globalSetupで起動済み）
-    try {
-      const response = await originalFetch("http://localhost:50021/version");
-      if (response.ok) {
-        console.log("🎤 VOICEVOX engine connection verified");
-      } else {
-        throw new Error("VOICEVOX engine is not responding");
-      }
-    } catch (_error) {
-      console.error(
-        "❌ VOICEVOX engine is required but not available. Please start VOICEVOX engine before running tests.",
-      );
+    const response = await originalFetch("http://localhost:50021/version");
+    if (!response.ok) {
       throw new Error(
         "❌ VOICEVOX engine is required but not available. Please start VOICEVOX engine before running tests.",
       );
     }
+    console.log("🎤 VOICEVOX engine connection verified");
   });
 
   afterAll(() => {
