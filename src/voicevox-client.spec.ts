@@ -27,8 +27,6 @@ const createCustomFetch = (baseUrl: string) => {
 };
 
 describe("VOICEVOX Client Integration Tests", () => {
-  let isVoicevoxAvailable = false;
-
   beforeAll(async () => {
     // グローバルfetchをカスタムfetchに置き換えてベースURLを設定
     globalThis.fetch = createCustomFetch(VOICEVOX_BASE_URL);
@@ -37,15 +35,17 @@ describe("VOICEVOX Client Integration Tests", () => {
     try {
       const response = await originalFetch("http://localhost:50021/version");
       if (response.ok) {
-        isVoicevoxAvailable = true;
         console.log("🎤 VOICEVOX engine connection verified");
       } else {
         throw new Error("VOICEVOX engine is not responding");
       }
     } catch (_error) {
-      console.warn("⚠️  VOICEVOX engine is not available");
-      console.warn("   Integration tests will be skipped");
-      isVoicevoxAvailable = false;
+      console.error(
+        "❌ VOICEVOX engine is required but not available. Please start VOICEVOX engine before running tests.",
+      );
+      throw new Error(
+        "❌ VOICEVOX engine is required but not available. Please start VOICEVOX engine before running tests.",
+      );
     }
   });
 
@@ -56,11 +56,6 @@ describe("VOICEVOX Client Integration Tests", () => {
 
   describe("API Connection", () => {
     it("should connect to VOICEVOX engine and get version", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       // VOICEVOXエンジンのバージョンを取得
       const response = await getVersion(createApiOptions());
 
@@ -74,11 +69,6 @@ describe("VOICEVOX Client Integration Tests", () => {
     }, 10000); // 10秒のタイムアウト
 
     it("should fetch available speakers", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       // 利用可能な話者一覧を取得
       const response = await speakers();
 
@@ -108,11 +98,6 @@ describe("VOICEVOX Client Integration Tests", () => {
     }, 10000);
 
     it("should find ずんだもん speaker", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       // ずんだもんが含まれているかチェック
       const response = await speakers();
 
@@ -140,11 +125,6 @@ describe("VOICEVOX Client Integration Tests", () => {
 
   describe("Audio Query Generation", () => {
     it("should generate audio query for text", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       const text = "こんにちは、VOICEVOX です";
       const speakerId = 1; // ずんだもん（あまあま）
 
@@ -183,11 +163,6 @@ describe("VOICEVOX Client Integration Tests", () => {
 
   describe("Audio Synthesis", () => {
     it("should synthesize audio from text", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       const text = "テストです";
       const speakerId = 3; // ずんだもん（ノーマル）
 
@@ -218,11 +193,6 @@ describe("VOICEVOX Client Integration Tests", () => {
 
   describe("Error Handling", () => {
     it("should handle invalid speaker ID gracefully", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       const text = "テスト";
       const invalidSpeakerId = 99999;
 
@@ -246,11 +216,6 @@ describe("VOICEVOX Client Integration Tests", () => {
     }, 10000);
 
     it("should handle empty text gracefully", async () => {
-      if (!isVoicevoxAvailable) {
-        console.log("⏭️  Skipping test: VOICEVOX engine not available");
-        return;
-      }
-
       const emptyText = "";
       const speakerId = 1;
 
@@ -296,16 +261,10 @@ describe("VOICEVOX Client Integration Tests", () => {
       console.log("✅ Custom fetch function creation verified");
     });
 
-    it("should show appropriate messages when VOICEVOX is unavailable", () => {
-      if (!isVoicevoxAvailable) {
-        console.log(
-          "✅ VOICEVOX unavailable state properly detected and handled",
-        );
-        expect(isVoicevoxAvailable).toBe(false);
-      } else {
-        console.log("✅ VOICEVOX is available for integration tests");
-        expect(isVoicevoxAvailable).toBe(true);
-      }
+    it("should validate test environment setup", () => {
+      // beforeAll が成功していればここに到達できる
+      expect(VOICEVOX_BASE_URL).toBe("http://localhost:50021");
+      console.log("✅ Test environment is properly configured");
     });
   });
 });
