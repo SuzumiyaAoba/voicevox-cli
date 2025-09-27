@@ -16,6 +16,8 @@
     "test:run": "vitest run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --reporter=verbose",
+    "test:no-docker": "vitest run --config vitest.config.no-docker.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "lint:staged": "lint-staged",

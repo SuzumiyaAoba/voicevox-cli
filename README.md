@@ -101,11 +101,17 @@ npm start
 
 ### Testing
 ```bash
-# Run tests
+# Run tests (automatically starts/stops VOICEVOX engine)
 npm test
 
-# Run tests once
+# Run tests once (with auto Docker management)
 npm run test:run
+
+# Run integration tests with verbose output
+npm run test:integration
+
+# Run tests without Docker (skips integration tests)
+npm run test:no-docker
 
 # Run tests with UI
 npm run test:ui

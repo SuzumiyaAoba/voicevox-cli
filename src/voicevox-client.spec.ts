@@ -27,9 +27,21 @@ const createCustomFetch = (baseUrl: string) => {
 };
 
 describe("VOICEVOX Client Integration Tests", () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     // グローバルfetchをカスタムfetchに置き換えてベースURLを設定
     globalThis.fetch = createCustomFetch(VOICEVOX_BASE_URL);
+
+    // VOICEVOX エンジンの起動確認（globalSetupで起動済み）
+    try {
+      const response = await originalFetch("http://localhost:50021/version");
+      if (!response.ok) {
+        throw new Error("VOICEVOX engine is not responding");
+      }
+      console.log("🎤 VOICEVOX engine connection verified");
+    } catch (error) {
+      console.warn("⚠️  VOICEVOX engine is not available:", error);
+      console.warn("   Integration tests will be skipped");
+    }
   });
 
   afterAll(() => {

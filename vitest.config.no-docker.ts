@@ -1,16 +1,16 @@
 import { defineConfig } from "vitest/config";
 
+// Docker なしでテストを実行する設定
 export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    globalSetup: "./test/setup.ts",
+    // globalSetup を無効にしてDockerを起動しない
     coverage: {
       reporter: ["text", "json", "html"],
       exclude: ["node_modules/", "dist/", "**/*.d.ts"],
     },
-    // テストタイムアウトを延長（Docker起動時間を考慮）
-    testTimeout: 30000,
-    hookTimeout: 30000,
+    testTimeout: 10000,
+    hookTimeout: 10000,
   },
 });
