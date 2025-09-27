@@ -1,6 +1,6 @@
 import { speakers } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import { logUser, logDebug } from "../logger.js";
+import { logDebug, logUser } from "../logger.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -37,9 +37,9 @@ export const speakersCommand = defineCommand({
       // 元のfetchを復元
       globalThis.fetch = originalFetch;
 
-      logDebug.debug("API response received", { 
-        status: response.status, 
-        dataLength: Array.isArray(response.data) ? response.data.length : 0 
+      logDebug.debug("API response received", {
+        status: response.status,
+        dataLength: Array.isArray(response.data) ? response.data.length : 0,
       });
 
       if (response.status !== 200) {
@@ -52,26 +52,67 @@ export const speakersCommand = defineCommand({
         process.exit(1);
       }
 
-      logUser.info("");
-      logUser.info("Available speakers:");
-      logUser.info("=".repeat(50));
+      // 文字列の実際の表示幅を計算する関数（日本語は2文字分）
+      const getDisplayWidth = (str: string): number => {
+        let width = 0;
+        for (const char of str) {
+          const code = char.codePointAt(0);
+          if (!code) continue;
+
+          // 日本語文字（ひらがな、カタカナ、漢字、全角記号）は2文字分
+          if (
+            (code >= 0x3040 && code <= 0x309f) || // ひらがな
+            (code >= 0x30a0 && code <= 0x30ff) || // カタカナ
+            (code >= 0x4e00 && code <= 0x9faf) || // 漢字
+            (code >= 0xff00 && code <= 0xffef) || // 全角記号
+            (code >= 0x3000 && code <= 0x303f) // 全角記号・句読点
+          ) {
+            width += 2;
+          } else {
+            width += 1;
+          }
+        }
+        return width;
+      };
+
+      // パディング関数（表示幅を考慮、スペースで埋める）
+      const padToWidth = (str: string, targetWidth: number): string => {
+        const currentWidth = getDisplayWidth(str);
+        const paddingNeeded = targetWidth - currentWidth;
+        return str + " ".repeat(Math.max(0, paddingNeeded));
+      };
+
+      // ヘッダー行を固定幅で表示
+      logUser.info(
+        padToWidth("名前", 20) +
+          padToWidth("UUID", 40) +
+          padToWidth("Style名", 20) +
+          "StyleID",
+      );
+      logUser.info("=".repeat(85));
 
       for (const speaker of response.data) {
-        logDebug.debug("Processing speaker", { 
-          name: speaker.name, 
+        logDebug.debug("Processing speaker", {
+          name: speaker.name,
           uuid: speaker.speaker_uuid,
-          stylesCount: speaker.styles?.length || 0 
+          stylesCount: speaker.styles?.length || 0,
         });
 
-        logUser.info("");
-        logUser.info(`${speaker.name}`);
-        logUser.info(`  UUID: ${speaker.speaker_uuid}`);
-
         if (speaker.styles && Array.isArray(speaker.styles)) {
-          logUser.info("  Styles:");
           for (const style of speaker.styles) {
-            logUser.info(`    - ${style.name} (ID: ${style.id})`);
+            const name = padToWidth(speaker.name, 20);
+            const uuid = padToWidth(speaker.speaker_uuid, 40);
+            const styleName = padToWidth(style.name, 20);
+            const styleId = style.id.toString();
+            logUser.info(`${name}${uuid}${styleName}${styleId}`);
           }
+        } else {
+          // スタイルがない場合
+          const name = padToWidth(speaker.name, 20);
+          const uuid = padToWidth(speaker.speaker_uuid, 40);
+          const styleName = padToWidth("-", 20);
+          const styleId = "-";
+          logUser.info(`${name}${uuid}${styleName}${styleId}`);
         }
       }
 
@@ -79,7 +120,9 @@ export const speakersCommand = defineCommand({
       logUser.info(`Total ${response.data.length} speakers found`);
       logDebug.debug("Speakers command completed successfully");
     } catch (error) {
-      logDebug.error("Error in speakers command", { error: error instanceof Error ? error.message : String(error) });
+      logDebug.error("Error in speakers command", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       logUser.error("Error fetching speakers:");
       if (error instanceof Error) {
         logUser.error(`  ${error.message}`);
