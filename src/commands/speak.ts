@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { logUser, logDebug } from "../logger.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({
@@ -29,10 +30,24 @@ export const speakCommand = defineCommand({
     },
   },
   run({ args }) {
-    console.log(`Synthesizing: "${args.text}"`);
-    console.log(`Speaker ID: ${args.speaker}`);
-    console.log(`Output: ${args.output || "default.wav"}`);
-    console.log(`Play: ${args.play || false}`);
+    logDebug.debug("Starting speak command", { 
+      text: args.text, 
+      speaker: args.speaker, 
+      output: args.output, 
+      play: args.play 
+    });
+    
+    logUser.info(`Synthesizing: "${args.text}"`);
+    logUser.info(`Speaker ID: ${args.speaker}`);
+    logUser.info(`Output: ${args.output || "default.wav"}`);
+    logUser.info(`Play: ${args.play || false}`);
+    
+    logDebug.debug("Speak command parameters processed", { 
+      speakerId: args.speaker,
+      outputFile: args.output || "default.wav",
+      shouldPlay: args.play || false
+    });
+    
     // TODO: Voicevox API呼び出しの実装
   },
 });

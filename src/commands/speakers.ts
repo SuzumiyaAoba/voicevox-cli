@@ -1,5 +1,6 @@
 import { speakers } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
+import { logUser, logDebug } from "../logger.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -16,7 +17,8 @@ export const speakersCommand = defineCommand({
   },
   async run({ args }) {
     try {
-      console.log("Fetching available speakers...");
+      logDebug.debug("Starting speakers command", { baseUrl: args.baseUrl });
+      logUser.info("Fetching available speakers...");
 
       // カスタムfetchでベースURLを設定
       const originalFetch = globalThis.fetch;
@@ -26,6 +28,7 @@ export const speakersCommand = defineCommand({
       ): Promise<Response> => {
         const url =
           typeof input === "string" ? `${args.baseUrl}${input}` : input;
+        logDebug.debug("Making API request", { url });
         return originalFetch(url, init);
       };
 
@@ -34,46 +37,59 @@ export const speakersCommand = defineCommand({
       // 元のfetchを復元
       globalThis.fetch = originalFetch;
 
+      logDebug.debug("API response received", { 
+        status: response.status, 
+        dataLength: Array.isArray(response.data) ? response.data.length : 0 
+      });
+
       if (response.status !== 200) {
-        console.error(`Failed to fetch speakers (Status: ${response.status})`);
+        logUser.error(`Failed to fetch speakers (Status: ${response.status})`);
         process.exit(1);
       }
 
       if (!Array.isArray(response.data)) {
-        console.error("Invalid response format");
+        logUser.error("Invalid response format");
         process.exit(1);
       }
 
-      console.log("");
-      console.log("Available speakers:");
-      console.log("=".repeat(50));
+      logUser.info("");
+      logUser.info("Available speakers:");
+      logUser.info("=".repeat(50));
 
       for (const speaker of response.data) {
-        console.log("");
-        console.log(`${speaker.name}`);
-        console.log(`  UUID: ${speaker.speaker_uuid}`);
+        logDebug.debug("Processing speaker", { 
+          name: speaker.name, 
+          uuid: speaker.speaker_uuid,
+          stylesCount: speaker.styles?.length || 0 
+        });
+
+        logUser.info("");
+        logUser.info(`${speaker.name}`);
+        logUser.info(`  UUID: ${speaker.speaker_uuid}`);
 
         if (speaker.styles && Array.isArray(speaker.styles)) {
-          console.log("  Styles:");
+          logUser.info("  Styles:");
           for (const style of speaker.styles) {
-            console.log(`    - ${style.name} (ID: ${style.id})`);
+            logUser.info(`    - ${style.name} (ID: ${style.id})`);
           }
         }
       }
 
-      console.log("");
-      console.log(`Total ${response.data.length} speakers found`);
+      logUser.info("");
+      logUser.info(`Total ${response.data.length} speakers found`);
+      logDebug.debug("Speakers command completed successfully");
     } catch (error) {
-      console.error("Error fetching speakers:");
+      logDebug.error("Error in speakers command", { error: error instanceof Error ? error.message : String(error) });
+      logUser.error("Error fetching speakers:");
       if (error instanceof Error) {
-        console.error(`  ${error.message}`);
+        logUser.error(`  ${error.message}`);
         if (error.message.includes("fetch")) {
-          console.error(
+          logUser.error(
             "  Make sure VOICEVOX Engine is running on the specified URL",
           );
         }
       } else {
-        console.error("  Unknown error occurred");
+        logUser.error("  Unknown error occurred");
       }
       process.exit(1);
     }
