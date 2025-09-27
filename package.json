@@ -12,6 +12,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch",
     "test": "vitest",
     "test:run": "vitest run",
     "test:ui": "vitest --ui",

@@ -127,6 +127,12 @@ npm run lint
 
 # Fix linting issues
 npm run lint:fix
+
+# Type checking
+npm run typecheck
+
+# Type checking in watch mode
+npm run typecheck:watch
 ```
 
 ### Docker Operations
