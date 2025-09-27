@@ -113,3 +113,14 @@ Thumbs.db
 # Generated files
 **/*.generated.*
 **/generated/
+
+# Nix
+result
+result-*
+.direnv/
+
+# Local environment files
+.env.local
+
+# NPM global packages (when using Nix)
+.npm-global/
