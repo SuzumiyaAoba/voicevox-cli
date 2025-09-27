@@ -124,3 +124,8 @@ result-*
 
 # NPM global packages (when using Nix)
 .npm-global/
+
+# Docker
+.docker/
+docker-compose.override.yml
+.env.docker

@@ -128,16 +128,59 @@ Includes: Everything from default + Python tools for VOICEVOX engine integration
 
 ## 🐳 VOICEVOX Engine Setup
 
-To use this CLI, you need a running VOICEVOX engine. You can:
+To use this CLI, you need a running VOICEVOX engine. Choose one of the following methods:
 
-1. **Download VOICEVOX desktop application** and run it in server mode
-2. **Use Docker:**
-   ```bash
-   docker run --rm -p 50021:50021 voicevox/voicevox_engine:latest
-   ```
-3. **Build from source** following [VOICEVOX Engine documentation](https://github.com/VOICEVOX/voicevox_engine)
+### Method 1: Docker Compose (Recommended)
 
-The CLI expects the VOICEVOX API to be available at `http://localhost:50021` by default.
+Use the included `docker-compose.yml` for easy setup:
+
+```bash
+# Start VOICEVOX engine
+docker-compose up -d voicevox-engine
+
+# Check if it's running
+docker-compose ps
+
+# View logs
+docker-compose logs -f voicevox-engine
+
+# Stop the engine
+docker-compose down
+```
+
+**With Nginx proxy (for CORS handling):**
+```bash
+# Start with proxy
+docker-compose --profile proxy up -d
+
+# Access VOICEVOX API via:
+# - Direct: http://localhost:50021
+# - Proxy: http://localhost:8080
+```
+
+### Method 2: Direct Docker
+
+```bash
+docker run --rm -p 50021:50021 voicevox/voicevox_engine:latest
+```
+
+### Method 3: VOICEVOX Desktop Application
+
+1. Download VOICEVOX desktop application
+2. Run it in server mode
+3. Enable API server in settings
+
+### Method 4: Build from Source
+
+Follow [VOICEVOX Engine documentation](https://github.com/VOICEVOX/voicevox_engine)
+
+### API Endpoints
+
+The CLI expects the VOICEVOX API to be available at:
+- **Default**: `http://localhost:50021`
+- **With proxy**: `http://localhost:8080`
+
+You can change the API URL using the `VOICEVOX_API_URL` environment variable.
 
 ## 📁 Project Structure
 
@@ -147,12 +190,15 @@ voicevox-cli/
 │   ├── index.ts          # Main CLI entry point
 │   └── types/
 │       └── ts-reset.d.ts # TypeScript type improvements
-├── flake.nix             # Nix development environment
-├── .envrc                # direnv configuration
-├── package.json          # npm configuration
-├── tsconfig.json         # TypeScript configuration
-├── biome.json           # Biome linter/formatter config
-└── .husky/              # Git hooks
+├── docker-compose.yml    # VOICEVOX engine Docker setup
+├── nginx.conf           # Nginx proxy configuration
+├── flake.nix            # Nix development environment
+├── .envrc               # direnv configuration
+├── package.json         # npm configuration
+├── tsconfig.json        # TypeScript configuration
+├── biome.json          # Biome linter/formatter config
+├── README.md           # Project documentation
+└── .husky/             # Git hooks
 ```
 
 ## 🤝 Contributing

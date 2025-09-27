@@ -1,0 +1,47 @@
+services:
+  voicevox-engine:
+    image: voicevox/voicevox_engine:latest
+    container_name: voicevox-engine
+    ports:
+      - "50021:50021"
+    environment:
+      # CORS設定（開発時のアクセス許可）
+      - VOICEVOX_CORS_POLICY_MODE=localapps
+    volumes:
+      # 音声モデルキャッシュの永続化
+      - voicevox_models:/opt/voicevox_engine/model
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50021/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - voicevox-network
+
+  # 開発用のNginx（オプション）
+  # ローカル開発時のプロキシやCORS回避に使用
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: voicevox-proxy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - voicevox-engine
+    networks:
+      - voicevox-network
+    profiles:
+      - proxy  # docker-compose --profile proxy up で起動
+
+volumes:
+  # VOICEVOXモデルの永続化ボリューム
+  voicevox_models:
+    driver: local
+
+networks:
+  voicevox-network:
+    driver: bridge
+    name: voicevox-network
