@@ -4,11 +4,18 @@ CLI tool for VOICEVOX speech synthesis using TypeScript.
 
 ## 🚀 Features
 
+- ⚡ Fast and lightweight CLI interface
+- 🛠️ Development environment with Nix support
+- 🐳 Docker Compose setup for VOICEVOX engine
+- 🧪 Comprehensive test suite for API integration
+- 📦 TypeScript with strict type checking
+
+## 🚧 Planned Features (In Development)
+
 - 🎤 Text-to-speech synthesis using VOICEVOX API
 - 🗣️ Multiple speaker voices support
 - 📁 Audio file output (WAV format)
 - 🔊 Audio playback functionality
-- ⚡ Fast and lightweight CLI interface
 
 ## 📋 Requirements
 
@@ -58,39 +65,29 @@ CLI tool for VOICEVOX speech synthesis using TypeScript.
    npm run dev -- --help
    ```
 
-## 🎯 Usage
+## 🎯 Current Usage
 
-### Basic Commands
+### Available Commands
 
 ```bash
 # Show help
-voicevox --help
+npm run dev -- --help
 
-# List available speakers
-voicevox speakers
+# Show version
+npm run dev -- version
 
-# Synthesize speech
-voicevox speak "こんにちは、VOICEVOX です" --speaker 1 --output hello.wav
+# Test speaker command (development)
+npm run dev -- speakers
 
-# Synthesize and play
-voicevox speak "Hello World" --speaker 0 --play
+# Test speak command (development)
+npm run dev -- speak "テスト"
 ```
 
-### Command Options
-
-#### `speak <text>`
-- `-s, --speaker <id>`: Speaker ID (default: 0)
-- `-o, --output <file>`: Output file path
-- `--play`: Play audio after synthesis
-
-#### `speakers`
-Lists all available speakers with their IDs and names.
-
-#### `version`
-Shows version information.
+> **Note**: The CLI is currently in development. The commands above show the interface but core functionality (actual speech synthesis) is not yet implemented.
 
 ## 🔧 Development Scripts
 
+### Development
 ```bash
 # Development mode
 npm run dev
@@ -98,14 +95,50 @@ npm run dev
 # Build the project
 npm run build
 
+# Start built version
+npm start
+```
+
+### Testing
+```bash
+# Run tests
+npm test
+
+# Run tests once
+npm run test:run
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### Code Quality
+```bash
 # Run linter
 npm run lint
 
 # Fix linting issues
 npm run lint:fix
+```
 
-# Start built version
-npm start
+### Docker Operations
+```bash
+# Start VOICEVOX engine
+npm run docker:up
+
+# Start with Nginx proxy
+npm run docker:up:proxy
+
+# Stop VOICEVOX engine
+npm run docker:down
+
+# View logs
+npm run docker:logs
+
+# Check status
+npm run docker:ps
 ```
 
 ## 🏗️ Nix Development Environments
@@ -136,22 +169,22 @@ Use the included `docker-compose.yml` for easy setup:
 
 ```bash
 # Start VOICEVOX engine
-docker-compose up -d voicevox-engine
+npm run docker:up
 
 # Check if it's running
-docker-compose ps
+npm run docker:ps
 
 # View logs
-docker-compose logs -f voicevox-engine
+npm run docker:logs
 
 # Stop the engine
-docker-compose down
+npm run docker:down
 ```
 
 **With Nginx proxy (for CORS handling):**
 ```bash
 # Start with proxy
-docker-compose --profile proxy up -d
+npm run docker:up:proxy
 
 # Access VOICEVOX API via:
 # - Direct: http://localhost:50021
@@ -187,18 +220,20 @@ You can change the API URL using the `VOICEVOX_API_URL` environment variable.
 ```
 voicevox-cli/
 ├── src/
-│   ├── index.ts          # Main CLI entry point
+│   ├── index.ts                # Main CLI entry point
+│   ├── voicevox-client.spec.ts # API integration tests
 │   └── types/
-│       └── ts-reset.d.ts # TypeScript type improvements
-├── docker-compose.yml    # VOICEVOX engine Docker setup
-├── nginx.conf           # Nginx proxy configuration
-├── flake.nix            # Nix development environment
-├── .envrc               # direnv configuration
-├── package.json         # npm configuration
-├── tsconfig.json        # TypeScript configuration
-├── biome.json          # Biome linter/formatter config
-├── README.md           # Project documentation
-└── .husky/             # Git hooks
+│       └── ts-reset.d.ts       # TypeScript type improvements
+├── docker-compose.yml          # VOICEVOX engine Docker setup
+├── nginx.conf                  # Nginx proxy configuration
+├── vitest.config.ts            # Test configuration
+├── flake.nix                   # Nix development environment
+├── .envrc                      # direnv configuration
+├── package.json                # npm configuration
+├── tsconfig.json               # TypeScript configuration
+├── biome.json                  # Biome linter/formatter config
+├── README.md                   # Project documentation
+└── .husky/                     # Git hooks
 ```
 
 ## 🤝 Contributing
