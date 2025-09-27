@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { logUser, logDebug } from "../logger.js";
+import { display, logDebug } from "../logger.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({
@@ -30,24 +30,24 @@ export const speakCommand = defineCommand({
     },
   },
   run({ args }) {
-    logDebug.debug("Starting speak command", { 
-      text: args.text, 
-      speaker: args.speaker, 
-      output: args.output, 
-      play: args.play 
+    logDebug.debug("Starting speak command", {
+      text: args.text,
+      speaker: args.speaker,
+      output: args.output,
+      play: args.play,
     });
-    
-    logUser.info(`Synthesizing: "${args.text}"`);
-    logUser.info(`Speaker ID: ${args.speaker}`);
-    logUser.info(`Output: ${args.output || "default.wav"}`);
-    logUser.info(`Play: ${args.play || false}`);
-    
-    logDebug.debug("Speak command parameters processed", { 
+
+    display.info(`Synthesizing: "${args.text}"`);
+    display.info(`Speaker ID: ${args.speaker}`);
+    display.info(`Output: ${args.output || "default.wav"}`);
+    display.info(`Play: ${args.play || false}`);
+
+    logDebug.debug("Speak command parameters processed", {
       speakerId: args.speaker,
       outputFile: args.output || "default.wav",
-      shouldPlay: args.play || false
+      shouldPlay: args.play || false,
     });
-    
+
     // TODO: Voicevox API呼び出しの実装
   },
 });

@@ -26,8 +26,8 @@ export const LOG_LEVELS = {
   FATAL: 60,
 } as const;
 
-// ユーザー向けメッセージ用のログ（常に表示）
-export const logUser = {
+// ユーザー向けメッセージ用の表示関数（常に表示）
+export const display = {
   info: (message: string, ...args: unknown[]) => {
     try {
       console.log(message, ...args);

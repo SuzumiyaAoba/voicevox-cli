@@ -1,6 +1,6 @@
 import { speakers } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import { logDebug, logUser } from "../logger.js";
+import { display, logDebug } from "../logger.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -18,7 +18,7 @@ export const speakersCommand = defineCommand({
   async run({ args }) {
     try {
       logDebug.debug("Starting speakers command", { baseUrl: args.baseUrl });
-      logUser.info("Fetching available speakers...");
+      display.info("Fetching available speakers...");
 
       // カスタムfetchでベースURLを設定
       const originalFetch = globalThis.fetch;
@@ -43,12 +43,12 @@ export const speakersCommand = defineCommand({
       });
 
       if (response.status !== 200) {
-        logUser.error(`Failed to fetch speakers (Status: ${response.status})`);
+        display.error(`Failed to fetch speakers (Status: ${response.status})`);
         process.exit(1);
       }
 
       if (!Array.isArray(response.data)) {
-        logUser.error("Invalid response format");
+        display.error("Invalid response format");
         process.exit(1);
       }
 
@@ -83,13 +83,13 @@ export const speakersCommand = defineCommand({
       };
 
       // ヘッダー行を固定幅で表示
-      logUser.info(
+      display.info(
         padToWidth("名前", 20) +
           padToWidth("UUID", 40) +
           padToWidth("Style名", 20) +
           "StyleID",
       );
-      logUser.info("=".repeat(85));
+      display.info("=".repeat(85));
 
       for (const speaker of response.data) {
         logDebug.debug("Processing speaker", {
@@ -104,7 +104,7 @@ export const speakersCommand = defineCommand({
             const uuid = padToWidth(speaker.speaker_uuid, 40);
             const styleName = padToWidth(style.name, 20);
             const styleId = style.id.toString();
-            logUser.info(`${name}${uuid}${styleName}${styleId}`);
+            display.info(`${name}${uuid}${styleName}${styleId}`);
           }
         } else {
           // スタイルがない場合
@@ -112,27 +112,27 @@ export const speakersCommand = defineCommand({
           const uuid = padToWidth(speaker.speaker_uuid, 40);
           const styleName = padToWidth("-", 20);
           const styleId = "-";
-          logUser.info(`${name}${uuid}${styleName}${styleId}`);
+          display.info(`${name}${uuid}${styleName}${styleId}`);
         }
       }
 
-      logUser.info("");
-      logUser.info(`Total ${response.data.length} speakers found`);
+      display.info("");
+      display.info(`Total ${response.data.length} speakers found`);
       logDebug.debug("Speakers command completed successfully");
     } catch (error) {
       logDebug.error("Error in speakers command", {
         error: error instanceof Error ? error.message : String(error),
       });
-      logUser.error("Error fetching speakers:");
+      display.error("Error fetching speakers:");
       if (error instanceof Error) {
-        logUser.error(`  ${error.message}`);
+        display.error(`  ${error.message}`);
         if (error.message.includes("fetch")) {
-          logUser.error(
+          display.error(
             "  Make sure VOICEVOX Engine is running on the specified URL",
           );
         }
       } else {
-        logUser.error("  Unknown error occurred");
+        display.error("  Unknown error occurred");
       }
       process.exit(1);
     }
