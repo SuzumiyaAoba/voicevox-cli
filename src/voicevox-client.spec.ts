@@ -120,35 +120,30 @@ describe("VOICEVOX Client Integration Tests", () => {
       const text = "こんにちは、VOICEVOX です";
       const speakerId = 1; // ずんだもん（あまあま）
 
-      try {
-        // 音声クエリを生成
-        const response = await audioQuery(
-          { text, speaker: speakerId },
-          createApiOptions(),
+      // 音声クエリを生成
+      const response = await audioQuery(
+        { text, speaker: speakerId },
+        createApiOptions(),
+      );
+
+      expect(response).toBeDefined();
+      expect(response.status).toBe(200);
+      expect(response.data).toBeDefined();
+
+      // 型ガード: データがAudioQueryオブジェクトであることを確認
+      if ("accent_phrases" in response.data) {
+        expect(response.data).toHaveProperty("accent_phrases");
+        expect(response.data).toHaveProperty("speedScale");
+        expect(response.data).toHaveProperty("pitchScale");
+        expect(response.data).toHaveProperty("intonationScale");
+
+        expect(Array.isArray(response.data.accent_phrases)).toBe(true);
+        expect(response.data.accent_phrases.length).toBeGreaterThan(0);
+
+        console.log(`✅ Generated audio query for: "${text}"`);
+        console.log(
+          `✅ Accent phrases: ${response.data.accent_phrases.length}`,
         );
-
-        expect(response).toBeDefined();
-        expect(response.status).toBe(200);
-        expect(response.data).toBeDefined();
-
-        // 型ガード: データがAudioQueryオブジェクトであることを確認
-        if ("accent_phrases" in response.data) {
-          expect(response.data).toHaveProperty("accent_phrases");
-          expect(response.data).toHaveProperty("speedScale");
-          expect(response.data).toHaveProperty("pitchScale");
-          expect(response.data).toHaveProperty("intonationScale");
-
-          expect(Array.isArray(response.data.accent_phrases)).toBe(true);
-          expect(response.data.accent_phrases.length).toBeGreaterThan(0);
-
-          console.log(`✅ Generated audio query for: "${text}"`);
-          console.log(
-            `✅ Accent phrases: ${response.data.accent_phrases.length}`,
-          );
-        }
-      } catch (error) {
-        console.error("❌ Error generating audio query:", error);
-        throw error;
       }
     }, 15000);
   });
@@ -158,28 +153,23 @@ describe("VOICEVOX Client Integration Tests", () => {
       const text = "テストです";
       const speakerId = 3; // ずんだもん（ノーマル）
 
-      try {
-        // 音声クエリを生成
-        const audioQueryResponse = await audioQuery(
-          { text, speaker: speakerId },
-          createApiOptions(),
-        );
+      // 音声クエリを生成
+      const audioQueryResponse = await audioQuery(
+        { text, speaker: speakerId },
+        createApiOptions(),
+      );
 
-        expect(audioQueryResponse).toBeDefined();
-        expect(audioQueryResponse.status).toBe(200);
-        expect(audioQueryResponse.data).toBeDefined();
+      expect(audioQueryResponse).toBeDefined();
+      expect(audioQueryResponse.status).toBe(200);
+      expect(audioQueryResponse.data).toBeDefined();
 
-        console.log(`✅ Generated audio query for synthesis test: "${text}"`);
-        console.log(
-          "✅ Audio synthesis API is available (skipping actual synthesis due to JSON parsing issue)",
-        );
+      console.log(`✅ Generated audio query for synthesis test: "${text}"`);
+      console.log(
+        "✅ Audio synthesis API is available (skipping actual synthesis due to JSON parsing issue)",
+      );
 
-        // Note: synthesis APIは動作するが、このライブラリの実装ではバイナリデータのハンドリングに問題がある
-        // 実際のVOICEVOX APIは正常に動作することをaudio queryの成功で確認済み
-      } catch (error) {
-        console.error("❌ Error in synthesis test:", error);
-        throw error;
-      }
+      // Note: synthesis APIは動作するが、このライブラリの実装ではバイナリデータのハンドリングに問題がある
+      // 実際のVOICEVOX APIは正常に動作することをaudio queryの成功で確認済み
     }, 20000);
   });
 
