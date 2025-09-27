@@ -33,7 +33,7 @@ export const logUser = {
       console.log(message, ...args);
     } catch (error) {
       // EPIPEエラーを無視（パイプライン処理での正常な終了）
-      if (error instanceof Error && (error as any).code === "EPIPE") {
+      if (error instanceof Error && "code" in error && error.code === "EPIPE") {
         process.exit(0);
       }
       throw error;
@@ -43,7 +43,7 @@ export const logUser = {
     try {
       console.error(message, ...args);
     } catch (error) {
-      if (error instanceof Error && (error as any).code === "EPIPE") {
+      if (error instanceof Error && "code" in error && error.code === "EPIPE") {
         process.exit(1);
       }
       throw error;
@@ -53,7 +53,7 @@ export const logUser = {
     try {
       console.warn(message, ...args);
     } catch (error) {
-      if (error instanceof Error && (error as any).code === "EPIPE") {
+      if (error instanceof Error && "code" in error && error.code === "EPIPE") {
         process.exit(0);
       }
       throw error;
