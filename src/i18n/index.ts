@@ -1,0 +1,189 @@
+// 翻訳データの型定義
+type TranslationData = Record<string, unknown>;
+
+// 利用可能なロケール
+export const SUPPORTED_LOCALES = ["ja", "en"] as const;
+export type Locale = (typeof SUPPORTED_LOCALES)[number];
+
+// デフォルトロケール
+const DEFAULT_LOCALE: Locale = "ja";
+
+// 現在のロケールを取得（環境変数から）
+const getCurrentLocale = (): Locale => {
+  const envLocale = process.env["LANG"]?.split(".")[0]?.split("_")[0];
+  if (envLocale && SUPPORTED_LOCALES.includes(envLocale as Locale)) {
+    return envLocale as Locale;
+  }
+  return DEFAULT_LOCALE;
+};
+
+// 翻訳データを直接埋め込み
+const translations: Record<Locale, TranslationData> = {
+  ja: {
+    commands: {
+      speak: {
+        name: "speak",
+        description: "テキストから音声を合成する",
+        synthesizing: '音声合成中: "{text}"',
+        speakerId: "話者ID: {speaker}",
+        output: "出力: {output}",
+        play: "再生: {play}",
+        args: {
+          text: "合成するテキスト",
+          speaker: "話者ID（デフォルト: 0）",
+          output: "出力ファイルパス",
+          play: "合成後に音声を再生",
+        },
+      },
+      speakers: {
+        name: "speakers",
+        description: "利用可能な話者一覧を表示",
+        fetching: "利用可能な話者を取得中...",
+        totalSpeakers: "合計 {count} 人の話者が見つかりました",
+        invalidResponse: "無効なレスポンス形式",
+        errorFetching: "話者一覧の取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        args: {
+          json: "JSON形式で出力",
+        },
+      },
+      version: {
+        name: "version",
+        description: "バージョン情報を表示",
+      },
+      engine: {
+        name: "engine",
+        description: "VOICEVOX Engine関連のコマンド",
+        version: {
+          name: "version",
+          description: "VOICEVOX Engineのバージョン情報を表示",
+          engineVersion: "VOICEVOX Engine バージョン: {version}",
+          invalidResponse: "無効なレスポンス形式",
+          errorFetching: "エンジンバージョンの取得中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+          unknownError: "不明なエラーが発生しました",
+          args: {
+            json: "JSON形式で出力",
+          },
+        },
+      },
+    },
+    common: {
+      error: "エラー",
+      unknown: "不明",
+    },
+  },
+  en: {
+    commands: {
+      speak: {
+        name: "speak",
+        description: "Synthesize speech from text",
+        synthesizing: 'Synthesizing: "{text}"',
+        speakerId: "Speaker ID: {speaker}",
+        output: "Output: {output}",
+        play: "Play: {play}",
+        args: {
+          text: "Text to synthesize",
+          speaker: "Speaker ID (default: 0)",
+          output: "Output file path",
+          play: "Play audio after synthesis",
+        },
+      },
+      speakers: {
+        name: "speakers",
+        description: "List available speakers",
+        fetching: "Fetching available speakers...",
+        totalSpeakers: "Total {count} speakers found",
+        invalidResponse: "Invalid response format",
+        errorFetching: "Error fetching speakers:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
+        args: {
+          json: "Output in JSON format",
+        },
+      },
+      version: {
+        name: "version",
+        description: "Show version information",
+      },
+      engine: {
+        name: "engine",
+        description: "VOICEVOX Engine related commands",
+        version: {
+          name: "version",
+          description: "Show VOICEVOX Engine version information",
+          engineVersion: "VOICEVOX Engine Version: {version}",
+          invalidResponse: "Invalid response format",
+          errorFetching: "Error fetching engine version:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
+          unknownError: "Unknown error occurred",
+          args: {
+            json: "Output in JSON format",
+          },
+        },
+      },
+    },
+    common: {
+      error: "Error",
+      unknown: "Unknown",
+    },
+  },
+};
+
+// 現在のロケール
+const currentLocale = getCurrentLocale();
+
+// 現在の翻訳データ
+const currentTranslations = translations[currentLocale];
+
+/**
+ * 翻訳キーから値を取得する
+ * @param key 翻訳キー（ドット記法でネストしたオブジェクトにアクセス）
+ * @param params 置換パラメータ
+ * @returns 翻訳された文字列
+ */
+export const t = (
+  key: string,
+  params: Record<string, string | number> = {},
+): string => {
+  const keys = key.split(".");
+  let value: unknown = currentTranslations;
+
+  // ネストしたキーを辿る
+  for (const k of keys) {
+    if (value && typeof value === "object" && value !== null && k in value) {
+      value = (value as Record<string, unknown>)[k];
+    } else {
+      // キーが見つからない場合はキー自体を返す
+      return key;
+    }
+  }
+
+  if (typeof value !== "string") {
+    return key;
+  }
+
+  // パラメータを置換
+  return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
+    return String(params[paramKey] || match);
+  });
+};
+
+/**
+ * 現在のロケールを取得
+ * @returns 現在のロケール
+ */
+export const getLocale = (): Locale => {
+  return currentLocale;
+};
+
+/**
+ * 利用可能なロケールを取得
+ * @returns 利用可能なロケールの配列
+ */
+export const getSupportedLocales = (): readonly Locale[] => {
+  return SUPPORTED_LOCALES;
+};

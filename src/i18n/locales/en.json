@@ -1,0 +1,42 @@
+{
+  "commands": {
+    "speak": {
+      "name": "speak",
+      "description": "Synthesize speech from text",
+      "synthesizing": "Synthesizing: \"{text}\"",
+      "speakerId": "Speaker ID: {speaker}",
+      "output": "Output: {output}",
+      "play": "Play: {play}"
+    },
+    "speakers": {
+      "name": "speakers",
+      "description": "List available speakers",
+      "fetching": "Fetching available speakers...",
+      "totalSpeakers": "Total {count} speakers found",
+      "invalidResponse": "Invalid response format",
+      "errorFetching": "Error fetching speakers:",
+      "makeSureEngineRunning": "Make sure VOICEVOX Engine is running on the specified URL"
+    },
+    "version": {
+      "name": "version",
+      "description": "Show version information"
+    },
+    "engine": {
+      "name": "engine",
+      "description": "VOICEVOX Engine related commands",
+      "version": {
+        "name": "version",
+        "description": "Show VOICEVOX Engine version information",
+        "engineVersion": "VOICEVOX Engine Version: {version}",
+        "invalidResponse": "Invalid response format",
+        "errorFetching": "Error fetching engine version:",
+        "makeSureEngineRunning": "Make sure VOICEVOX Engine is running on the specified URL",
+        "unknownError": "Unknown error occurred"
+      }
+    }
+  },
+  "common": {
+    "error": "Error",
+    "unknown": "Unknown"
+  }
+}

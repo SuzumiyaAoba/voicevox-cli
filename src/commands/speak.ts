@@ -1,33 +1,34 @@
 import { defineCommand } from "citty";
+import { t } from "../i18n/index.js";
 import { display, log } from "../logger.js";
 import { baseUrlOption } from "../options.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({
   meta: {
-    name: "speak",
-    description: "Synthesize speech from text",
+    name: t("commands.speak.name"),
+    description: t("commands.speak.description"),
   },
   args: {
     text: {
       type: "positional",
-      description: "Text to synthesize",
+      description: t("commands.speak.args.text"),
       required: true,
     },
     speaker: {
       type: "string",
-      description: "Speaker ID (default: 0)",
+      description: t("commands.speak.args.speaker"),
       alias: "s",
       default: "0",
     },
     output: {
       type: "string",
-      description: "Output file path",
+      description: t("commands.speak.args.output"),
       alias: "o",
     },
     play: {
       type: "boolean",
-      description: "Play audio after synthesis",
+      description: t("commands.speak.args.play"),
     },
     ...baseUrlOption,
   },
@@ -40,10 +41,14 @@ export const speakCommand = defineCommand({
       baseUrl: args.baseUrl,
     });
 
-    display.info(`Synthesizing: "${args.text}"`);
-    display.info(`Speaker ID: ${args.speaker}`);
-    display.info(`Output: ${args.output || "default.wav"}`);
-    display.info(`Play: ${args.play || false}`);
+    display.info(t("commands.speak.synthesizing", { text: args.text }));
+    display.info(t("commands.speak.speakerId", { speaker: args.speaker }));
+    display.info(
+      t("commands.speak.output", { output: args.output || "default.wav" }),
+    );
+    display.info(
+      t("commands.speak.play", { play: String(args.play || false) }),
+    );
 
     log.debug("Speak command parameters processed", {
       speakerId: args.speaker,

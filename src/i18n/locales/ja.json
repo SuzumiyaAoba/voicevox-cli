@@ -1,0 +1,42 @@
+{
+  "commands": {
+    "speak": {
+      "name": "speak",
+      "description": "テキストから音声を合成する",
+      "synthesizing": "音声合成中: \"{text}\"",
+      "speakerId": "話者ID: {speaker}",
+      "output": "出力: {output}",
+      "play": "再生: {play}"
+    },
+    "speakers": {
+      "name": "speakers",
+      "description": "利用可能な話者一覧を表示",
+      "fetching": "利用可能な話者を取得中...",
+      "totalSpeakers": "合計 {count} 人の話者が見つかりました",
+      "invalidResponse": "無効なレスポンス形式",
+      "errorFetching": "話者一覧の取得中にエラーが発生しました:",
+      "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください"
+    },
+    "version": {
+      "name": "version",
+      "description": "バージョン情報を表示"
+    },
+    "engine": {
+      "name": "engine",
+      "description": "VOICEVOX Engine関連のコマンド",
+      "version": {
+        "name": "version",
+        "description": "VOICEVOX Engineのバージョン情報を表示",
+        "engineVersion": "VOICEVOX Engine バージョン: {version}",
+        "invalidResponse": "無効なレスポンス形式",
+        "errorFetching": "エンジンバージョンの取得中にエラーが発生しました:",
+        "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        "unknownError": "不明なエラーが発生しました"
+      }
+    }
+  },
+  "common": {
+    "error": "エラー",
+    "unknown": "不明"
+  }
+}

@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { t } from "../../i18n/index.js";
 import { display, log } from "../../logger.js";
 import { baseUrlOption } from "../../options.js";
 import { createVoicevoxClient } from "../../utils/client.js";
@@ -6,13 +7,13 @@ import { createVoicevoxClient } from "../../utils/client.js";
 // エンジンバージョン表示コマンド
 export const engineVersionCommand = defineCommand({
   meta: {
-    name: "engine-version",
-    description: "Show VOICEVOX Engine version information",
+    name: t("commands.engine.version.name"),
+    description: t("commands.engine.version.description"),
   },
   args: {
     json: {
       type: "boolean",
-      description: "Output in JSON format",
+      description: t("commands.engine.version.args.json"),
       alias: "j",
     },
     ...baseUrlOption,
@@ -34,7 +35,7 @@ export const engineVersionCommand = defineCommand({
       });
 
       if (!response.data) {
-        display.error("Invalid response format");
+        display.error(t("commands.engine.version.invalidResponse"));
         process.exit(1);
       }
 
@@ -47,7 +48,9 @@ export const engineVersionCommand = defineCommand({
 
       // プレーンテキスト形式で出力
       const versionInfo = response.data;
-      const output = `VOICEVOX Engine Version: ${versionInfo || "Unknown"}`;
+      const output = t("commands.engine.version.engineVersion", {
+        version: versionInfo || t("common.unknown"),
+      });
       display.info(output);
 
       log.debug("Engine-version command completed successfully");
@@ -55,16 +58,16 @@ export const engineVersionCommand = defineCommand({
       log.error("Error in engine-version command", {
         error: error instanceof Error ? error.message : String(error),
       });
-      display.error("Error fetching engine version:");
+      display.error(t("commands.engine.version.errorFetching"));
       if (error instanceof Error) {
         display.error(`  ${error.message}`);
         if (error.message.includes("fetch")) {
           display.error(
-            "  Make sure VOICEVOX Engine is running on the specified URL",
+            `  ${t("commands.engine.version.makeSureEngineRunning")}`,
           );
         }
       } else {
-        display.error("  Unknown error occurred");
+        display.error(`  ${t("commands.engine.version.unknownError")}`);
       }
       process.exit(1);
     }

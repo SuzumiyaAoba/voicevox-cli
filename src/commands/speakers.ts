@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { t } from "../i18n/index.js";
 import { display, log } from "../logger.js";
 import { baseUrlOption } from "../options.js";
 import { createVoicevoxClient } from "../utils/client.js";
@@ -7,13 +8,13 @@ import { createTable } from "../utils/display.js";
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
   meta: {
-    name: "speakers",
-    description: "List available speakers",
+    name: t("commands.speakers.name"),
+    description: t("commands.speakers.description"),
   },
   args: {
     json: {
       type: "boolean",
-      description: "Output in JSON format",
+      description: t("commands.speakers.args.json"),
       alias: "j",
     },
     ...baseUrlOption,
@@ -35,7 +36,7 @@ export const speakersCommand = defineCommand({
       });
 
       if (!response.data || !Array.isArray(response.data)) {
-        display.error("Invalid response format");
+        display.error(t("commands.speakers.invalidResponse"));
         process.exit(1);
       }
 
@@ -72,7 +73,7 @@ export const speakersCommand = defineCommand({
 
       // テーブル形式の出力を生成
       const tableOutput = createTable(headers, rows, columnWidths);
-      const fullOutput = `Fetching available speakers...\n\n${tableOutput}\nTotal ${response.data.length} speakers found\n`;
+      const fullOutput = `${t("commands.speakers.fetching")}\n\n${tableOutput}\n${t("commands.speakers.totalSpeakers", { count: response.data.length })}\n`;
 
       // 直接出力
       display.info(fullOutput);
@@ -81,16 +82,14 @@ export const speakersCommand = defineCommand({
       log.error("Error in speakers command", {
         error: error instanceof Error ? error.message : String(error),
       });
-      display.error("Error fetching speakers:");
+      display.error(t("commands.speakers.errorFetching"));
       if (error instanceof Error) {
         display.error(`  ${error.message}`);
         if (error.message.includes("fetch")) {
-          display.error(
-            "  Make sure VOICEVOX Engine is running on the specified URL",
-          );
+          display.error(`  ${t("commands.speakers.makeSureEngineRunning")}`);
         }
       } else {
-        display.error("  Unknown error occurred");
+        display.error(`  ${t("common.unknown")}`);
       }
       process.exit(1);
     }
