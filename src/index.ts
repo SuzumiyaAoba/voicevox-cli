@@ -2,8 +2,8 @@
 
 import { defineCommand, runMain } from "citty";
 import { engineCommand } from "@/commands/engine/index.js";
-import { speakCommand } from "@/commands/speak.js";
 import { speakersCommand } from "@/commands/speakers.js";
+import { synthesisCommand } from "@/commands/synthesis.js";
 import { versionCommand } from "@/commands/version.js";
 
 // メインコマンド
@@ -14,7 +14,7 @@ const main = defineCommand({
     description: "CLI tool for VOICEVOX speech synthesis",
   },
   subCommands: {
-    speak: speakCommand,
+    synthesis: synthesisCommand,
     speakers: speakersCommand,
     version: versionCommand,
     engine: engineCommand,

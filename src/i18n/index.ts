@@ -21,8 +21,8 @@ const getCurrentLocale = (): Locale => {
 const translations: Record<Locale, TranslationData> = {
   ja: {
     commands: {
-      speak: {
-        name: "speak",
+      synthesis: {
+        name: "synthesis",
         description: "テキストから音声を合成する",
         synthesizing: '音声合成中: "{text}"',
         speakerId: "話者ID: {speaker}",
@@ -30,10 +30,17 @@ const translations: Record<Locale, TranslationData> = {
         play: "再生: {play}",
         args: {
           text: "合成するテキスト",
-          speaker: "話者ID（デフォルト: 0）",
+          speaker: "話者ID（デフォルト: 2）",
           output: "出力ファイルパス",
           play: "合成後に音声を再生",
         },
+        synthesisError: "音声合成中にエラーが発生しました",
+        synthesisComplete: "音声合成が完了しました: {output}",
+        playingAudio: "音声を再生中...",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        playerNotFound: "音声プレイヤーが見つかりません",
+        playerError: "音声再生中にエラーが発生しました",
       },
       speakers: {
         name: "speakers",
@@ -77,8 +84,8 @@ const translations: Record<Locale, TranslationData> = {
   },
   en: {
     commands: {
-      speak: {
-        name: "speak",
+      synthesis: {
+        name: "synthesis",
         description: "Synthesize speech from text",
         synthesizing: 'Synthesizing: "{text}"',
         speakerId: "Speaker ID: {speaker}",
@@ -86,10 +93,17 @@ const translations: Record<Locale, TranslationData> = {
         play: "Play: {play}",
         args: {
           text: "Text to synthesize",
-          speaker: "Speaker ID (default: 0)",
+          speaker: "Speaker ID (default: 2)",
           output: "Output file path",
           play: "Play audio after synthesis",
         },
+        synthesisError: "Error occurred during synthesis",
+        synthesisComplete: "Synthesis completed: {output}",
+        playingAudio: "Playing audio...",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
+        playerNotFound: "Audio player not found",
+        playerError: "Error occurred during audio playback",
       },
       speakers: {
         name: "speakers",
