@@ -1,6 +1,8 @@
-import { client } from "@suzumiyaaoba/voicevox-client";
+import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
+import openapiFetch from "openapi-fetch";
 import { display, log } from "../logger.js";
+import { baseUrlOption } from "../options.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -14,28 +16,21 @@ export const speakersCommand = defineCommand({
       description: "Output in JSON format",
       alias: "j",
     },
+    ...baseUrlOption,
   },
   async run({ args }) {
     try {
-      log.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
+      log.debug("Starting speakers command", { baseUrl: args.baseUrl });
 
-      // カスタムfetchでベースURLを設定
-      const originalFetch = globalThis.fetch;
-      globalThis.fetch = (
-        input: RequestInfo | URL,
-        init?: RequestInit,
-      ): Promise<Response> => {
-        const url =
-          typeof input === "string" ? `${args["baseUrl"]}${input}` : input;
-        log.debug("Making API request", { url });
-        return originalFetch(url, init);
-      };
+      // ベースURLを指定してクライアントを作成
+      const client = openapiFetch<paths>({
+        baseUrl: args.baseUrl,
+      });
+
+      log.debug("Making API request", { baseUrl: args.baseUrl });
 
       // APIクライアントを使用してspeakersエンドポイントにアクセス
       const response = await client.GET("/speakers");
-
-      // 元のfetchを復元
-      globalThis.fetch = originalFetch;
 
       log.debug("API response received", {
         dataLength: Array.isArray(response.data) ? response.data.length : 0,

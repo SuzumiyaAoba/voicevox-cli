@@ -1,5 +1,5 @@
-// 共通オプションの定義
-export const commonOptions = {
+// ベースURLオプションの定義（個別コマンドで使用）
+export const baseUrlOption = {
   baseUrl: {
     type: "string",
     description: "VOICEVOX Engine base URL (default: http://localhost:50021)",

@@ -1,5 +1,6 @@
 import { defineCommand } from "citty";
 import { display, log } from "../logger.js";
+import { baseUrlOption } from "../options.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({
@@ -28,6 +29,7 @@ export const speakCommand = defineCommand({
       type: "boolean",
       description: "Play audio after synthesis",
     },
+    ...baseUrlOption,
   },
   run({ args }) {
     log.debug("Starting speak command", {
@@ -35,6 +37,7 @@ export const speakCommand = defineCommand({
       speaker: args.speaker,
       output: args.output,
       play: args.play,
+      baseUrl: args.baseUrl,
     });
 
     display.info(`Synthesizing: "${args.text}"`);
