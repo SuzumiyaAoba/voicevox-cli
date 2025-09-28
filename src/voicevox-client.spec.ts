@@ -118,14 +118,14 @@ describe("VOICEVOX Client Integration Tests", () => {
 
       // 音声クエリを生成
       const response = await client.POST("/audio_query", {
-        query: { text, speaker: speakerId },
+        params: { query: { text, speaker: speakerId } },
       });
 
       expect(response).toBeDefined();
       expect(response.data).toBeDefined();
 
       // 型ガード: データがAudioQueryオブジェクトであることを確認
-      if ("accent_phrases" in response.data) {
+      if (response.data && "accent_phrases" in response.data) {
         expect(response.data).toHaveProperty("accent_phrases");
         expect(response.data).toHaveProperty("speedScale");
         expect(response.data).toHaveProperty("pitchScale");
@@ -149,7 +149,7 @@ describe("VOICEVOX Client Integration Tests", () => {
 
       // 音声クエリを生成
       const audioQueryResponse = await client.POST("/audio_query", {
-        query: { text, speaker: speakerId },
+        params: { query: { text, speaker: speakerId } },
       });
 
       expect(audioQueryResponse).toBeDefined();
@@ -172,7 +172,7 @@ describe("VOICEVOX Client Integration Tests", () => {
 
       try {
         const response = await client.POST("/audio_query", {
-          query: { text, speaker: invalidSpeakerId },
+          params: { query: { text, speaker: invalidSpeakerId } },
         });
 
         // エラーが発生することを期待
@@ -194,7 +194,7 @@ describe("VOICEVOX Client Integration Tests", () => {
 
       try {
         const response = await client.POST("/audio_query", {
-          query: { text: emptyText, speaker: speakerId },
+          params: { query: { text: emptyText, speaker: speakerId } },
         });
 
         // エラーが発生することを期待
