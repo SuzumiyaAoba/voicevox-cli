@@ -115,6 +115,28 @@ const translations: Record<Locale, TranslationData> = {
           makeSureEngineRunning:
             "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         },
+        update: {
+          name: "update",
+          description: "既存のプリセットを更新する",
+          updating: "プリセットを更新中: ID {id}",
+          updated: "プリセットが更新されました: ID {id}",
+          args: {
+            id: "プリセットID",
+            name: "プリセット名",
+            speaker: "話者UUID",
+            style: "スタイルID",
+            speed: "速度スケール",
+            pitch: "ピッチスケール",
+            intonation: "イントネーションスケール",
+            volume: "音量スケール",
+            prePhonemeLength: "前音素長",
+            postPhonemeLength: "後音素長",
+            json: "JSON形式で出力する",
+          },
+          errorUpdating: "プリセット更新中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        },
       },
       version: {
         name: "version",
@@ -237,6 +259,28 @@ const translations: Record<Locale, TranslationData> = {
             json: "Output in JSON format",
           },
           errorAdding: "Error adding preset:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
+        },
+        update: {
+          name: "update",
+          description: "Update an existing preset",
+          updating: "Updating preset: ID {id}",
+          updated: "Preset updated: ID {id}",
+          args: {
+            id: "Preset ID",
+            name: "Preset name",
+            speaker: "Speaker UUID",
+            style: "Style ID",
+            speed: "Speed scale",
+            pitch: "Pitch scale",
+            intonation: "Intonation scale",
+            volume: "Volume scale",
+            prePhonemeLength: "Pre-phoneme length",
+            postPhonemeLength: "Post-phoneme length",
+            json: "Output in JSON format",
+          },
+          errorUpdating: "Error updating preset:",
           makeSureEngineRunning:
             "Make sure VOICEVOX Engine is running on the specified URL",
         },

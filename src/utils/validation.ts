@@ -76,6 +76,22 @@ export const presetsAddSchema = z.object({
   json: z.boolean().optional(),
 });
 
+// プリセット更新用のスキーマ
+export const presetsUpdateSchema = z.object({
+  id: presetIdSchema,
+  name: presetNameSchema.optional(),
+  speaker: speakerUuidSchema.optional(),
+  style: styleIdSchema.optional(),
+  speed: scaleSchema.optional(),
+  pitch: scaleSchema.optional(),
+  intonation: scaleSchema.optional(),
+  volume: scaleSchema.optional(),
+  prePhonemeLength: lengthSchema.optional(),
+  postPhonemeLength: lengthSchema.optional(),
+  baseUrl: baseUrlSchema,
+  json: z.boolean().optional(),
+});
+
 // 音声合成用のスキーマ
 export const synthesisSchema = z.object({
   speaker: speakerIdSchema,
