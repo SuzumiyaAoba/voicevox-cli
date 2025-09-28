@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { defineCommand, runMain } from "citty";
+import { coreCommand } from "@/commands/core/index.js";
 import { engineCommand } from "@/commands/engine/index.js";
 import { presetsCommand } from "@/commands/presets/index.js";
 import { queryCommand } from "@/commands/query/index.js";
@@ -22,6 +23,7 @@ const main = defineCommand({
     presets: presetsCommand,
     version: versionCommand,
     engine: engineCommand,
+    core: coreCommand,
   },
 });
 

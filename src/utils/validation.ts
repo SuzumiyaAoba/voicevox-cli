@@ -141,6 +141,12 @@ export const engineVersionSchema = z.object({
   json: z.boolean().optional(),
 });
 
+// コアバージョン一覧用のスキーマ
+export const engineVersionsSchema = z.object({
+  baseUrl: baseUrlSchema.optional(),
+  json: z.boolean().optional(),
+});
+
 // バリデーション関数
 export const validateArgs = <T>(schema: z.ZodSchema<T>, args: unknown): T => {
   try {

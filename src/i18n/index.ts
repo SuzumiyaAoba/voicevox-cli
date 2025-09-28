@@ -1,155 +1,6 @@
 // 翻訳データの型定義
-interface TranslationData {
-  commands: {
-    synthesis: {
-      name: string;
-      description: string;
-      synthesizing: string;
-      speakerId: string;
-      output: string;
-      play: string;
-      synthesisComplete: string;
-      playingAudio: string;
-      playerError: string;
-      synthesisError: string;
-      makeSureEngineRunning: string;
-      playerNotFound: string;
-      args: {
-        speaker: string;
-        text: string;
-        output: string;
-        play: string;
-      };
-    };
-    query: {
-      name: string;
-      description: string;
-      create: {
-        name: string;
-        description: string;
-        querying: string;
-        speakerId: string;
-        queryComplete: string;
-        queryResult: string;
-        queryError: string;
-        makeSureEngineRunning: string;
-        args: {
-          speaker: string;
-          text: string;
-          enableKatakanaEnglish: string;
-          json: string;
-        };
-      };
-    };
-    speakers: {
-      name: string;
-      description: string;
-      fetching: string;
-      totalSpeakers: string;
-      invalidResponse: string;
-      errorFetching: string;
-      makeSureEngineRunning: string;
-      args: {
-        json: string;
-      };
-    };
-    presets: {
-      name: string;
-      description: string;
-      list: {
-        name: string;
-        description: string;
-        fetching: string;
-        totalPresets: string;
-        noPresets: string;
-        args: {
-          json: string;
-        };
-        errorFetching: string;
-        makeSureEngineRunning: string;
-      };
-      add: {
-        name: string;
-        description: string;
-        adding: string;
-        added: string;
-        presetId: string;
-        args: {
-          id: string;
-          name: string;
-          speaker: string;
-          style: string;
-          speed: string;
-          pitch: string;
-          intonation: string;
-          volume: string;
-          prePhonemeLength: string;
-          postPhonemeLength: string;
-          json: string;
-        };
-        errorAdding: string;
-        makeSureEngineRunning: string;
-      };
-      update: {
-        name: string;
-        description: string;
-        updating: string;
-        updated: string;
-        args: {
-          id: string;
-          name: string;
-          speaker: string;
-          style: string;
-          speed: string;
-          pitch: string;
-          intonation: string;
-          volume: string;
-          prePhonemeLength: string;
-          postPhonemeLength: string;
-          json: string;
-        };
-        errorUpdating: string;
-        makeSureEngineRunning: string;
-      };
-      delete: {
-        name: string;
-        description: string;
-        deleting: string;
-        deleted: string;
-        args: {
-          id: string;
-          json: string;
-        };
-        errorDeleting: string;
-        makeSureEngineRunning: string;
-      };
-    };
-    version: {
-      name: string;
-      description: string;
-    };
-    engine: {
-      name: string;
-      description: string;
-      version: {
-        name: string;
-        description: string;
-        engineVersion: string;
-        invalidResponse: string;
-        errorFetching: string;
-        makeSureEngineRunning: string;
-        unknownError: string;
-        args: {
-          json: string;
-        };
-      };
-    };
-  };
-  common: {
-    error: string;
-    unknown: string;
-  };
-}
+// 厳密な型定義の代わりに、より柔軟で保守しやすい型を使用
+type TranslationData = Record<string, unknown>;
 
 // 利用可能なロケール
 export const SUPPORTED_LOCALES = ["ja", "en"] as const;
@@ -323,6 +174,22 @@ const translations: Record<Locale, TranslationData> = {
         },
       },
     },
+    core: {
+      name: "core",
+      description: "VOICEVOX Core関連のコマンド",
+      versions: {
+        name: "versions",
+        description: "利用可能なコアバージョン一覧を表示",
+        fetching: "コアバージョン一覧を取得中...",
+        versionsFound: "利用可能なコアバージョン:",
+        args: {
+          json: "JSON形式で出力",
+        },
+        errorFetching: "コアバージョン一覧の取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      },
+    },
     common: {
       error: "エラー",
       unknown: "不明",
@@ -481,6 +348,22 @@ const translations: Record<Locale, TranslationData> = {
             json: "Output in JSON format",
           },
         },
+      },
+    },
+    core: {
+      name: "core",
+      description: "VOICEVOX Core related commands",
+      versions: {
+        name: "versions",
+        description: "Display available core versions",
+        fetching: "Fetching core versions...",
+        versionsFound: "Available core versions:",
+        args: {
+          json: "Output in JSON format",
+        },
+        errorFetching: "Error occurred while fetching core versions:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
       },
     },
     common: {
