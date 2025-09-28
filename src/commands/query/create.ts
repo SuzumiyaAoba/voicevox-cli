@@ -100,45 +100,47 @@ const displayAudioQuery = (audioQuery: AudioQuery) => {
   });
 };
 
-// 音声クエリコマンド
-export const audioQueryCommand = defineCommand({
+// 音声クエリ作成コマンド
+export const createCommand = defineCommand({
   meta: {
-    name: t("commands.audioQuery.name"),
-    description: t("commands.audioQuery.description"),
+    name: t("commands.query.create.name"),
+    description: t("commands.query.create.description"),
   },
   args: {
     text: {
       type: "positional",
-      description: t("commands.audioQuery.args.text"),
+      description: t("commands.query.create.args.text"),
       required: true,
     },
     speaker: {
       type: "string",
-      description: t("commands.audioQuery.args.speaker"),
+      description: t("commands.query.create.args.speaker"),
       alias: "s",
       default: "2",
     },
     "enable-katakana-english": {
       type: "boolean",
-      description: t("commands.audioQuery.args.enableKatakanaEnglish"),
+      description: t("commands.query.create.args.enableKatakanaEnglish"),
     },
     json: {
       type: "boolean",
-      description: t("commands.audioQuery.args.json"),
+      description: t("commands.query.create.args.json"),
       alias: "j",
     },
     ...baseUrlOption,
   },
   async run({ args }) {
-    log.debug("Starting audio-query command", {
+    log.debug("Starting create command", {
       text: args.text,
       speaker: args.speaker,
       enableKatakanaEnglish: args["enable-katakana-english"],
       baseUrl: args.baseUrl,
     });
 
-    display.info(t("commands.audioQuery.querying", { text: args.text }));
-    display.info(t("commands.audioQuery.speakerId", { speaker: args.speaker }));
+    display.info(t("commands.query.create.querying", { text: args.text }));
+    display.info(
+      t("commands.query.create.speakerId", { speaker: args.speaker }),
+    );
 
     try {
       log.debug("Making audio query API request", {
@@ -172,7 +174,7 @@ export const audioQueryCommand = defineCommand({
 
       const audioQuery = audioQueryRes.data;
 
-      display.info(t("commands.audioQuery.queryComplete"));
+      display.info(t("commands.query.create.queryComplete"));
 
       // JSON形式で出力する場合
       if (args.json) {
@@ -182,14 +184,14 @@ export const audioQueryCommand = defineCommand({
       }
 
       // 整形して表示
-      display.info(t("commands.audioQuery.queryResult"));
+      display.info(t("commands.query.create.queryResult"));
       displayAudioQuery(audioQuery);
 
-      log.debug("Audio query command completed successfully", {
+      log.debug("Create command completed successfully", {
         queryKeys: Object.keys(audioQuery),
       });
     } catch (error) {
-      handleError(error, "audio-query", {
+      handleError(error, "create", {
         speaker: args.speaker,
         text: args.text,
         baseUrl: args.baseUrl,

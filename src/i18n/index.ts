@@ -42,21 +42,26 @@ const translations: Record<Locale, TranslationData> = {
         playerNotFound: "音声プレイヤーが見つかりません",
         playerError: "音声再生中にエラーが発生しました",
       },
-      audioQuery: {
-        name: "audio-query",
-        description: "テキストから音声クエリを生成する",
-        querying: '音声クエリ生成中: "{text}"',
-        speakerId: "話者ID: {speaker}",
-        args: {
-          text: "クエリを生成するテキスト",
-          speaker: "話者ID（デフォルト: 2）",
-          enableKatakanaEnglish: "英語をカタカナに変換してから処理",
+      query: {
+        name: "query",
+        description: "音声クエリ関連のコマンド",
+        create: {
+          name: "create",
+          description: "テキストから音声クエリを生成する",
+          querying: '音声クエリ生成中: "{text}"',
+          speakerId: "話者ID: {speaker}",
+          args: {
+            text: "クエリを生成するテキスト",
+            speaker: "話者ID（デフォルト: 2）",
+            enableKatakanaEnglish: "英語をカタカナに変換してから処理",
+            json: "JSON形式で出力する",
+          },
+          queryError: "音声クエリ生成中にエラーが発生しました",
+          queryComplete: "音声クエリが完了しました",
+          queryResult: "音声クエリ結果:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         },
-        queryError: "音声クエリ生成中にエラーが発生しました",
-        queryComplete: "音声クエリが完了しました",
-        queryResult: "音声クエリ結果:",
-        makeSureEngineRunning:
-          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
       },
       speakers: {
         name: "speakers",
@@ -121,22 +126,27 @@ const translations: Record<Locale, TranslationData> = {
         playerNotFound: "Audio player not found",
         playerError: "Error occurred during audio playback",
       },
-      audioQuery: {
-        name: "audio-query",
-        description: "Generate audio query from text",
-        querying: 'Generating audio query: "{text}"',
-        speakerId: "Speaker ID: {speaker}",
-        args: {
-          text: "Text to generate query for",
-          speaker: "Speaker ID (default: 2)",
-          enableKatakanaEnglish:
-            "Convert English to katakana before processing",
+      query: {
+        name: "query",
+        description: "Audio query related commands",
+        create: {
+          name: "create",
+          description: "Generate audio query from text",
+          querying: 'Generating audio query: "{text}"',
+          speakerId: "Speaker ID: {speaker}",
+          args: {
+            text: "Text to generate query for",
+            speaker: "Speaker ID (default: 2)",
+            enableKatakanaEnglish:
+              "Convert English to katakana before processing",
+            json: "Output in JSON format",
+          },
+          queryError: "Error occurred during audio query generation",
+          queryComplete: "Audio query completed",
+          queryResult: "Audio query result:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
         },
-        queryError: "Error occurred during audio query generation",
-        queryComplete: "Audio query completed",
-        queryResult: "Audio query result:",
-        makeSureEngineRunning:
-          "Make sure VOICEVOX Engine is running on the specified URL",
       },
       speakers: {
         name: "speakers",

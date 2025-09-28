@@ -27,8 +27,8 @@
       "synthesisError": "音声合成中にエラーが発生しました",
       "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください"
     },
-    "audioQuery": {
-      "name": "audio-query",
+    "create": {
+      "name": "create",
       "description": "テキストから音声クエリを生成する",
       "args": {
         "text": "クエリを生成するテキスト",

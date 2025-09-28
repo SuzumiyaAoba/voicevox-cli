@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { defineCommand, runMain } from "citty";
-import { audioQueryCommand } from "@/commands/audio-query.js";
 import { engineCommand } from "@/commands/engine/index.js";
+import { queryCommand } from "@/commands/query/index.js";
 import { speakersCommand } from "@/commands/speakers.js";
 import { synthesisCommand } from "@/commands/synthesis.js";
 import { versionCommand } from "@/commands/version.js";
@@ -16,7 +16,7 @@ const main = defineCommand({
   },
   subCommands: {
     synthesis: synthesisCommand,
-    "audio-query": audioQueryCommand,
+    query: queryCommand,
     speakers: speakersCommand,
     version: versionCommand,
     engine: engineCommand,

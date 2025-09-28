@@ -27,8 +27,8 @@
       "synthesisError": "Error occurred during synthesis",
       "makeSureEngineRunning": "Make sure VOICEVOX Engine is running on the specified URL"
     },
-    "audioQuery": {
-      "name": "audio-query",
+    "create": {
+      "name": "create",
       "description": "Generate audio query from text",
       "args": {
         "text": "Text to generate query for",
