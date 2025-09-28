@@ -76,6 +76,19 @@ const translations: Record<Locale, TranslationData> = {
           json: "JSON形式で出力",
         },
       },
+      presets: {
+        name: "presets",
+        description: "利用可能なプリセット一覧を表示",
+        fetching: "利用可能なプリセットを取得中...",
+        totalPresets: "合計 {count} 個のプリセットが見つかりました",
+        noPresets: "プリセットが見つかりませんでした",
+        args: {
+          json: "JSON形式で出力する",
+        },
+        errorFetching: "プリセット一覧の取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      },
       version: {
         name: "version",
         description: "バージョン情報を表示",
@@ -160,6 +173,19 @@ const translations: Record<Locale, TranslationData> = {
         args: {
           json: "Output in JSON format",
         },
+      },
+      presets: {
+        name: "presets",
+        description: "List available presets",
+        fetching: "Fetching available presets...",
+        totalPresets: "Total {count} presets found",
+        noPresets: "No presets found",
+        args: {
+          json: "Output in JSON format",
+        },
+        errorFetching: "Error fetching presets:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
       },
       version: {
         name: "version",
