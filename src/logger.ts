@@ -1,7 +1,7 @@
 import pino from "pino";
 
 // ログレベルを環境変数から取得（デフォルト: info）
-const logLevel = process.env["LOG_LEVEL"] || "info";
+const logLevel = process.env.LOG_LEVEL || "info";
 
 // pinoロガーの設定
 export const logger = pino({
