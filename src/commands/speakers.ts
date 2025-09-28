@@ -1,6 +1,36 @@
+import { spawn } from "node:child_process";
 import { client } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { display, log } from "../logger.js";
+
+// ページャーを使用して出力する関数
+const outputWithPager = async (content: string): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const pager = process.env["PAGER"] || "less";
+    const pagerArgs = pager === "less" ? ["-R"] : []; // lessの場合は色付き表示を有効化
+
+    const child = spawn(pager, pagerArgs, {
+      stdio: ["pipe", "inherit", "inherit"],
+    });
+
+    child.stdin?.write(content);
+    child.stdin?.end();
+
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`Pager exited with code ${code}`));
+      }
+    });
+
+    child.on("error", () => {
+      // ページャーが利用できない場合は直接出力
+      console.log(content);
+      resolve();
+    });
+  });
+};
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -8,7 +38,17 @@ export const speakersCommand = defineCommand({
     name: "speakers",
     description: "List available speakers",
   },
-  args: {},
+  args: {
+    json: {
+      type: "boolean",
+      description: "Output in JSON format",
+      alias: "j",
+    },
+    "no-pager": {
+      type: "boolean",
+      description: "Disable pager output",
+    },
+  },
   async run({ args }) {
     try {
       log.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
@@ -41,6 +81,17 @@ export const speakersCommand = defineCommand({
         process.exit(1);
       }
 
+      // JSON形式で出力する場合
+      if (args.json) {
+        const output = JSON.stringify(response.data, null, 2);
+        if (args["no-pager"]) {
+          console.log(output);
+        } else {
+          await outputWithPager(output);
+        }
+        return;
+      }
+
       // 文字列の実際の表示幅を計算する関数（日本語は2文字分）
       const getDisplayWidth = (str: string): number => {
         let width = 0;
@@ -71,14 +122,20 @@ export const speakersCommand = defineCommand({
         return str + " ".repeat(Math.max(0, paddingNeeded));
       };
 
+      // テーブル形式の出力を文字列として構築
+      let tableOutput = "";
+
       // ヘッダー行を固定幅で表示
-      display.info(
+      const headerLine =
         padToWidth("名前", 20) +
-          padToWidth("UUID", 40) +
-          padToWidth("Style名", 20) +
-          "StyleID",
-      );
-      display.info("=".repeat(85));
+        padToWidth("UUID", 40) +
+        padToWidth("Style名", 20) +
+        "StyleID";
+      tableOutput += `${headerLine}\n`;
+
+      // ヘッダー行の表示幅に合わせて区切り線を生成
+      const headerWidth = getDisplayWidth(headerLine);
+      tableOutput += `${"=".repeat(headerWidth)}\n`;
 
       for (const speaker of response.data) {
         log.debug("Processing speaker", {
@@ -93,7 +150,7 @@ export const speakersCommand = defineCommand({
             const uuid = padToWidth(speaker.speaker_uuid, 40);
             const styleName = padToWidth(style.name, 20);
             const styleId = style.id.toString();
-            display.info(`${name}${uuid}${styleName}${styleId}`);
+            tableOutput += `${name}${uuid}${styleName}${styleId}\n`;
           }
         } else {
           // スタイルがない場合
@@ -101,12 +158,19 @@ export const speakersCommand = defineCommand({
           const uuid = padToWidth(speaker.speaker_uuid, 40);
           const styleName = padToWidth("-", 20);
           const styleId = "-";
-          display.info(`${name}${uuid}${styleName}${styleId}`);
+          tableOutput += `${name}${uuid}${styleName}${styleId}\n`;
         }
       }
 
-      display.info("");
-      display.info(`Total ${response.data.length} speakers found`);
+      tableOutput += "\n";
+      tableOutput += `Total ${response.data.length} speakers found\n`;
+
+      // ページング機能を適用
+      if (args["no-pager"]) {
+        console.log(tableOutput);
+      } else {
+        await outputWithPager(tableOutput);
+      }
       log.debug("Speakers command completed successfully");
     } catch (error) {
       log.error("Error in speakers command", {
