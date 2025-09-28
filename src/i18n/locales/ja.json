@@ -8,6 +8,41 @@
       "output": "出力: {output}",
       "play": "再生: {play}"
     },
+    "synthesis": {
+      "name": "synthesis",
+      "description": "テキストから音声を合成する",
+      "args": {
+        "text": "合成するテキスト",
+        "speaker": "話者ID",
+        "output": "出力ファイル名",
+        "play": "音声を再生する",
+        "json": "JSON形式で出力する"
+      },
+      "synthesizing": "音声合成中: \"{text}\"",
+      "speakerId": "話者ID: {speaker}",
+      "output": "出力: {output}",
+      "play": "再生: {play}",
+      "synthesisComplete": "音声合成完了: {output}",
+      "playingAudio": "音声を再生中...",
+      "synthesisError": "音声合成中にエラーが発生しました",
+      "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください"
+    },
+    "audioQuery": {
+      "name": "audio-query",
+      "description": "テキストから音声クエリを生成する",
+      "args": {
+        "text": "クエリを生成するテキスト",
+        "speaker": "話者ID",
+        "enableKatakanaEnglish": "カタカナ英語変換を有効にする",
+        "json": "JSON形式で出力する"
+      },
+      "querying": "音声クエリを生成中: \"{text}\"",
+      "speakerId": "話者ID: {speaker}",
+      "queryComplete": "音声クエリ生成完了",
+      "queryResult": "音声クエリ結果:",
+      "queryError": "音声クエリ生成中にエラーが発生しました",
+      "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください"
+    },
     "speakers": {
       "name": "speakers",
       "description": "利用可能な話者一覧を表示",

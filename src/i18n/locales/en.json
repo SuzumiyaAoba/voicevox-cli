@@ -8,6 +8,41 @@
       "output": "Output: {output}",
       "play": "Play: {play}"
     },
+    "synthesis": {
+      "name": "synthesis",
+      "description": "Synthesize speech from text",
+      "args": {
+        "text": "Text to synthesize",
+        "speaker": "Speaker ID",
+        "output": "Output file name",
+        "play": "Play the audio",
+        "json": "Output in JSON format"
+      },
+      "synthesizing": "Synthesizing: \"{text}\"",
+      "speakerId": "Speaker ID: {speaker}",
+      "output": "Output: {output}",
+      "play": "Play: {play}",
+      "synthesisComplete": "Synthesis complete: {output}",
+      "playingAudio": "Playing audio...",
+      "synthesisError": "Error occurred during synthesis",
+      "makeSureEngineRunning": "Make sure VOICEVOX Engine is running on the specified URL"
+    },
+    "audioQuery": {
+      "name": "audio-query",
+      "description": "Generate audio query from text",
+      "args": {
+        "text": "Text to generate query for",
+        "speaker": "Speaker ID",
+        "enableKatakanaEnglish": "Enable katakana English conversion",
+        "json": "Output in JSON format"
+      },
+      "querying": "Generating audio query: \"{text}\"",
+      "speakerId": "Speaker ID: {speaker}",
+      "queryComplete": "Audio query generation complete",
+      "queryResult": "Audio query result:",
+      "queryError": "Error occurred during audio query generation",
+      "makeSureEngineRunning": "Make sure VOICEVOX Engine is running on the specified URL"
+    },
     "speakers": {
       "name": "speakers",
       "description": "List available speakers",

@@ -122,6 +122,11 @@ export const audioQueryCommand = defineCommand({
       type: "boolean",
       description: t("commands.audioQuery.args.enableKatakanaEnglish"),
     },
+    json: {
+      type: "boolean",
+      description: t("commands.audioQuery.args.json"),
+      alias: "j",
+    },
     ...baseUrlOption,
   },
   async run({ args }) {
@@ -168,6 +173,13 @@ export const audioQueryCommand = defineCommand({
       const audioQuery = audioQueryRes.data;
 
       display.info(t("commands.audioQuery.queryComplete"));
+
+      // JSON形式で出力する場合
+      if (args.json) {
+        const output = JSON.stringify(audioQuery, null, 2);
+        display.info(output);
+        return;
+      }
 
       // 整形して表示
       display.info(t("commands.audioQuery.queryResult"));

@@ -80,6 +80,11 @@ export const synthesisCommand = defineCommand({
       type: "boolean",
       description: t("commands.synthesis.args.play"),
     },
+    json: {
+      type: "boolean",
+      description: t("commands.synthesis.args.json"),
+      alias: "j",
+    },
     ...baseUrlOption,
   },
   async run({ args }) {
@@ -149,6 +154,22 @@ export const synthesisCommand = defineCommand({
 
       // 音声データをファイルに保存
       writeFileSync(outputFile, Buffer.from(synthesisRes.data));
+
+      // JSON形式で出力する場合
+      if (args.json) {
+        const result = {
+          success: true,
+          output: outputFile,
+          speaker: speakerId,
+          text: args.text,
+          audioQuery: audioQueryRes.data,
+          fileSize: synthesisRes.data.byteLength,
+          play: args.play || false,
+        };
+        const output = JSON.stringify(result, null, 2);
+        display.info(output);
+        return;
+      }
 
       display.info(
         t("commands.synthesis.synthesisComplete", { output: outputFile }),
