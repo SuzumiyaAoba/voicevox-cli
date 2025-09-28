@@ -1,8 +1,4 @@
-import {
-  audioQuery,
-  version as getVersion,
-  speakers,
-} from "@suzumiyaaoba/voicevox-client";
+import { client } from "@suzumiyaaoba/voicevox-client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 // VOICEVOX APIのベースURLを設定
@@ -49,23 +45,23 @@ describe("VOICEVOX Client Integration Tests", () => {
   describe("API Connection", () => {
     it("should connect to VOICEVOX engine and get version", async () => {
       // VOICEVOXエンジンのバージョンを取得
-      const response = await getVersion(createApiOptions());
+      const response = await client.GET("/version");
 
       expect(response).toBeDefined();
-      expect(response.status).toBe(200);
       expect(response.data).toBeDefined();
-      expect(typeof response.data).toBe("string");
-      expect(response.data.length).toBeGreaterThan(0);
+      if (response.data) {
+        expect(typeof response.data).toBe("string");
+        expect(response.data.length).toBeGreaterThan(0);
+      }
 
       console.log(`✅ VOICEVOX Engine Version: ${response.data}`);
     }, 10000); // 10秒のタイムアウト
 
     it("should fetch available speakers", async () => {
       // 利用可能な話者一覧を取得
-      const response = await speakers();
+      const response = await client.GET("/speakers");
 
       expect(response).toBeDefined();
-      expect(response.status).toBe(200);
       expect(response.data).toBeDefined();
       expect(Array.isArray(response.data)).toBe(true);
 
@@ -91,7 +87,7 @@ describe("VOICEVOX Client Integration Tests", () => {
 
     it("should find ずんだもん speaker", async () => {
       // ずんだもんが含まれているかチェック
-      const response = await speakers();
+      const response = await client.GET("/speakers");
 
       // 型ガード: データが配列であることを確認
       if (Array.isArray(response.data)) {
@@ -121,13 +117,11 @@ describe("VOICEVOX Client Integration Tests", () => {
       const speakerId = 1; // ずんだもん（あまあま）
 
       // 音声クエリを生成
-      const response = await audioQuery(
-        { text, speaker: speakerId },
-        createApiOptions(),
-      );
+      const response = await client.POST("/audio_query", {
+        query: { text, speaker: speakerId },
+      });
 
       expect(response).toBeDefined();
-      expect(response.status).toBe(200);
       expect(response.data).toBeDefined();
 
       // 型ガード: データがAudioQueryオブジェクトであることを確認
@@ -154,13 +148,11 @@ describe("VOICEVOX Client Integration Tests", () => {
       const speakerId = 3; // ずんだもん（ノーマル）
 
       // 音声クエリを生成
-      const audioQueryResponse = await audioQuery(
-        { text, speaker: speakerId },
-        createApiOptions(),
-      );
+      const audioQueryResponse = await client.POST("/audio_query", {
+        query: { text, speaker: speakerId },
+      });
 
       expect(audioQueryResponse).toBeDefined();
-      expect(audioQueryResponse.status).toBe(200);
       expect(audioQueryResponse.data).toBeDefined();
 
       console.log(`✅ Generated audio query for synthesis test: "${text}"`);
@@ -179,15 +171,14 @@ describe("VOICEVOX Client Integration Tests", () => {
       const invalidSpeakerId = 99999;
 
       try {
-        const response = await audioQuery(
-          { text, speaker: invalidSpeakerId },
-          createApiOptions(),
-        );
+        const response = await client.POST("/audio_query", {
+          query: { text, speaker: invalidSpeakerId },
+        });
 
-        // 4xxエラーが発生することを期待
-        if (response.status >= 400) {
+        // エラーが発生することを期待
+        if (response.error) {
           console.log("✅ Correctly handled invalid speaker ID error");
-          expect(response.status).toBeGreaterThanOrEqual(400);
+          expect(response.error).toBeDefined();
         } else {
           expect.fail("Expected error for invalid speaker ID");
         }
@@ -202,15 +193,14 @@ describe("VOICEVOX Client Integration Tests", () => {
       const speakerId = 1;
 
       try {
-        const response = await audioQuery(
-          { text: emptyText, speaker: speakerId },
-          createApiOptions(),
-        );
+        const response = await client.POST("/audio_query", {
+          query: { text: emptyText, speaker: speakerId },
+        });
 
-        // 4xxエラーが発生することを期待
-        if (response.status >= 400) {
+        // エラーが発生することを期待
+        if (response.error) {
           console.log("✅ Correctly handled empty text error");
-          expect(response.status).toBeGreaterThanOrEqual(400);
+          expect(response.error).toBeDefined();
         } else {
           expect.fail("Expected error for empty text");
         }

@@ -1,4 +1,4 @@
-import { speakers } from "@suzumiyaaoba/voicevox-client";
+import { client } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { display, log } from "../logger.js";
 
@@ -26,22 +26,17 @@ export const speakersCommand = defineCommand({
         return originalFetch(url, init);
       };
 
-      const response = await speakers();
+      // APIクライアントを使用してspeakersエンドポイントにアクセス
+      const response = await client.GET("/speakers");
 
       // 元のfetchを復元
       globalThis.fetch = originalFetch;
 
       log.debug("API response received", {
-        status: response.status,
         dataLength: Array.isArray(response.data) ? response.data.length : 0,
       });
 
-      if (response.status !== 200) {
-        display.error(`Failed to fetch speakers (Status: ${response.status})`);
-        process.exit(1);
-      }
-
-      if (!Array.isArray(response.data)) {
+      if (!response.data || !Array.isArray(response.data)) {
         display.error("Invalid response format");
         process.exit(1);
       }
