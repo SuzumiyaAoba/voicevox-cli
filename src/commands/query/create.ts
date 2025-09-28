@@ -9,6 +9,7 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
+import { audioQuerySchema, validateArgs } from "@/utils/validation.js";
 
 // API Clientの型定義を使用
 type AudioQuery =
@@ -130,35 +131,38 @@ export const createCommand = defineCommand({
     ...baseUrlOption,
   },
   async run({ args }) {
+    // 引数のバリデーション
+    const validatedArgs = validateArgs(audioQuerySchema, args);
+
     log.debug("Starting create command", {
-      text: args.text,
-      speaker: args.speaker,
-      enableKatakanaEnglish: args["enable-katakana-english"],
-      baseUrl: args.baseUrl,
+      text: validatedArgs.text,
+      speaker: validatedArgs.speaker,
+      baseUrl: validatedArgs.baseUrl,
     });
 
-    display.info(t("commands.query.create.querying", { text: args.text }));
     display.info(
-      t("commands.query.create.speakerId", { speaker: args.speaker }),
+      t("commands.query.create.querying", { text: validatedArgs.text }),
+    );
+    display.info(
+      t("commands.query.create.speakerId", { speaker: validatedArgs.speaker }),
     );
 
     try {
       log.debug("Making audio query API request", {
-        baseUrl: args.baseUrl,
-        speaker: args.speaker,
-        text: args.text,
+        baseUrl: validatedArgs.baseUrl,
+        speaker: validatedArgs.speaker,
+        text: validatedArgs.text,
       });
 
-      const speakerId = Number(args.speaker);
-      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
+      const speakerId = Number(validatedArgs.speaker);
+      const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 音声クエリを生成
       const audioQueryRes = await client.POST("/audio_query", {
         params: {
           query: {
             speaker: speakerId,
-            text: args.text,
-            enable_kana_conversion: args["enable-katakana-english"] || false,
+            text: validatedArgs.text,
           },
         },
       });
@@ -168,7 +172,7 @@ export const createCommand = defineCommand({
           "Audio query failed: empty response",
           ErrorType.API,
           undefined,
-          { speakerId, text: args.text },
+          { speakerId, text: validatedArgs.text },
         );
       }
 
@@ -177,7 +181,7 @@ export const createCommand = defineCommand({
       display.info(t("commands.query.create.queryComplete"));
 
       // JSON形式で出力する場合
-      if (args.json) {
+      if (validatedArgs.json) {
         const output = JSON.stringify(audioQuery, null, 2);
         display.info(output);
         return;

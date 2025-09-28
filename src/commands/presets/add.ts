@@ -8,6 +8,7 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
+import { presetsAddSchema, validateArgs } from "@/utils/validation.js";
 
 // プリセット追加コマンド
 export const presetsAddCommand = defineCommand({
@@ -76,36 +77,41 @@ export const presetsAddCommand = defineCommand({
   },
   async run({ args }) {
     try {
+      // 引数のバリデーション
+      const validatedArgs = validateArgs(presetsAddSchema, args);
+
       log.debug("Starting presets add command", {
-        id: args.id,
-        name: args.name,
-        baseUrl: args.baseUrl,
+        id: validatedArgs.id,
+        name: validatedArgs.name,
+        baseUrl: validatedArgs.baseUrl,
       });
 
       // ベースURLを指定してクライアントを作成
-      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
+      const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // プリセットデータを構築（必須パラメータ）
       const presetData = {
-        id: Number(args.id),
-        name: args.name,
-        speaker_uuid: args.speaker,
-        style_id: Number(args.style),
-        speedScale: Number(args.speed),
-        pitchScale: Number(args.pitch),
-        intonationScale: Number(args.intonation),
-        volumeScale: Number(args.volume),
-        prePhonemeLength: Number(args.prePhonemeLength),
-        postPhonemeLength: Number(args.postPhonemeLength),
+        id: validatedArgs.id,
+        name: validatedArgs.name,
+        speaker_uuid: validatedArgs.speaker,
+        style_id: validatedArgs.style,
+        speedScale: validatedArgs.speed,
+        pitchScale: validatedArgs.pitch,
+        intonationScale: validatedArgs.intonation,
+        volumeScale: validatedArgs.volume,
+        prePhonemeLength: validatedArgs.prePhonemeLength,
+        postPhonemeLength: validatedArgs.postPhonemeLength,
         pauseLengthScale: 1.0, // デフォルト値
       };
 
       log.debug("Making add preset API request", {
-        baseUrl: args.baseUrl,
+        baseUrl: validatedArgs.baseUrl,
         presetData,
       });
 
-      display.info(t("commands.presets.add.adding", { name: args.name }));
+      display.info(
+        t("commands.presets.add.adding", { name: validatedArgs.name }),
+      );
 
       // APIクライアントを使用してadd_presetエンドポイントにアクセス
       const response = await client.POST("/add_preset", {
@@ -121,24 +127,28 @@ export const presetsAddCommand = defineCommand({
           "Invalid response format from add preset API",
           ErrorType.API,
           undefined,
-          { baseUrl: args.baseUrl, presetData },
+          { baseUrl: validatedArgs.baseUrl, presetData },
         );
       }
 
       // JSON形式で出力する場合
-      if (args.json) {
+      if (validatedArgs.json) {
         const output = JSON.stringify(response.data, null, 2);
         display.info(output);
         return;
       }
 
       // プレーンテキスト形式で出力
-      display.info(t("commands.presets.add.added", { name: args.name }));
-      display.info(t("commands.presets.add.presetId", { id: args.id }));
+      display.info(
+        t("commands.presets.add.added", { name: validatedArgs.name }),
+      );
+      display.info(
+        t("commands.presets.add.presetId", { id: validatedArgs.id }),
+      );
 
       log.debug("Presets add command completed successfully", {
-        presetId: args.id,
-        presetName: args.name,
+        presetId: validatedArgs.id,
+        presetName: validatedArgs.name,
       });
     } catch (error) {
       handleError(error, "presets-add", {

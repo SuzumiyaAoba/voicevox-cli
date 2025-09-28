@@ -11,6 +11,7 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
+import { synthesisSchema, validateArgs } from "@/utils/validation.js";
 
 // 音声ファイルを再生する関数
 const playAudio = (filePath: string): Promise<void> => {
@@ -88,49 +89,60 @@ export const synthesisCommand = defineCommand({
     ...baseUrlOption,
   },
   async run({ args }) {
+    // 引数のバリデーション
+    const validatedArgs = validateArgs(synthesisSchema, args);
+
     log.debug("Starting synthesis command", {
-      text: args.text,
-      speaker: args.speaker,
-      output: args.output,
-      play: args.play,
-      baseUrl: args.baseUrl,
+      text: validatedArgs.text,
+      speaker: validatedArgs.speaker,
+      output: validatedArgs.output,
+      play: validatedArgs.play,
+      baseUrl: validatedArgs.baseUrl,
     });
 
-    display.info(t("commands.synthesis.synthesizing", { text: args.text }));
-    display.info(t("commands.synthesis.speakerId", { speaker: args.speaker }));
     display.info(
-      t("commands.synthesis.output", { output: args.output || "output.wav" }),
+      t("commands.synthesis.synthesizing", { text: validatedArgs.text }),
     );
     display.info(
-      t("commands.synthesis.play", { play: String(args.play || false) }),
+      t("commands.synthesis.speakerId", { speaker: validatedArgs.speaker }),
+    );
+    display.info(
+      t("commands.synthesis.output", {
+        output: validatedArgs.output || "output.wav",
+      }),
+    );
+    display.info(
+      t("commands.synthesis.play", {
+        play: String(validatedArgs.play || false),
+      }),
     );
 
     log.debug("Synthesis command parameters processed", {
-      speakerId: args.speaker,
-      outputFile: args.output || "output.wav",
-      shouldPlay: args.play || false,
+      speakerId: validatedArgs.speaker,
+      outputFile: validatedArgs.output || "output.wav",
+      shouldPlay: validatedArgs.play || false,
     });
 
     try {
       log.debug("Making synthesis API request", {
-        baseUrl: args.baseUrl,
-        speaker: args.speaker,
-        text: args.text,
+        baseUrl: validatedArgs.baseUrl,
+        speaker: validatedArgs.speaker,
+        text: validatedArgs.text,
       });
 
-      const speakerId = Number(args.speaker);
-      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
+      const speakerId = Number(validatedArgs.speaker);
+      const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 1. 音声クエリを生成 (POST /audio_query?speaker&text)
       const audioQueryRes = await client.POST("/audio_query", {
-        params: { query: { speaker: speakerId, text: args.text } },
+        params: { query: { speaker: speakerId, text: validatedArgs.text } },
       });
       if (!audioQueryRes.data) {
         throw new VoicevoxError(
           "Audio query failed: empty response",
           ErrorType.API,
           undefined,
-          { speakerId, text: args.text },
+          { speakerId, text: validatedArgs.text },
         );
       }
 
@@ -145,26 +157,26 @@ export const synthesisCommand = defineCommand({
           "Synthesis failed: empty response",
           ErrorType.API,
           undefined,
-          { speakerId, text: args.text },
+          { speakerId, text: validatedArgs.text },
         );
       }
 
       // 出力ファイル名を決定
-      const outputFile = args.output || "output/synthesis.wav";
+      const outputFile = validatedArgs.output || "output/synthesis.wav";
 
       // 音声データをファイルに保存
       writeFileSync(outputFile, Buffer.from(synthesisRes.data));
 
       // JSON形式で出力する場合
-      if (args.json) {
+      if (validatedArgs.json) {
         const result = {
           success: true,
           output: outputFile,
           speaker: speakerId,
-          text: args.text,
+          text: validatedArgs.text,
           audioQuery: audioQueryRes.data,
           fileSize: synthesisRes.data.byteLength,
-          play: args.play || false,
+          play: validatedArgs.play || false,
         };
         const output = JSON.stringify(result, null, 2);
         display.info(output);
@@ -176,14 +188,14 @@ export const synthesisCommand = defineCommand({
       );
 
       // 再生オプションが指定されている場合
-      if (args.play) {
+      if (validatedArgs.play) {
         display.info(t("commands.synthesis.playingAudio"));
         await playAudio(outputFile);
       }
 
       log.debug("Synthesis command completed successfully", {
         outputFile,
-        played: args.play || false,
+        played: validatedArgs.play || false,
       });
     } catch (error) {
       handleError(error, "synthesis", {
