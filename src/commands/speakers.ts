@@ -1,36 +1,6 @@
-import { spawn } from "node:child_process";
 import { client } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { display, log } from "../logger.js";
-
-// ページャーを使用して出力する関数
-const outputWithPager = async (content: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    const pager = process.env["PAGER"] || "less";
-    const pagerArgs = pager === "less" ? ["-R"] : []; // lessの場合は色付き表示を有効化
-
-    const child = spawn(pager, pagerArgs, {
-      stdio: ["pipe", "inherit", "inherit"],
-    });
-
-    child.stdin?.write(content);
-    child.stdin?.end();
-
-    child.on("close", (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Pager exited with code ${code}`));
-      }
-    });
-
-    child.on("error", () => {
-      // ページャーが利用できない場合は直接出力
-      console.log(content);
-      resolve();
-    });
-  });
-};
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -44,15 +14,10 @@ export const speakersCommand = defineCommand({
       description: "Output in JSON format",
       alias: "j",
     },
-    "no-pager": {
-      type: "boolean",
-      description: "Disable pager output",
-    },
   },
   async run({ args }) {
     try {
       log.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
-      display.info("Fetching available speakers...");
 
       // カスタムfetchでベースURLを設定
       const originalFetch = globalThis.fetch;
@@ -84,11 +49,7 @@ export const speakersCommand = defineCommand({
       // JSON形式で出力する場合
       if (args.json) {
         const output = JSON.stringify(response.data, null, 2);
-        if (args["no-pager"]) {
-          console.log(output);
-        } else {
-          await outputWithPager(output);
-        }
+        console.log(output);
         return;
       }
 
@@ -123,7 +84,7 @@ export const speakersCommand = defineCommand({
       };
 
       // テーブル形式の出力を文字列として構築
-      let tableOutput = "";
+      let tableOutput = "Fetching available speakers...\n\n";
 
       // ヘッダー行を固定幅で表示
       const headerLine =
@@ -165,12 +126,8 @@ export const speakersCommand = defineCommand({
       tableOutput += "\n";
       tableOutput += `Total ${response.data.length} speakers found\n`;
 
-      // ページング機能を適用
-      if (args["no-pager"]) {
-        console.log(tableOutput);
-      } else {
-        await outputWithPager(tableOutput);
-      }
+      // 直接出力
+      console.log(tableOutput);
       log.debug("Speakers command completed successfully");
     } catch (error) {
       log.error("Error in speakers command", {

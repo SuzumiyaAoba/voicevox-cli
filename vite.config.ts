@@ -25,6 +25,7 @@ export default defineConfig({
         "stream",
         "events",
         "child_process",
+        "node:child_process",
         "crypto",
         "url",
         "querystring",
