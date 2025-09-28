@@ -8,16 +8,10 @@ export const speakersCommand = defineCommand({
     name: "speakers",
     description: "List available speakers",
   },
-  args: {
-    baseUrl: {
-      type: "string",
-      description: "VOICEVOX Engine base URL (default: http://localhost:50021)",
-      default: "http://localhost:50021",
-    },
-  },
+  args: {},
   async run({ args }) {
     try {
-      logDebug.debug("Starting speakers command", { baseUrl: args.baseUrl });
+      logDebug.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
       display.info("Fetching available speakers...");
 
       // カスタムfetchでベースURLを設定
@@ -27,7 +21,7 @@ export const speakersCommand = defineCommand({
         init?: RequestInit,
       ): Promise<Response> => {
         const url =
-          typeof input === "string" ? `${args.baseUrl}${input}` : input;
+          typeof input === "string" ? `${args["baseUrl"]}${input}` : input;
         logDebug.debug("Making API request", { url });
         return originalFetch(url, init);
       };
