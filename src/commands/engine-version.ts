@@ -1,8 +1,7 @@
-import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import openapiFetch from "openapi-fetch";
 import { display, log } from "../logger.js";
 import { baseUrlOption } from "../options.js";
+import { createVoicevoxClient } from "../utils/client.js";
 
 // エンジンバージョン表示コマンド
 export const engineVersionCommand = defineCommand({
@@ -23,9 +22,7 @@ export const engineVersionCommand = defineCommand({
       log.debug("Starting engine-version command", { baseUrl: args.baseUrl });
 
       // ベースURLを指定してクライアントを作成
-      const client = openapiFetch<paths>({
-        baseUrl: args.baseUrl,
-      });
+      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
 
       log.debug("Making API request", { baseUrl: args.baseUrl });
 

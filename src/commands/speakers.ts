@@ -1,8 +1,7 @@
-import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import openapiFetch from "openapi-fetch";
 import { display, log } from "../logger.js";
 import { baseUrlOption } from "../options.js";
+import { createVoicevoxClient } from "../utils/client.js";
 import { createTable } from "../utils/display.js";
 
 // 話者一覧コマンド
@@ -24,9 +23,7 @@ export const speakersCommand = defineCommand({
       log.debug("Starting speakers command", { baseUrl: args.baseUrl });
 
       // ベースURLを指定してクライアントを作成
-      const client = openapiFetch<paths>({
-        baseUrl: args.baseUrl,
-      });
+      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
 
       log.debug("Making API request", { baseUrl: args.baseUrl });
 
