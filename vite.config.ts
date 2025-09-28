@@ -11,7 +11,7 @@ export default defineConfig({
     // ライブラリモードでビルド
     lib: {
       entry: "./src/index.ts",
-      formats: ["cjs"],
+      formats: ["es"],
       fileName: "index",
     },
     // 外部依存関係をバンドルに含めない

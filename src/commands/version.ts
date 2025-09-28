@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import packageJson from "../../package.json";
 
 // バージョン情報表示コマンド
 export const versionCommand = defineCommand({
@@ -8,6 +9,6 @@ export const versionCommand = defineCommand({
   },
   args: {},
   run() {
-    console.log("voicevox-cli v0.1.0");
+    console.log(`${packageJson.name} v${packageJson.version}`);
   },
 });
