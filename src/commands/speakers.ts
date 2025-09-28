@@ -3,6 +3,7 @@ import { defineCommand } from "citty";
 import openapiFetch from "openapi-fetch";
 import { display, log } from "../logger.js";
 import { baseUrlOption } from "../options.js";
+import { createTable } from "../utils/display.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -44,56 +45,15 @@ export const speakersCommand = defineCommand({
       // JSON形式で出力する場合
       if (args.json) {
         const output = JSON.stringify(response.data, null, 2);
-        console.log(output);
+        display.info(output);
         return;
       }
 
-      // 文字列の実際の表示幅を計算する関数（日本語は2文字分）
-      const getDisplayWidth = (str: string): number => {
-        let width = 0;
-        for (const char of str) {
-          const code = char.codePointAt(0);
-          if (!code) continue;
+      // テーブル形式の出力を構築
+      const headers = ["名前", "UUID", "Style名", "StyleID"];
+      const columnWidths = [20, 40, 20, 10];
 
-          // 日本語文字（ひらがな、カタカナ、漢字、全角記号）は2文字分
-          if (
-            (code >= 0x3040 && code <= 0x309f) || // ひらがな
-            (code >= 0x30a0 && code <= 0x30ff) || // カタカナ
-            (code >= 0x4e00 && code <= 0x9faf) || // 漢字
-            (code >= 0xff00 && code <= 0xffef) || // 全角記号
-            (code >= 0x3000 && code <= 0x303f) // 全角記号・句読点
-          ) {
-            width += 2;
-          } else {
-            width += 1;
-          }
-        }
-        return width;
-      };
-
-      // パディング関数（表示幅を考慮、スペースで埋める）
-      const padToWidth = (str: string, targetWidth: number): string => {
-        const currentWidth = getDisplayWidth(str);
-        const paddingNeeded = targetWidth - currentWidth;
-        return str + " ".repeat(Math.max(0, paddingNeeded));
-      };
-
-      // テーブル形式の出力を文字列として構築
-      let tableOutput = "Fetching available speakers...\n\n";
-
-      // ヘッダー行を固定幅で表示
-      const headerLine =
-        padToWidth("名前", 20) +
-        padToWidth("UUID", 40) +
-        padToWidth("Style名", 20) +
-        "StyleID";
-      tableOutput += `${headerLine}\n`;
-
-      // ヘッダー行の表示幅に合わせて区切り線を生成
-      const headerWidth = getDisplayWidth(headerLine);
-      tableOutput += `${"=".repeat(headerWidth)}\n`;
-
-      for (const speaker of response.data) {
+      const rows: string[][] = response.data.flatMap((speaker) => {
         log.debug("Processing speaker", {
           name: speaker.name,
           uuid: speaker.speaker_uuid,
@@ -101,28 +61,24 @@ export const speakersCommand = defineCommand({
         });
 
         if (speaker.styles && Array.isArray(speaker.styles)) {
-          for (const style of speaker.styles) {
-            const name = padToWidth(speaker.name, 20);
-            const uuid = padToWidth(speaker.speaker_uuid, 40);
-            const styleName = padToWidth(style.name, 20);
-            const styleId = style.id.toString();
-            tableOutput += `${name}${uuid}${styleName}${styleId}\n`;
-          }
+          return speaker.styles.map((style) => [
+            speaker.name,
+            speaker.speaker_uuid,
+            style.name,
+            style.id.toString(),
+          ]);
         } else {
           // スタイルがない場合
-          const name = padToWidth(speaker.name, 20);
-          const uuid = padToWidth(speaker.speaker_uuid, 40);
-          const styleName = padToWidth("-", 20);
-          const styleId = "-";
-          tableOutput += `${name}${uuid}${styleName}${styleId}\n`;
+          return [[speaker.name, speaker.speaker_uuid, "-", "-"]];
         }
-      }
+      });
 
-      tableOutput += "\n";
-      tableOutput += `Total ${response.data.length} speakers found\n`;
+      // テーブル形式の出力を生成
+      const tableOutput = createTable(headers, rows, columnWidths);
+      const fullOutput = `Fetching available speakers...\n\n${tableOutput}\nTotal ${response.data.length} speakers found\n`;
 
       // 直接出力
-      console.log(tableOutput);
+      display.info(fullOutput);
       log.debug("Speakers command completed successfully");
     } catch (error) {
       log.error("Error in speakers command", {
