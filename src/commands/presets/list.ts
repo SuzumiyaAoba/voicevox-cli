@@ -10,22 +10,22 @@ import {
 } from "@/utils/error-handler.js";
 
 // プリセット一覧コマンド
-export const presetsCommand = defineCommand({
+export const presetsListCommand = defineCommand({
   meta: {
-    name: t("commands.presets.name"),
-    description: t("commands.presets.description"),
+    name: t("commands.presets.list.name"),
+    description: t("commands.presets.list.description"),
   },
   args: {
     json: {
       type: "boolean",
-      description: t("commands.presets.args.json"),
+      description: t("commands.presets.list.args.json"),
       alias: "j",
     },
     ...baseUrlOption,
   },
   async run({ args }) {
     try {
-      log.debug("Starting presets command", { baseUrl: args.baseUrl });
+      log.debug("Starting presets list command", { baseUrl: args.baseUrl });
 
       // ベースURLを指定してクライアントを作成
       const client = createVoicevoxClient({ baseUrl: args.baseUrl });
@@ -56,11 +56,13 @@ export const presetsCommand = defineCommand({
       }
 
       // プレーンテキスト形式で出力
-      display.info(t("commands.presets.fetching"));
+      display.info(t("commands.presets.list.fetching"));
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         display.info(
-          t("commands.presets.totalPresets", { count: response.data.length }),
+          t("commands.presets.list.totalPresets", {
+            count: response.data.length,
+          }),
         );
 
         response.data.forEach((preset, index) => {
@@ -95,12 +97,12 @@ export const presetsCommand = defineCommand({
           display.info(""); // 空行を追加
         });
       } else {
-        display.info(t("commands.presets.noPresets"));
+        display.info(t("commands.presets.list.noPresets"));
       }
 
-      log.debug("Presets command completed successfully");
+      log.debug("Presets list command completed successfully");
     } catch (error) {
-      handleError(error, "presets", {
+      handleError(error, "presets-list", {
         baseUrl: args.baseUrl,
         json: args.json,
       });

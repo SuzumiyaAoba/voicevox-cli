@@ -78,16 +78,43 @@ const translations: Record<Locale, TranslationData> = {
       },
       presets: {
         name: "presets",
-        description: "利用可能なプリセット一覧を表示",
-        fetching: "利用可能なプリセットを取得中...",
-        totalPresets: "合計 {count} 個のプリセットが見つかりました",
-        noPresets: "プリセットが見つかりませんでした",
-        args: {
-          json: "JSON形式で出力する",
+        description: "プリセット関連のコマンド",
+        list: {
+          name: "list",
+          description: "利用可能なプリセット一覧を表示",
+          fetching: "利用可能なプリセットを取得中...",
+          totalPresets: "合計 {count} 個のプリセットが見つかりました",
+          noPresets: "プリセットが見つかりませんでした",
+          args: {
+            json: "JSON形式で出力する",
+          },
+          errorFetching: "プリセット一覧の取得中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         },
-        errorFetching: "プリセット一覧の取得中にエラーが発生しました:",
-        makeSureEngineRunning:
-          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        add: {
+          name: "add",
+          description: "新しいプリセットを追加する",
+          adding: "プリセットを追加中: {name}",
+          added: "プリセットが追加されました: {name}",
+          presetId: "プリセットID: {id}",
+          args: {
+            id: "プリセットID",
+            name: "プリセット名",
+            speaker: "話者UUID",
+            style: "スタイルID",
+            speed: "速度スケール",
+            pitch: "ピッチスケール",
+            intonation: "イントネーションスケール",
+            volume: "音量スケール",
+            prePhonemeLength: "前音素長",
+            postPhonemeLength: "後音素長",
+            json: "JSON形式で出力する",
+          },
+          errorAdding: "プリセット追加中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        },
       },
       version: {
         name: "version",
@@ -176,16 +203,43 @@ const translations: Record<Locale, TranslationData> = {
       },
       presets: {
         name: "presets",
-        description: "List available presets",
-        fetching: "Fetching available presets...",
-        totalPresets: "Total {count} presets found",
-        noPresets: "No presets found",
-        args: {
-          json: "Output in JSON format",
+        description: "Preset-related commands",
+        list: {
+          name: "list",
+          description: "List available presets",
+          fetching: "Fetching available presets...",
+          totalPresets: "Total {count} presets found",
+          noPresets: "No presets found",
+          args: {
+            json: "Output in JSON format",
+          },
+          errorFetching: "Error fetching presets:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
         },
-        errorFetching: "Error fetching presets:",
-        makeSureEngineRunning:
-          "Make sure VOICEVOX Engine is running on the specified URL",
+        add: {
+          name: "add",
+          description: "Add a new preset",
+          adding: "Adding preset: {name}",
+          added: "Preset added: {name}",
+          presetId: "Preset ID: {id}",
+          args: {
+            id: "Preset ID",
+            name: "Preset name",
+            speaker: "Speaker UUID",
+            style: "Style ID",
+            speed: "Speed scale",
+            pitch: "Pitch scale",
+            intonation: "Intonation scale",
+            volume: "Volume scale",
+            prePhonemeLength: "Pre-phoneme length",
+            postPhonemeLength: "Post-phoneme length",
+            json: "Output in JSON format",
+          },
+          errorAdding: "Error adding preset:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
+        },
       },
       version: {
         name: "version",
