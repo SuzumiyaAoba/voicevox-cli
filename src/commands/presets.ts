@@ -63,45 +63,37 @@ export const presetsCommand = defineCommand({
           t("commands.presets.totalPresets", { count: response.data.length }),
         );
 
-        response.data.forEach(
-          (preset: Record<string, unknown>, index: number) => {
-            display.info(
-              `${index + 1}. ${preset["name"] || `Preset ${index + 1}`}`,
-            );
-            if (preset["id"]) {
-              display.info(`   ID: ${preset["id"]}`);
-            }
-            if (preset["speaker_uuid"]) {
-              display.info(`   Speaker UUID: ${preset["speaker_uuid"]}`);
-            }
-            if (preset["style_id"]) {
-              display.info(`   Style ID: ${preset["style_id"]}`);
-            }
-            if (preset["speed_scale"] !== undefined) {
-              display.info(`   Speed: ${preset["speed_scale"]}`);
-            }
-            if (preset["pitch_scale"] !== undefined) {
-              display.info(`   Pitch: ${preset["pitch_scale"]}`);
-            }
-            if (preset["intonation_scale"] !== undefined) {
-              display.info(`   Intonation: ${preset["intonation_scale"]}`);
-            }
-            if (preset["volume_scale"] !== undefined) {
-              display.info(`   Volume: ${preset["volume_scale"]}`);
-            }
-            if (preset["pre_phoneme_length"] !== undefined) {
-              display.info(
-                `   Pre-phoneme Length: ${preset["pre_phoneme_length"]}`,
-              );
-            }
-            if (preset["post_phoneme_length"] !== undefined) {
-              display.info(
-                `   Post-phoneme Length: ${preset["post_phoneme_length"]}`,
-              );
-            }
-            display.info(""); // 空行を追加
-          },
-        );
+        response.data.forEach((preset, index) => {
+          display.info(`${index + 1}. ${preset.name || `Preset ${index + 1}`}`);
+          if (preset.id) {
+            display.info(`   ID: ${preset.id}`);
+          }
+          if (preset.speaker_uuid) {
+            display.info(`   Speaker UUID: ${preset.speaker_uuid}`);
+          }
+          if (preset.style_id) {
+            display.info(`   Style ID: ${preset.style_id}`);
+          }
+          if (preset.speedScale !== undefined) {
+            display.info(`   Speed: ${preset.speedScale}`);
+          }
+          if (preset.pitchScale !== undefined) {
+            display.info(`   Pitch: ${preset.pitchScale}`);
+          }
+          if (preset.intonationScale !== undefined) {
+            display.info(`   Intonation: ${preset.intonationScale}`);
+          }
+          if (preset.volumeScale !== undefined) {
+            display.info(`   Volume: ${preset.volumeScale}`);
+          }
+          if (preset.prePhonemeLength !== undefined) {
+            display.info(`   Pre-phoneme Length: ${preset.prePhonemeLength}`);
+          }
+          if (preset.postPhonemeLength !== undefined) {
+            display.info(`   Post-phoneme Length: ${preset.postPhonemeLength}`);
+          }
+          display.info(""); // 空行を追加
+        });
       } else {
         display.info(t("commands.presets.noPresets"));
       }
