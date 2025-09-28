@@ -10,9 +10,7 @@ const DEFAULT_LOCALE: Locale = "ja";
 
 // 現在のロケールを取得（環境変数から）
 const getCurrentLocale = (): Locale => {
-  const envLocale = (
-    process.env as Record<string, string | undefined>
-  ).LANG?.split(".")[0]?.split("_")[0];
+  const envLocale = process.env.LANG?.split(".")[0]?.split("_")[0];
   if (envLocale && SUPPORTED_LOCALES.includes(envLocale as Locale)) {
     return envLocale as Locale;
   }

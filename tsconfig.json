@@ -14,6 +14,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "src/types/ts-reset.d.ts"],
+  "include": ["src", "src/types/ts-reset.d.ts", "env.d.ts"],
   "exclude": ["dist", "node_modules"]
 }
