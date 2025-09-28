@@ -130,7 +130,7 @@ export const synthesisCommand = defineCommand({
       }
 
       // 出力ファイル名を決定
-      const outputFile = args.output || "output.wav";
+      const outputFile = args.output || "output/synthesis.wav";
 
       // 音声データをファイルに保存
       writeFileSync(outputFile, Buffer.from(synthesisRes.data));
