@@ -1,6 +1,7 @@
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { presetsAddCommand } from "./add.js";
+import { presetsDeleteCommand } from "./delete.js";
 import { presetsListCommand } from "./list.js";
 import { presetsUpdateCommand } from "./update.js";
 
@@ -14,5 +15,6 @@ export const presetsCommand = defineCommand({
     list: presetsListCommand,
     add: presetsAddCommand,
     update: presetsUpdateCommand,
+    delete: presetsDeleteCommand,
   },
 });

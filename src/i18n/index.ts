@@ -137,6 +137,19 @@ const translations: Record<Locale, TranslationData> = {
           makeSureEngineRunning:
             "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         },
+        delete: {
+          name: "delete",
+          description: "既存のプリセットを削除する",
+          deleting: "プリセットを削除中: ID {id}",
+          deleted: "プリセットが削除されました: ID {id}",
+          args: {
+            id: "プリセットID",
+            json: "JSON形式で出力する",
+          },
+          errorDeleting: "プリセット削除中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        },
       },
       version: {
         name: "version",
@@ -281,6 +294,19 @@ const translations: Record<Locale, TranslationData> = {
             json: "Output in JSON format",
           },
           errorUpdating: "Error updating preset:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
+        },
+        delete: {
+          name: "delete",
+          description: "Delete an existing preset",
+          deleting: "Deleting preset: ID {id}",
+          deleted: "Preset deleted: ID {id}",
+          args: {
+            id: "Preset ID",
+            json: "Output in JSON format",
+          },
+          errorDeleting: "Error deleting preset:",
           makeSureEngineRunning:
             "Make sure VOICEVOX Engine is running on the specified URL",
         },

@@ -92,6 +92,13 @@ export const presetsUpdateSchema = z.object({
   json: z.boolean().optional(),
 });
 
+// プリセット削除用のスキーマ
+export const presetsDeleteSchema = z.object({
+  id: presetIdSchema,
+  baseUrl: baseUrlSchema,
+  json: z.boolean().optional(),
+});
+
 // 音声合成用のスキーマ
 export const synthesisSchema = z.object({
   speaker: speakerIdSchema,
