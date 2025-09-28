@@ -141,6 +141,8 @@ export const withErrorHandling = <T extends unknown[], R>(
       return await fn(...args);
     } catch (error) {
       handleError(error, command);
+      // handleErrorはneverを返すので、この行には到達しない
+      throw error;
     }
   };
 };
@@ -155,6 +157,8 @@ export const withErrorHandlingSync = <T extends unknown[], R>(
       return fn(...args);
     } catch (error) {
       handleError(error, command);
+      // handleErrorはneverを返すので、この行には到達しない
+      throw error;
     }
   };
 };
