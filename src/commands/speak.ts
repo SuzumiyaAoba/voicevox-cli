@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { display, logDebug } from "../logger.js";
+import { display, log } from "../logger.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({
@@ -30,7 +30,7 @@ export const speakCommand = defineCommand({
     },
   },
   run({ args }) {
-    logDebug.debug("Starting speak command", {
+    log.debug("Starting speak command", {
       text: args.text,
       speaker: args.speaker,
       output: args.output,
@@ -42,7 +42,7 @@ export const speakCommand = defineCommand({
     display.info(`Output: ${args.output || "default.wav"}`);
     display.info(`Play: ${args.play || false}`);
 
-    logDebug.debug("Speak command parameters processed", {
+    log.debug("Speak command parameters processed", {
       speakerId: args.speaker,
       outputFile: args.output || "default.wav",
       shouldPlay: args.play || false,

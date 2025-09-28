@@ -62,7 +62,7 @@ export const display = {
 };
 
 // デバッグ情報用のログ（debugレベル以上で表示）
-export const logDebug = {
+export const log = {
   trace: (message: string, data?: unknown) => logger.trace(data, message),
   debug: (message: string, data?: unknown) => logger.debug(data, message),
   info: (message: string, data?: unknown) => logger.info(data, message),

@@ -1,6 +1,6 @@
 import { speakers } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import { display, logDebug } from "../logger.js";
+import { display, log } from "../logger.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -11,7 +11,7 @@ export const speakersCommand = defineCommand({
   args: {},
   async run({ args }) {
     try {
-      logDebug.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
+      log.debug("Starting speakers command", { baseUrl: args["baseUrl"] });
       display.info("Fetching available speakers...");
 
       // カスタムfetchでベースURLを設定
@@ -22,7 +22,7 @@ export const speakersCommand = defineCommand({
       ): Promise<Response> => {
         const url =
           typeof input === "string" ? `${args["baseUrl"]}${input}` : input;
-        logDebug.debug("Making API request", { url });
+        log.debug("Making API request", { url });
         return originalFetch(url, init);
       };
 
@@ -31,7 +31,7 @@ export const speakersCommand = defineCommand({
       // 元のfetchを復元
       globalThis.fetch = originalFetch;
 
-      logDebug.debug("API response received", {
+      log.debug("API response received", {
         status: response.status,
         dataLength: Array.isArray(response.data) ? response.data.length : 0,
       });
@@ -86,7 +86,7 @@ export const speakersCommand = defineCommand({
       display.info("=".repeat(85));
 
       for (const speaker of response.data) {
-        logDebug.debug("Processing speaker", {
+        log.debug("Processing speaker", {
           name: speaker.name,
           uuid: speaker.speaker_uuid,
           stylesCount: speaker.styles?.length || 0,
@@ -112,9 +112,9 @@ export const speakersCommand = defineCommand({
 
       display.info("");
       display.info(`Total ${response.data.length} speakers found`);
-      logDebug.debug("Speakers command completed successfully");
+      log.debug("Speakers command completed successfully");
     } catch (error) {
-      logDebug.error("Error in speakers command", {
+      log.error("Error in speakers command", {
         error: error instanceof Error ? error.message : String(error),
       });
       display.error("Error fetching speakers:");
