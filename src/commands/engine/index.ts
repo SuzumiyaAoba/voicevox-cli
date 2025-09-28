@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { engineVersionCommand } from "./engine-version.js";
+import { engineVersionCommand } from "./version.js";
 
 // エンジン関連コマンド
 export const engineCommand = defineCommand({
