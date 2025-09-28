@@ -38,5 +38,16 @@
   "common": {
     "error": "Error",
     "unknown": "Unknown"
+  },
+  "errors": {
+    "network": "Network error occurred in {command} command",
+    "api": "API error occurred in {command} command",
+    "validation": "Validation error occurred in {command} command",
+    "unknown": "Unknown error occurred in {command} command",
+    "help": {
+      "network": "Check your network connection and ensure VOICEVOX Engine is running",
+      "api": "Check the API endpoint URL and parameters",
+      "validation": "Check the format of input parameters"
+    }
   }
 }

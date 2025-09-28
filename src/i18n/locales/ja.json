@@ -38,5 +38,16 @@
   "common": {
     "error": "エラー",
     "unknown": "不明"
+  },
+  "errors": {
+    "network": "{command}コマンドでネットワークエラーが発生しました",
+    "api": "{command}コマンドでAPIエラーが発生しました",
+    "validation": "{command}コマンドでバリデーションエラーが発生しました",
+    "unknown": "{command}コマンドで不明なエラーが発生しました",
+    "help": {
+      "network": "ネットワーク接続を確認し、VOICEVOX Engineが起動していることを確認してください",
+      "api": "APIエンドポイントのURLとパラメータを確認してください",
+      "validation": "入力パラメータの形式を確認してください"
+    }
   }
 }

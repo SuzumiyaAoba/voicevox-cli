@@ -6,6 +6,11 @@ import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+import {
+  ErrorType,
+  handleError,
+  VoicevoxError,
+} from "@/utils/error-handler.js";
 
 // 音声ファイルを再生する関数
 const playAudio = (filePath: string): Promise<void> => {
@@ -116,7 +121,12 @@ export const synthesisCommand = defineCommand({
         params: { query: { speaker: speakerId, text: args.text } },
       });
       if (!audioQueryRes.data) {
-        throw new Error("Audio query failed: empty response");
+        throw new VoicevoxError(
+          "Audio query failed: empty response",
+          ErrorType.API,
+          undefined,
+          { speakerId, text: args.text },
+        );
       }
 
       // 2. 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
@@ -126,7 +136,12 @@ export const synthesisCommand = defineCommand({
         parseAs: "arrayBuffer",
       });
       if (!synthesisRes.data) {
-        throw new Error("Synthesis failed: empty response");
+        throw new VoicevoxError(
+          "Synthesis failed: empty response",
+          ErrorType.API,
+          undefined,
+          { speakerId, text: args.text },
+        );
       }
 
       // 出力ファイル名を決定
@@ -150,20 +165,12 @@ export const synthesisCommand = defineCommand({
         played: args.play || false,
       });
     } catch (error) {
-      log.error("Error in synthesis command", {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      handleError(error, "synthesis", {
+        speaker: args.speaker,
+        text: args.text,
+        output: args.output,
+        baseUrl: args.baseUrl,
       });
-      display.error(t("commands.synthesis.synthesisError"));
-      if (error instanceof Error) {
-        display.error(`  ${error.message}`);
-        if (error.message.includes("fetch")) {
-          display.error(t("commands.synthesis.makeSureEngineRunning"));
-        }
-      } else {
-        display.error(`  ${t("common.unknown")}`);
-      }
-      process.exit(1);
     }
   },
 });

@@ -3,6 +3,11 @@ import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+import {
+  ErrorType,
+  handleError,
+  VoicevoxError,
+} from "@/utils/error-handler.js";
 
 // エンジンバージョン表示コマンド
 export const engineVersionCommand = defineCommand({
@@ -35,8 +40,12 @@ export const engineVersionCommand = defineCommand({
       });
 
       if (!response.data) {
-        display.error(t("commands.engine.version.invalidResponse"));
-        process.exit(1);
+        throw new VoicevoxError(
+          "Invalid response format from engine version API",
+          ErrorType.API,
+          undefined,
+          { baseUrl: args.baseUrl },
+        );
       }
 
       // JSON形式で出力する場合
@@ -55,21 +64,10 @@ export const engineVersionCommand = defineCommand({
 
       log.debug("Engine-version command completed successfully");
     } catch (error) {
-      log.error("Error in engine-version command", {
-        error: error instanceof Error ? error.message : String(error),
+      handleError(error, "engine-version", {
+        baseUrl: args.baseUrl,
+        json: args.json,
       });
-      display.error(t("commands.engine.version.errorFetching"));
-      if (error instanceof Error) {
-        display.error(`  ${error.message}`);
-        if (error.message.includes("fetch")) {
-          display.error(
-            `  ${t("commands.engine.version.makeSureEngineRunning")}`,
-          );
-        }
-      } else {
-        display.error(`  ${t("commands.engine.version.unknownError")}`);
-      }
-      process.exit(1);
     }
   },
 });

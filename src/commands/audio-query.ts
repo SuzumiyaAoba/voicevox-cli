@@ -4,6 +4,11 @@ import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+import {
+  ErrorType,
+  handleError,
+  VoicevoxError,
+} from "@/utils/error-handler.js";
 
 // API Clientの型定義を使用
 type AudioQuery =
@@ -152,8 +157,12 @@ export const audioQueryCommand = defineCommand({
       });
 
       if (!audioQueryRes.data) {
-        display.error(t("commands.audioQuery.queryError"));
-        process.exit(1);
+        throw new VoicevoxError(
+          "Audio query failed: empty response",
+          ErrorType.API,
+          undefined,
+          { speakerId, text: args.text },
+        );
       }
 
       const audioQuery = audioQueryRes.data;
@@ -168,20 +177,11 @@ export const audioQueryCommand = defineCommand({
         queryKeys: Object.keys(audioQuery),
       });
     } catch (error) {
-      log.error("Error in audio-query command", {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      handleError(error, "audio-query", {
+        speaker: args.speaker,
+        text: args.text,
+        baseUrl: args.baseUrl,
       });
-      display.error(t("commands.audioQuery.queryError"));
-      if (error instanceof Error) {
-        display.error(`  ${error.message}`);
-        if (error.message.includes("fetch")) {
-          display.error(t("commands.audioQuery.makeSureEngineRunning"));
-        }
-      } else {
-        display.error(`  ${t("common.unknown")}`);
-      }
-      process.exit(1);
     }
   },
 });

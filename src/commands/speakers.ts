@@ -4,6 +4,11 @@ import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { createTable } from "@/utils/display.js";
+import {
+  ErrorType,
+  handleError,
+  VoicevoxError,
+} from "@/utils/error-handler.js";
 
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
@@ -36,8 +41,12 @@ export const speakersCommand = defineCommand({
       });
 
       if (!response.data || !Array.isArray(response.data)) {
-        display.error(t("commands.speakers.invalidResponse"));
-        process.exit(1);
+        throw new VoicevoxError(
+          "Invalid response format from speakers API",
+          ErrorType.API,
+          undefined,
+          { baseUrl: args.baseUrl },
+        );
       }
 
       // JSON形式で出力する場合
@@ -79,19 +88,10 @@ export const speakersCommand = defineCommand({
       display.info(fullOutput);
       log.debug("Speakers command completed successfully");
     } catch (error) {
-      log.error("Error in speakers command", {
-        error: error instanceof Error ? error.message : String(error),
+      handleError(error, "speakers", {
+        baseUrl: args.baseUrl,
+        json: args.json,
       });
-      display.error(t("commands.speakers.errorFetching"));
-      if (error instanceof Error) {
-        display.error(`  ${error.message}`);
-        if (error.message.includes("fetch")) {
-          display.error(`  ${t("commands.speakers.makeSureEngineRunning")}`);
-        }
-      } else {
-        display.error(`  ${t("common.unknown")}`);
-      }
-      process.exit(1);
     }
   },
 });
