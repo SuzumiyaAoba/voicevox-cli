@@ -1,8 +1,13 @@
+import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+
+// API Clientの型定義を使用
+type AudioQuery =
+  paths["/audio_query"]["post"]["responses"]["200"]["content"]["application/json"];
 
 // 日本語文字の幅を計算する関数（日本語は2文字分、英数字は1文字分）
 const getStringWidth = (str: string): number => {
@@ -26,7 +31,7 @@ const padToWidth = (str: string, targetWidth: number): string => {
 };
 
 // 音声クエリを整形して表示する関数
-const displayAudioQuery = (audioQuery: any) => {
+const displayAudioQuery = (audioQuery: AudioQuery) => {
   console.log("\n📊 音声クエリ情報");
 
   // 各項目名の幅を計算
@@ -68,8 +73,8 @@ const displayAudioQuery = (audioQuery: any) => {
 
   // アクセント句をコンパクトに表示
   console.log("\n🎵 アクセント句");
-  audioQuery.accent_phrases.forEach((phrase: any, index: number) => {
-    const moraTexts = phrase.moras.map((mora: any) => mora.text).join("");
+  audioQuery.accent_phrases.forEach((phrase, index: number) => {
+    const moraTexts = phrase.moras.map((mora) => mora.text).join("");
     const accentMark =
       phrase.accent > 0 ? ` (アクセント: ${phrase.accent})` : "";
     const questionMark = phrase.is_interrogative ? "?" : "";
@@ -77,7 +82,7 @@ const displayAudioQuery = (audioQuery: any) => {
 
     // モーラの詳細を1行で表示
     const moraDetails = phrase.moras
-      .map((mora: any) => {
+      .map((mora) => {
         const consonant = mora.consonant || "";
         const vowel = mora.vowel;
         const length = (mora.consonant_length || 0) + mora.vowel_length;
