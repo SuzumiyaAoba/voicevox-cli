@@ -1,9 +1,11 @@
 import { spawn } from "node:child_process";
 import { writeFileSync } from "node:fs";
+import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
+import { createVoicevoxClient } from "@/utils/client.js";
 
 // 音声ファイルを再生する関数
 const playAudio = (filePath: string): Promise<void> => {
@@ -106,50 +108,32 @@ export const synthesisCommand = defineCommand({
         text: args.text,
       });
 
-      // 1. 音声クエリを生成
-      const audioQueryResponse = await fetch(
-        `${args.baseUrl}/audio_query?speaker=${args.speaker}&text=${encodeURIComponent(args.text)}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const speakerId = Number(args.speaker);
+      const client = createVoicevoxClient({ baseUrl: args.baseUrl });
 
-      if (!audioQueryResponse.ok) {
-        const errorText = await audioQueryResponse.text();
-        throw new Error(
-          `Audio query failed: HTTP ${audioQueryResponse.status}: ${errorText}`,
-        );
+      // 1. 音声クエリを生成 (POST /audio_query?speaker&text)
+      const audioQueryRes = await client.POST("/audio_query", {
+        params: { query: { speaker: speakerId, text: args.text } },
+      });
+      if (!audioQueryRes.data) {
+        throw new Error("Audio query failed: empty response");
       }
 
-      const audioQuery = await audioQueryResponse.json();
-
-      // 2. 音声合成を実行
-      const response = await fetch(
-        `${args.baseUrl}/synthesis?speaker=${args.speaker}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(audioQuery),
-        },
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      // 2. 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
+      const synthesisRes = await client.POST("/synthesis", {
+        params: { query: { speaker: speakerId } },
+        body: audioQueryRes.data as paths["/synthesis"]["post"]["requestBody"]["content"]["application/json"],
+        parseAs: "arrayBuffer",
+      });
+      if (!synthesisRes.data) {
+        throw new Error("Synthesis failed: empty response");
       }
-
-      const audioData = await response.arrayBuffer();
 
       // 出力ファイル名を決定
       const outputFile = args.output || "output.wav";
 
       // 音声データをファイルに保存
-      writeFileSync(outputFile, Buffer.from(audioData));
+      writeFileSync(outputFile, Buffer.from(synthesisRes.data));
 
       display.info(
         t("commands.synthesis.synthesisComplete", { output: outputFile }),
