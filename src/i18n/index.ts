@@ -47,15 +47,13 @@ const translations: Record<Locale, TranslationData> = {
         description: "テキストから音声クエリを生成する",
         querying: '音声クエリ生成中: "{text}"',
         speakerId: "話者ID: {speaker}",
-        output: "出力: {output}",
         args: {
           text: "クエリを生成するテキスト",
           speaker: "話者ID（デフォルト: 2）",
-          output: "出力ファイルパス",
           enableKatakanaEnglish: "英語をカタカナに変換してから処理",
         },
         queryError: "音声クエリ生成中にエラーが発生しました",
-        queryComplete: "音声クエリが完了しました: {output}",
+        queryComplete: "音声クエリが完了しました",
         queryResult: "音声クエリ結果:",
         makeSureEngineRunning:
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
@@ -128,16 +126,14 @@ const translations: Record<Locale, TranslationData> = {
         description: "Generate audio query from text",
         querying: 'Generating audio query: "{text}"',
         speakerId: "Speaker ID: {speaker}",
-        output: "Output: {output}",
         args: {
           text: "Text to generate query for",
           speaker: "Speaker ID (default: 2)",
-          output: "Output file path",
           enableKatakanaEnglish:
             "Convert English to katakana before processing",
         },
         queryError: "Error occurred during audio query generation",
-        queryComplete: "Audio query completed: {output}",
+        queryComplete: "Audio query completed",
         queryResult: "Audio query result:",
         makeSureEngineRunning:
           "Make sure VOICEVOX Engine is running on the specified URL",
