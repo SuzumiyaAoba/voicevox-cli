@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "../../i18n/index.js";
+import { t } from "@/i18n/index.js";
 import { engineVersionCommand } from "./version.js";
 
 // エンジン関連コマンド

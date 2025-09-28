@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { defineCommand, runMain } from "citty";
-import { engineCommand } from "./commands/engine/index.js";
-import { speakCommand } from "./commands/speak.js";
-import { speakersCommand } from "./commands/speakers.js";
-import { versionCommand } from "./commands/version.js";
+import { engineCommand } from "@/commands/engine/index.js";
+import { speakCommand } from "@/commands/speak.js";
+import { speakersCommand } from "@/commands/speakers.js";
+import { versionCommand } from "@/commands/version.js";
 
 // メインコマンド
 const main = defineCommand({

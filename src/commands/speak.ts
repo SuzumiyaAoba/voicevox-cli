@@ -1,7 +1,7 @@
 import { defineCommand } from "citty";
-import { t } from "../i18n/index.js";
-import { display, log } from "../logger.js";
-import { baseUrlOption } from "../options.js";
+import { t } from "@/i18n/index.js";
+import { display, log } from "@/logger.js";
+import { baseUrlOption } from "@/options.js";
 
 // 音声合成コマンド
 export const speakCommand = defineCommand({

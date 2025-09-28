@@ -8,7 +8,11 @@
     "rootDir": "src",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src", "src/types/ts-reset.d.ts"],
   "exclude": ["dist", "node_modules"]
