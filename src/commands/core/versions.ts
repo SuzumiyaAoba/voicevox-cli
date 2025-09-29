@@ -1,13 +1,10 @@
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
-import { baseUrlOption } from "@/options.js";
-import { createVoicevoxClient } from "@/utils/client.js";
-import {
-  ErrorType,
-  handleError,
-  VoicevoxError,
-} from "@/utils/error-handler.js";
+import { createClient, validateResponse } from "@/utils/api-helpers.js";
+import { commonCommandOptions } from "@/utils/command-helpers.js";
+import { handleError } from "@/utils/error-handler.js";
+import { outputConditional } from "@/utils/output.js";
 import { engineVersionsSchema, validateArgs } from "@/utils/validation.js";
 
 // コアバージョン一覧コマンド
@@ -16,14 +13,7 @@ export const coreVersionsCommand = defineCommand({
     name: t("commands.core.versions.name"),
     description: t("commands.core.versions.description"),
   },
-  args: {
-    json: {
-      type: "boolean",
-      description: t("commands.core.versions.args.json"),
-      alias: "j",
-    },
-    ...baseUrlOption,
-  },
+  args: commonCommandOptions,
   async run({ args }) {
     try {
       // 引数のバリデーション
@@ -33,50 +23,37 @@ export const coreVersionsCommand = defineCommand({
         baseUrl: validatedArgs.baseUrl,
       });
 
-      // ベースURLを指定してクライアントを作成
-      const client = createVoicevoxClient({
-        baseUrl: validatedArgs.baseUrl || "http://localhost:50021",
-      });
+      const client = createClient(validatedArgs.baseUrl);
 
       display.info(t("commands.core.versions.fetching"));
 
-      // APIクライアントを使用してcore_versionsエンドポイントにアクセス
       const response = await client.GET("/core_versions");
+      const versions = validateResponse(
+        response,
+        "Invalid response format from core versions API",
+        { baseUrl: validatedArgs.baseUrl },
+      );
 
       log.debug("API response received", {
-        hasData: !!response.data,
+        hasData: !!versions,
         status: response.response?.status,
       });
 
-      if (!response.data) {
-        throw new VoicevoxError(
-          "Invalid response format from core versions API",
-          ErrorType.API,
-          undefined,
-          { baseUrl: validatedArgs.baseUrl },
-        );
-      }
+      // 出力処理
+      outputConditional(validatedArgs.json || false, versions, () => {
+        display.info(t("commands.core.versions.versionsFound"));
 
-      // JSON形式で出力する場合
-      if (validatedArgs.json) {
-        const output = JSON.stringify(response.data, null, 2);
-        display.info(output);
-        return;
-      }
-
-      // プレーンテキスト形式で出力
-      display.info(t("commands.core.versions.versionsFound"));
-
-      if (Array.isArray(response.data)) {
-        response.data.forEach((version: unknown, index: number) => {
-          display.info(`${index + 1}. ${String(version)}`);
-        });
-      } else {
-        display.info(String(response.data));
-      }
+        if (Array.isArray(versions)) {
+          versions.forEach((version: unknown, index: number) => {
+            display.info(`${index + 1}. ${String(version)}`);
+          });
+        } else {
+          display.info(String(versions));
+        }
+      });
 
       log.debug("Core versions command completed successfully", {
-        versionsCount: Array.isArray(response.data) ? response.data.length : 1,
+        versionsCount: Array.isArray(versions) ? versions.length : 1,
       });
     } catch (error) {
       handleError(error, "core-versions", {

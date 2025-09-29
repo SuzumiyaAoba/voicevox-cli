@@ -4,12 +4,13 @@ import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { baseUrlOption } from "@/options.js";
-import { createVoicevoxClient } from "@/utils/client.js";
+import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import {
   ErrorType,
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
+import { outputJson, resolveOutputFormat } from "@/utils/output.js";
 import {
   type AudioQuery,
   audioQueryDataSchema,
@@ -147,7 +148,7 @@ export const synthesisCommand = defineCommand({
 
     try {
       const speakerId = Number(validatedArgs.speaker);
-      const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
+      const client = createClient(validatedArgs.baseUrl);
 
       let audioQuery: AudioQuery;
 
@@ -181,15 +182,11 @@ export const synthesisCommand = defineCommand({
         const audioQueryRes = await client.POST("/audio_query", {
           params: { query: { speaker: speakerId, text: validatedArgs.text } },
         });
-        if (!audioQueryRes.data) {
-          throw new VoicevoxError(
-            "Audio query failed: empty response",
-            ErrorType.API,
-            undefined,
-            { speakerId, text: validatedArgs.text },
-          );
-        }
-        audioQuery = audioQueryRes.data;
+        audioQuery = validateResponse(
+          audioQueryRes,
+          "Audio query failed: empty response",
+          { speakerId, text: validatedArgs.text },
+        );
       }
 
       // 2. 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
@@ -198,24 +195,23 @@ export const synthesisCommand = defineCommand({
         body: audioQuery,
         parseAs: "arrayBuffer",
       });
-      if (!synthesisRes.data) {
-        throw new VoicevoxError(
-          "Synthesis failed: empty response",
-          ErrorType.API,
-          undefined,
-          { speakerId, text: validatedArgs.text },
-        );
-      }
+      const synthesisData = validateResponse(
+        synthesisRes,
+        "Synthesis failed: empty response",
+        { speakerId, text: validatedArgs.text },
+      );
 
       // 出力ファイル名を決定
       const outputFile = validatedArgs.output || "output/synthesis.wav";
 
       // 音声データをファイルに保存
-      writeFileSync(outputFile, Buffer.from(synthesisRes.data));
+      writeFileSync(outputFile, Buffer.from(synthesisData));
 
       // 出力形式を決定（--type が優先、次に --json）
-      const outputFormat =
-        validatedArgs.type || (validatedArgs.json ? "json" : "text");
+      const outputFormat = resolveOutputFormat(
+        validatedArgs.type,
+        validatedArgs.json,
+      );
 
       // JSON形式で出力する場合
       if (outputFormat === "json") {
@@ -226,11 +222,10 @@ export const synthesisCommand = defineCommand({
           text: validatedArgs.text,
           input: validatedArgs.input,
           audioQuery: audioQuery,
-          fileSize: synthesisRes.data.byteLength,
+          fileSize: synthesisData.byteLength,
           play: validatedArgs.play || false,
         };
-        const output = JSON.stringify(result, null, 2);
-        display.info(output);
+        outputJson(result);
         return;
       }
 

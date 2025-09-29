@@ -1,8 +1,68 @@
 import type { components } from "@suzumiyaaoba/voicevox-client";
 import { z } from "zod";
+import {
+  createNonNegativeIntSchema,
+  createRangeNumberSchema,
+} from "./number-parser.js";
 
-// API型定義（pathsから取得して型変数に束縛）
+// ========================================
+// API型定義
+// ========================================
+
 export type AudioQuery = components["schemas"]["AudioQuery"];
+
+// ========================================
+// 共通の基本スキーマ
+// ========================================
+
+export const baseUrlSchema = z.string().url("Invalid base URL format");
+
+export const speakerIdSchema = z.string().min(1, "Speaker ID is required");
+
+export const textSchema = z
+  .string()
+  .min(1, "Text is required")
+  .max(1000, "Text is too long");
+
+export const outputFileSchema = z
+  .string()
+  .min(1, "Output file path is required");
+
+export const inputFileSchema = z
+  .string()
+  .min(1, "Input file path is required")
+  .refine((val) => val.endsWith(".json"), {
+    message: "Input file must be a JSON file",
+  });
+
+export const outputTypeSchema = z.union([z.literal("json"), z.literal("text")]);
+
+// ========================================
+// 数値関連のスキーマ（共通ヘルパーを使用）
+// ========================================
+
+export const presetIdSchema = createNonNegativeIntSchema("Preset ID");
+
+export const styleIdSchema = createNonNegativeIntSchema("Style ID");
+
+export const scaleSchema = createRangeNumberSchema("Scale", 0, 10);
+
+export const lengthSchema = createRangeNumberSchema("Length", 0, 10);
+
+// ========================================
+// その他の特定スキーマ
+// ========================================
+
+export const presetNameSchema = z
+  .string()
+  .min(1, "Preset name is required")
+  .max(100, "Preset name is too long");
+
+export const speakerUuidSchema = z.string().uuid("Invalid speaker UUID format");
+
+// ========================================
+// AudioQuery関連のスキーマ
+// ========================================
 
 // Moraのスキーマ
 const moraSchema: z.ZodType<components["schemas"]["Mora"]> = z.object({
@@ -39,116 +99,23 @@ export const audioQueryDataSchema: z.ZodType<AudioQuery> = z.object({
   kana: z.string().optional(),
 });
 
-// 共通のバリデーションスキーマ
-export const baseUrlSchema = z.string().url("Invalid base URL format");
+// ========================================
+// 共通のコマンドオプションスキーマ
+// ========================================
 
-export const speakerIdSchema = z.string().min(1, "Speaker ID is required");
-
-export const textSchema = z
-  .string()
-  .min(1, "Text is required")
-  .max(1000, "Text is too long");
-
-export const outputFileSchema = z
-  .string()
-  .min(1, "Output file path is required");
-
-export const inputFileSchema = z
-  .string()
-  .min(1, "Input file path is required")
-  .refine((val) => val.endsWith(".json"), {
-    message: "Input file must be a JSON file",
-  });
-
-// プリセット関連のスキーマ
-export const presetIdSchema = z.string().transform((val) => {
-  const num = Number(val);
-  if (Number.isNaN(num) || num < 0) {
-    throw new Error("Preset ID must be a non-negative number");
-  }
-  return num;
-});
-
-export const presetNameSchema = z
-  .string()
-  .min(1, "Preset name is required")
-  .max(100, "Preset name is too long");
-
-export const speakerUuidSchema = z.string().uuid("Invalid speaker UUID format");
-
-export const styleIdSchema = z.string().transform((val) => {
-  const num = Number(val);
-  if (Number.isNaN(num) || num < 0) {
-    throw new Error("Style ID must be a non-negative number");
-  }
-  return num;
-});
-
-export const scaleSchema = z.string().transform((val) => {
-  const num = Number(val);
-  if (Number.isNaN(num)) {
-    throw new Error("Scale value must be a number");
-  }
-  if (num < 0 || num > 10) {
-    throw new Error("Scale value must be between 0 and 10");
-  }
-  return num;
-});
-
-export const lengthSchema = z.string().transform((val) => {
-  const num = Number(val);
-  if (Number.isNaN(num)) {
-    throw new Error("Length value must be a number");
-  }
-  if (num < 0 || num > 10) {
-    throw new Error("Length value must be between 0 and 10");
-  }
-  return num;
-});
-
-// プリセット追加用のスキーマ
-export const presetsAddSchema = z.object({
-  id: presetIdSchema,
-  name: presetNameSchema,
-  speaker: speakerUuidSchema,
-  style: styleIdSchema,
-  speed: scaleSchema,
-  pitch: scaleSchema,
-  intonation: scaleSchema,
-  volume: scaleSchema,
-  prePhonemeLength: lengthSchema,
-  postPhonemeLength: lengthSchema,
-  baseUrl: baseUrlSchema,
+/**
+ * 基本的なコマンドオプション（baseUrl, jsonオプション）
+ */
+const baseCommandOptionsSchema = z.object({
+  baseUrl: baseUrlSchema.optional(),
   json: z.boolean().optional(),
 });
 
-// プリセット更新用のスキーマ
-export const presetsUpdateSchema = z.object({
-  id: presetIdSchema,
-  name: presetNameSchema.optional(),
-  speaker: speakerUuidSchema.optional(),
-  style: styleIdSchema.optional(),
-  speed: scaleSchema.optional(),
-  pitch: scaleSchema.optional(),
-  intonation: scaleSchema.optional(),
-  volume: scaleSchema.optional(),
-  prePhonemeLength: lengthSchema.optional(),
-  postPhonemeLength: lengthSchema.optional(),
-  baseUrl: baseUrlSchema,
-  json: z.boolean().optional(),
-});
+// ========================================
+// コマンド用スキーマ
+// ========================================
 
-// プリセット削除用のスキーマ
-export const presetsDeleteSchema = z.object({
-  id: presetIdSchema,
-  baseUrl: baseUrlSchema,
-  json: z.boolean().optional(),
-});
-
-// 出力形式のスキーマ（文字列からパース）
-export const outputTypeSchema = z.union([z.literal("json"), z.literal("text")]);
-
-// 音声合成用のスキーマ
+// --- Synthesis Command ---
 export const synthesisSchema = z
   .object({
     speaker: speakerIdSchema,
@@ -188,7 +155,7 @@ export const synthesisSchema = z
     };
   });
 
-// 音声クエリ用のスキーマ
+// --- Audio Query Command ---
 export const audioQuerySchema = z
   .object({
     speaker: speakerIdSchema.optional(),
@@ -211,37 +178,66 @@ export const audioQuerySchema = z
     }
   });
 
-// スピーカー一覧用のスキーマ
-export const speakersSchema = z.object({
-  baseUrl: baseUrlSchema.optional(),
+// --- Presets Commands ---
+export const presetsAddSchema = z.object({
+  id: presetIdSchema,
+  name: presetNameSchema,
+  speaker: speakerUuidSchema,
+  style: styleIdSchema,
+  speed: scaleSchema,
+  pitch: scaleSchema,
+  intonation: scaleSchema,
+  volume: scaleSchema,
+  prePhonemeLength: lengthSchema,
+  postPhonemeLength: lengthSchema,
+  baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
 
-// プリセット一覧用のスキーマ
-export const presetsListSchema = z.object({
-  baseUrl: baseUrlSchema.optional(),
+export const presetsUpdateSchema = z.object({
+  id: presetIdSchema,
+  name: presetNameSchema.optional(),
+  speaker: speakerUuidSchema.optional(),
+  style: styleIdSchema.optional(),
+  speed: scaleSchema.optional(),
+  pitch: scaleSchema.optional(),
+  intonation: scaleSchema.optional(),
+  volume: scaleSchema.optional(),
+  prePhonemeLength: lengthSchema.optional(),
+  postPhonemeLength: lengthSchema.optional(),
+  baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
 
-// バージョン用のスキーマ
-export const versionSchema = z.object({
-  baseUrl: baseUrlSchema.optional(),
+export const presetsDeleteSchema = z.object({
+  id: presetIdSchema,
+  baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
 
-// エンジンバージョン用のスキーマ
-export const engineVersionSchema = z.object({
-  baseUrl: baseUrlSchema.optional(),
-  json: z.boolean().optional(),
-});
+export const presetsListSchema = baseCommandOptionsSchema;
 
-// コアバージョン一覧用のスキーマ
-export const engineVersionsSchema = z.object({
-  baseUrl: baseUrlSchema.optional(),
-  json: z.boolean().optional(),
-});
+// --- Speakers Command ---
+export const speakersSchema = baseCommandOptionsSchema;
 
-// バリデーション関数
+// --- Version Commands ---
+export const versionSchema = baseCommandOptionsSchema;
+
+export const engineVersionSchema = baseCommandOptionsSchema;
+
+export const engineVersionsSchema = baseCommandOptionsSchema;
+
+// ========================================
+// バリデーションヘルパー
+// ========================================
+
+/**
+ * Zodスキーマを使用して引数をバリデーションする
+ * @param schema - Zodスキーマ
+ * @param args - バリデーション対象の引数
+ * @returns バリデーション済みの引数
+ * @throws バリデーションエラー
+ */
 export const validateArgs = <T>(schema: z.ZodSchema<T>, args: unknown): T => {
   try {
     return schema.parse(args);
