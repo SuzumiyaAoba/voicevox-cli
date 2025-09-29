@@ -119,6 +119,10 @@ export const createCommand = defineCommand({
       alias: "s",
       default: "2",
     },
+    "preset-id": {
+      type: "string",
+      description: t("commands.query.create.args.presetId"),
+    },
     "enable-katakana-english": {
       type: "boolean",
       description: t("commands.query.create.args.enableKatakanaEnglish"),
@@ -137,42 +141,71 @@ export const createCommand = defineCommand({
     log.debug("Starting create command", {
       text: validatedArgs.text,
       speaker: validatedArgs.speaker,
+      presetId: validatedArgs.presetId,
       baseUrl: validatedArgs.baseUrl,
     });
 
     display.info(
       t("commands.query.create.querying", { text: validatedArgs.text }),
     );
-    display.info(
-      t("commands.query.create.speakerId", { speaker: validatedArgs.speaker }),
-    );
+    if (validatedArgs.presetId !== undefined) {
+      display.info(
+        t("commands.query.create.usingPreset", {
+          presetId: String(validatedArgs.presetId),
+        }),
+      );
+    } else {
+      display.info(
+        t("commands.query.create.speakerId", {
+          speaker: String(validatedArgs.speaker),
+        }),
+      );
+    }
 
     try {
       log.debug("Making audio query API request", {
         baseUrl: validatedArgs.baseUrl,
-        speaker: validatedArgs.speaker,
+        speaker: validatedArgs.speaker ?? null,
+        presetId: validatedArgs.presetId ?? null,
         text: validatedArgs.text,
       });
 
-      const speakerId = Number(validatedArgs.speaker);
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
-
-      // 音声クエリを生成
-      const audioQueryRes = await client.POST("/audio_query", {
-        params: {
-          query: {
-            speaker: speakerId,
-            text: validatedArgs.text,
-          },
-        },
-      });
+      const audioQueryRes =
+        validatedArgs.presetId !== undefined
+          ? await client.POST("/audio_query_from_preset", {
+              params: {
+                query: {
+                  text: validatedArgs.text,
+                  preset_id: Number(validatedArgs.presetId),
+                  ...(validatedArgs.enableKatakanaEnglish !== undefined
+                    ? {
+                        enable_katakana_english:
+                          validatedArgs.enableKatakanaEnglish as boolean,
+                      }
+                    : {}),
+                },
+              },
+            })
+          : await client.POST("/audio_query", {
+              params: {
+                query: {
+                  speaker: Number(validatedArgs.speaker),
+                  text: validatedArgs.text,
+                },
+              },
+            });
 
       if (!audioQueryRes.data) {
         throw new VoicevoxError(
           "Audio query failed: empty response",
           ErrorType.API,
           undefined,
-          { speakerId, text: validatedArgs.text },
+          {
+            speaker: validatedArgs.speaker,
+            presetId: validatedArgs.presetId,
+            text: validatedArgs.text,
+          },
         );
       }
 

@@ -110,12 +110,27 @@ export const synthesisSchema = z.object({
 });
 
 // 音声クエリ用のスキーマ
-export const audioQuerySchema = z.object({
-  speaker: speakerIdSchema,
-  text: textSchema,
-  baseUrl: baseUrlSchema,
-  json: z.boolean().optional(),
-});
+export const audioQuerySchema = z
+  .object({
+    speaker: speakerIdSchema.optional(),
+    presetId: presetIdSchema.optional(),
+    text: textSchema,
+    baseUrl: baseUrlSchema,
+    json: z.boolean().optional(),
+    enableKatakanaEnglish: z.boolean().optional(),
+  })
+  .superRefine((val, ctx) => {
+    const hasSpeaker =
+      typeof val.speaker === "string" && val.speaker.length > 0;
+    const hasPreset = typeof val.presetId === "number";
+    if (!hasSpeaker && !hasPreset) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Either speaker or presetId is required",
+        path: ["presetId"],
+      });
+    }
+  });
 
 // スピーカー一覧用のスキーマ
 export const speakersSchema = z.object({

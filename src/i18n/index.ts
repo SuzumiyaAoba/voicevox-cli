@@ -51,10 +51,12 @@ const translations: Record<Locale, TranslationData> = {
           description: "テキストから音声クエリを生成する",
           querying: '音声クエリ生成中: "{text}"',
           speakerId: "話者ID: {speaker}",
+          usingPreset: "プリセットIDで生成: {presetId}",
           args: {
             text: "クエリを生成するテキスト",
             speaker: "話者ID（デフォルト: 2）",
             enableKatakanaEnglish: "英語をカタカナに変換してから処理",
+            presetId: "プリセットIDを指定してクエリを生成",
             json: "JSON形式で出力する",
           },
           queryError: "音声クエリ生成中にエラーが発生しました",
@@ -226,11 +228,13 @@ const translations: Record<Locale, TranslationData> = {
           description: "Generate audio query from text",
           querying: 'Generating audio query: "{text}"',
           speakerId: "Speaker ID: {speaker}",
+          usingPreset: "Using preset ID: {presetId}",
           args: {
             text: "Text to generate query for",
             speaker: "Speaker ID (default: 2)",
             enableKatakanaEnglish:
               "Convert English to katakana before processing",
+            presetId: "Generate query with specified preset ID",
             json: "Output in JSON format",
           },
           queryError: "Error occurred during audio query generation",

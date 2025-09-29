@@ -41,8 +41,7 @@ export const coreVersionsCommand = defineCommand({
       display.info(t("commands.core.versions.fetching"));
 
       // APIクライアントを使用してcore_versionsエンドポイントにアクセス
-      // @ts-expect-error - API型定義にcore_versionsエンドポイントが含まれていないため
-      const response = await client.GET("/core_versions", {});
+      const response = await client.GET("/core_versions");
 
       log.debug("API response received", {
         hasData: !!response.data,
