@@ -1,6 +1,5 @@
 import { spawn } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
-import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
@@ -161,7 +160,8 @@ export const synthesisCommand = defineCommand({
         try {
           const fileContent = readFileSync(validatedArgs.input, "utf-8");
           const parsedData = JSON.parse(fileContent);
-          audioQuery = audioQueryDataSchema.parse(parsedData) as AudioQuery;
+          // Zodでバリデーション（exactOptionalPropertyTypes: falseにより型が一致）
+          audioQuery = audioQueryDataSchema.parse(parsedData);
         } catch (error) {
           throw new VoicevoxError(
             `Failed to read or parse input file: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -195,7 +195,7 @@ export const synthesisCommand = defineCommand({
       // 2. 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
       const synthesisRes = await client.POST("/synthesis", {
         params: { query: { speaker: speakerId } },
-        body: audioQuery as paths["/synthesis"]["post"]["requestBody"]["content"]["application/json"],
+        body: audioQuery,
         parseAs: "arrayBuffer",
       });
       if (!synthesisRes.data) {

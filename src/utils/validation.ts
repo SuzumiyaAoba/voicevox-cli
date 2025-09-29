@@ -1,45 +1,38 @@
-import type { paths } from "@suzumiyaaoba/voicevox-client";
+import type { components } from "@suzumiyaaoba/voicevox-client";
 import { z } from "zod";
 
-// API型定義
-export type AudioQuery =
-  paths["/audio_query"]["post"]["responses"]["200"]["content"]["application/json"];
+// API型定義（pathsから取得して型変数に束縛）
+export type AudioQuery = components["schemas"]["AudioQuery"];
+
+// Moraのスキーマ
+const moraSchema: z.ZodType<components["schemas"]["Mora"]> = z.object({
+  text: z.string(),
+  consonant: z.string().optional(),
+  consonant_length: z.number().optional(),
+  vowel: z.string(),
+  vowel_length: z.number(),
+  pitch: z.number(),
+});
+
+// AccentPhraseのスキーマ
+const accentPhraseSchema: z.ZodType<components["schemas"]["AccentPhrase"]> =
+  z.object({
+    moras: z.array(moraSchema),
+    accent: z.number(),
+    pause_mora: moraSchema.optional(),
+    is_interrogative: z.boolean(),
+  });
 
 // AudioQueryのZodスキーマ
-export const audioQueryDataSchema = z.object({
-  accent_phrases: z.array(
-    z.object({
-      moras: z.array(
-        z.object({
-          text: z.string(),
-          consonant: z.string().optional(),
-          consonant_length: z.number().optional(),
-          vowel: z.string(),
-          vowel_length: z.number(),
-          pitch: z.number(),
-        }),
-      ),
-      accent: z.number(),
-      pause_mora: z
-        .object({
-          text: z.string(),
-          consonant: z.string().optional(),
-          consonant_length: z.number().optional(),
-          vowel: z.string(),
-          vowel_length: z.number(),
-          pitch: z.number(),
-        })
-        .optional(),
-      is_interrogative: z.boolean(),
-    }),
-  ),
+export const audioQueryDataSchema: z.ZodType<AudioQuery> = z.object({
+  accent_phrases: z.array(accentPhraseSchema),
   speedScale: z.number(),
   pitchScale: z.number(),
   intonationScale: z.number(),
   volumeScale: z.number(),
   prePhonemeLength: z.number(),
   postPhonemeLength: z.number(),
-  pauseLength: z.number().optional(),
+  pauseLength: z.number().nullable().optional(),
   pauseLengthScale: z.number(),
   outputSamplingRate: z.number(),
   outputStereo: z.boolean(),
