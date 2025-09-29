@@ -1,4 +1,50 @@
+import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { z } from "zod";
+
+// API型定義
+export type AudioQuery =
+  paths["/audio_query"]["post"]["responses"]["200"]["content"]["application/json"];
+
+// AudioQueryのZodスキーマ
+export const audioQueryDataSchema = z.object({
+  accent_phrases: z.array(
+    z.object({
+      moras: z.array(
+        z.object({
+          text: z.string(),
+          consonant: z.string().optional(),
+          consonant_length: z.number().optional(),
+          vowel: z.string(),
+          vowel_length: z.number(),
+          pitch: z.number(),
+        }),
+      ),
+      accent: z.number(),
+      pause_mora: z
+        .object({
+          text: z.string(),
+          consonant: z.string().optional(),
+          consonant_length: z.number().optional(),
+          vowel: z.string(),
+          vowel_length: z.number(),
+          pitch: z.number(),
+        })
+        .optional(),
+      is_interrogative: z.boolean(),
+    }),
+  ),
+  speedScale: z.number(),
+  pitchScale: z.number(),
+  intonationScale: z.number(),
+  volumeScale: z.number(),
+  prePhonemeLength: z.number(),
+  postPhonemeLength: z.number(),
+  pauseLength: z.number().optional(),
+  pauseLengthScale: z.number(),
+  outputSamplingRate: z.number(),
+  outputStereo: z.boolean(),
+  kana: z.string().optional(),
+});
 
 // 共通のバリデーションスキーマ
 export const baseUrlSchema = z.string().url("Invalid base URL format");
@@ -13,6 +59,13 @@ export const textSchema = z
 export const outputFileSchema = z
   .string()
   .min(1, "Output file path is required");
+
+export const inputFileSchema = z
+  .string()
+  .min(1, "Input file path is required")
+  .refine((val) => val.endsWith(".json"), {
+    message: "Input file must be a JSON file",
+  });
 
 // プリセット関連のスキーマ
 export const presetIdSchema = z.string().transform((val) => {
@@ -99,15 +152,48 @@ export const presetsDeleteSchema = z.object({
   json: z.boolean().optional(),
 });
 
+// 出力形式のスキーマ（文字列からパース）
+export const outputTypeSchema = z.union([z.literal("json"), z.literal("text")]);
+
 // 音声合成用のスキーマ
-export const synthesisSchema = z.object({
-  speaker: speakerIdSchema,
-  text: textSchema,
-  output: outputFileSchema.optional(),
-  play: z.boolean().optional(),
-  baseUrl: baseUrlSchema,
-  json: z.boolean().optional(),
-});
+export const synthesisSchema = z
+  .object({
+    speaker: speakerIdSchema,
+    text: textSchema.optional(),
+    input: inputFileSchema.optional(),
+    output: outputFileSchema.optional(),
+    play: z.boolean().optional(),
+    type: outputTypeSchema.optional(),
+    baseUrl: baseUrlSchema,
+    json: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      // text または input のいずれかが必須
+      return data.text !== undefined || data.input !== undefined;
+    },
+    {
+      message: "Either text or input file must be provided",
+      path: ["text", "input"],
+    },
+  )
+  .refine(
+    (data) => {
+      // type と json は同時に指定できない
+      return !(data.type !== undefined && data.json !== undefined);
+    },
+    {
+      message: "Cannot specify both type and json options",
+      path: ["type", "json"],
+    },
+  )
+  .transform((data) => {
+    // text が undefined の場合は空文字列に変換（実際には refine でチェック済み）
+    return {
+      ...data,
+      text: data.text ?? "",
+    };
+  });
 
 // 音声クエリ用のスキーマ
 export const audioQuerySchema = z

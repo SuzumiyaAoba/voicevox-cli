@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
@@ -11,7 +11,12 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
-import { synthesisSchema, validateArgs } from "@/utils/validation.js";
+import {
+  type AudioQuery,
+  audioQueryDataSchema,
+  synthesisSchema,
+  validateArgs,
+} from "@/utils/validation.js";
 
 // 音声ファイルを再生する関数
 const playAudio = (filePath: string): Promise<void> => {
@@ -64,13 +69,18 @@ export const synthesisCommand = defineCommand({
     text: {
       type: "positional",
       description: t("commands.synthesis.args.text"),
-      required: true,
+      required: false,
     },
     speaker: {
       type: "string",
       description: t("commands.synthesis.args.speaker"),
       alias: "s",
       default: "2",
+    },
+    input: {
+      type: "string",
+      description: t("commands.synthesis.args.input"),
+      alias: "i",
     },
     output: {
       type: "string",
@@ -80,6 +90,12 @@ export const synthesisCommand = defineCommand({
     play: {
       type: "boolean",
       description: t("commands.synthesis.args.play"),
+    },
+    type: {
+      type: "string",
+      description: t("commands.synthesis.args.type"),
+      alias: "t",
+      choices: ["json", "text"],
     },
     json: {
       type: "boolean",
@@ -94,15 +110,22 @@ export const synthesisCommand = defineCommand({
 
     log.debug("Starting synthesis command", {
       text: validatedArgs.text,
+      input: validatedArgs.input,
       speaker: validatedArgs.speaker,
       output: validatedArgs.output,
       play: validatedArgs.play,
       baseUrl: validatedArgs.baseUrl,
     });
 
-    display.info(
-      t("commands.synthesis.synthesizing", { text: validatedArgs.text }),
-    );
+    if (validatedArgs.text) {
+      display.info(
+        t("commands.synthesis.synthesizing", { text: validatedArgs.text }),
+      );
+    } else if (validatedArgs.input) {
+      display.info(
+        t("commands.synthesis.loadingInput", { input: validatedArgs.input }),
+      );
+    }
     display.info(
       t("commands.synthesis.speakerId", { speaker: validatedArgs.speaker }),
     );
@@ -124,32 +147,55 @@ export const synthesisCommand = defineCommand({
     });
 
     try {
-      log.debug("Making synthesis API request", {
-        baseUrl: validatedArgs.baseUrl,
-        speaker: validatedArgs.speaker,
-        text: validatedArgs.text,
-      });
-
       const speakerId = Number(validatedArgs.speaker);
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
-      // 1. 音声クエリを生成 (POST /audio_query?speaker&text)
-      const audioQueryRes = await client.POST("/audio_query", {
-        params: { query: { speaker: speakerId, text: validatedArgs.text } },
-      });
-      if (!audioQueryRes.data) {
-        throw new VoicevoxError(
-          "Audio query failed: empty response",
-          ErrorType.API,
-          undefined,
-          { speakerId, text: validatedArgs.text },
-        );
+      let audioQuery: AudioQuery;
+
+      if (validatedArgs.input) {
+        // ファイルから音声クエリを読み込み
+        log.debug("Loading audio query from file", {
+          inputFile: validatedArgs.input,
+        });
+
+        try {
+          const fileContent = readFileSync(validatedArgs.input, "utf-8");
+          const parsedData = JSON.parse(fileContent);
+          audioQuery = audioQueryDataSchema.parse(parsedData) as AudioQuery;
+        } catch (error) {
+          throw new VoicevoxError(
+            `Failed to read or parse input file: ${error instanceof Error ? error.message : "Unknown error"}`,
+            ErrorType.VALIDATION,
+            undefined,
+            { inputFile: validatedArgs.input },
+          );
+        }
+      } else {
+        // テキストから音声クエリを生成
+        log.debug("Making audio query API request", {
+          baseUrl: validatedArgs.baseUrl,
+          speaker: validatedArgs.speaker,
+          text: validatedArgs.text,
+        });
+
+        const audioQueryRes = await client.POST("/audio_query", {
+          params: { query: { speaker: speakerId, text: validatedArgs.text } },
+        });
+        if (!audioQueryRes.data) {
+          throw new VoicevoxError(
+            "Audio query failed: empty response",
+            ErrorType.API,
+            undefined,
+            { speakerId, text: validatedArgs.text },
+          );
+        }
+        audioQuery = audioQueryRes.data;
       }
 
       // 2. 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
       const synthesisRes = await client.POST("/synthesis", {
         params: { query: { speaker: speakerId } },
-        body: audioQueryRes.data as paths["/synthesis"]["post"]["requestBody"]["content"]["application/json"],
+        body: audioQuery as paths["/synthesis"]["post"]["requestBody"]["content"]["application/json"],
         parseAs: "arrayBuffer",
       });
       if (!synthesisRes.data) {
@@ -167,14 +213,19 @@ export const synthesisCommand = defineCommand({
       // 音声データをファイルに保存
       writeFileSync(outputFile, Buffer.from(synthesisRes.data));
 
+      // 出力形式を決定（--type が優先、次に --json）
+      const outputFormat =
+        validatedArgs.type || (validatedArgs.json ? "json" : "text");
+
       // JSON形式で出力する場合
-      if (validatedArgs.json) {
+      if (outputFormat === "json") {
         const result = {
           success: true,
           output: outputFile,
           speaker: speakerId,
           text: validatedArgs.text,
-          audioQuery: audioQueryRes.data,
+          input: validatedArgs.input,
+          audioQuery: audioQuery,
           fileSize: synthesisRes.data.byteLength,
           play: validatedArgs.play || false,
         };
@@ -201,6 +252,7 @@ export const synthesisCommand = defineCommand({
       handleError(error, "synthesis", {
         speaker: args.speaker,
         text: args.text,
+        input: args.input,
         output: args.output,
         baseUrl: args.baseUrl,
       });

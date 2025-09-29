@@ -14,11 +14,14 @@
       "args": {
         "text": "Text to synthesize",
         "speaker": "Speaker ID",
+        "input": "Audio query file (JSON format)",
         "output": "Output file name",
         "play": "Play the audio",
+        "type": "Output format (json|text)",
         "json": "Output in JSON format"
       },
       "synthesizing": "Synthesizing: \"{text}\"",
+      "loadingInput": "Loading input file: {input}",
       "speakerId": "Speaker ID: {speaker}",
       "output": "Output: {output}",
       "play": "Play: {play}",

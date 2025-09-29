@@ -14,11 +14,14 @@
       "args": {
         "text": "合成するテキスト",
         "speaker": "話者ID",
+        "input": "音声クエリファイル（JSON形式）",
         "output": "出力ファイル名",
         "play": "音声を再生する",
+        "type": "出力形式（json|text）",
         "json": "JSON形式で出力する"
       },
       "synthesizing": "音声合成中: \"{text}\"",
+      "loadingInput": "入力ファイルを読み込み中: {input}",
       "speakerId": "話者ID: {speaker}",
       "output": "出力: {output}",
       "play": "再生: {play}",
