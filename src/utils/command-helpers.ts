@@ -1,5 +1,12 @@
 import { t } from "@/i18n/index.js";
-import { baseUrlOption } from "@/options.js";
+
+export const baseUrlOption = {
+  baseUrl: {
+    type: "string" as const,
+    description: "VOICEVOX Engine base URL (default: http://localhost:50021)",
+    default: "http://localhost:50021",
+  },
+} as const;
 
 /**
  * 共通のコマンドオプション定義（baseUrl, json）
