@@ -6,7 +6,7 @@ import { engineCommand } from "@/commands/engine/index.js";
 import { presetsCommand } from "@/commands/presets/index.js";
 import { queryCommand } from "@/commands/query/index.js";
 import { speakersCommand } from "@/commands/speakers.js";
-import { synthesisCommand } from "@/commands/synthesis.js";
+import { synthesisCommand } from "@/commands/synthesis/index.js";
 import { versionCommand } from "@/commands/version.js";
 
 // メインコマンド
