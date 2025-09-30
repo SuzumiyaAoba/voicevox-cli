@@ -34,6 +34,7 @@ export default defineConfig({
         "node:child_process",
         "node:fs",
         "node:path",
+        "node:os",
         "crypto",
         "url",
         "querystring",

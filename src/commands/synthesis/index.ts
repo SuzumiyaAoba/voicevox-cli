@@ -7,6 +7,7 @@ import { playAudio } from "@/utils/audio-player.js";
 import { handleError } from "@/utils/error-handler.js";
 import { resolveOutputFormat } from "@/utils/output.js";
 import { synthesisSchema, validateArgs } from "@/utils/validation.js";
+import { extractAndPlayZip } from "@/utils/zip-player.js";
 import {
   createAudioQueriesFromLines,
   createAudioQueryFromText,
@@ -128,14 +129,21 @@ export const synthesisCommand = defineCommand({
         const audioQueries = processMultiModeInput(validatedArgs.input);
         const outputFile = validatedArgs.output || "output/multi_synthesis.zip";
 
-        await executeMultiSynthesis({
+        const zipFilePath = await executeMultiSynthesis({
           client,
           audioQueries,
           speakerId,
           outputFile,
           outputFormat,
           baseUrl: validatedArgs.baseUrl,
+          shouldPlay: validatedArgs.play,
         });
+
+        // 再生オプションが指定されている場合
+        if (validatedArgs.play) {
+          display.info(t("commands.synthesis.playingAudio"));
+          await extractAndPlayZip(zipFilePath);
+        }
 
         return;
       }
@@ -149,14 +157,21 @@ export const synthesisCommand = defineCommand({
             // JSON配列からマルチ合成
             const outputFile =
               validatedArgs.output || "output/multi_synthesis.zip";
-            await executeMultiSynthesis({
+            const zipFilePath = await executeMultiSynthesis({
               client,
               audioQueries: result.audioQueries,
               speakerId,
               outputFile,
               outputFormat,
               baseUrl: validatedArgs.baseUrl,
+              shouldPlay: validatedArgs.play,
             });
+
+            // 再生オプションが指定されている場合
+            if (validatedArgs.play) {
+              display.info(t("commands.synthesis.playingAudio"));
+              await extractAndPlayZip(zipFilePath);
+            }
             return;
           }
 
@@ -177,14 +192,21 @@ export const synthesisCommand = defineCommand({
 
             const outputFile =
               validatedArgs.output || "output/multi_synthesis.zip";
-            await executeMultiSynthesis({
+            const zipFilePath = await executeMultiSynthesis({
               client,
               audioQueries,
               speakerId,
               outputFile,
               outputFormat,
               baseUrl: validatedArgs.baseUrl,
+              shouldPlay: validatedArgs.play,
             });
+
+            // 再生オプションが指定されている場合
+            if (validatedArgs.play) {
+              display.info(t("commands.synthesis.playingAudio"));
+              await extractAndPlayZip(zipFilePath);
+            }
             return;
           }
 

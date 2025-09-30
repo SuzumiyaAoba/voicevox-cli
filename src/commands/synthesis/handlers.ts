@@ -17,6 +17,7 @@ type MultiSynthesisOptions = {
   outputFile: string;
   outputFormat: "json" | "text";
   baseUrl: string;
+  shouldPlay?: boolean;
 };
 
 type SingleSynthesisOptions = {
@@ -33,7 +34,7 @@ type SingleSynthesisOptions = {
 // マルチ合成を実行
 export const executeMultiSynthesis = async (
   options: MultiSynthesisOptions,
-): Promise<void> => {
+): Promise<string> => {
   const { client, audioQueries, speakerId, outputFile, outputFormat, baseUrl } =
     options;
 
@@ -68,7 +69,7 @@ export const executeMultiSynthesis = async (
       fileSize: zipData.byteLength,
       format: "zip",
     });
-    return;
+    return outputFile;
   }
 
   display.info(
@@ -84,6 +85,8 @@ export const executeMultiSynthesis = async (
     totalItems: audioQueries.length,
     outputFile,
   });
+
+  return outputFile;
 };
 
 // シングル合成を実行
