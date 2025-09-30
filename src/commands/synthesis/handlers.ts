@@ -1,13 +1,20 @@
-import { readFileSync, writeFileSync } from "node:fs";
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import type openapiFetch from "openapi-fetch";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { ErrorType, VoicevoxError } from "@/utils/error-handler.js";
+import {
+  parseJsonArray,
+  parseJsonSafe,
+  parseTextLines,
+  readFileUtf8,
+  saveBuffer,
+} from "@/utils/file-io.js";
 import { outputJson } from "@/utils/output.js";
 import { type AudioQuery, audioQueryDataSchema } from "@/utils/validation.js";
 
+// 型定義
 type Client = ReturnType<typeof openapiFetch<paths>>;
 
 type MultiSynthesisOptions = {
@@ -44,7 +51,6 @@ export const executeMultiSynthesis = async (
     count: audioQueries.length,
   });
 
-  // /multi_synthesis エンドポイントを使用
   const multiSynthesisRes = await client.POST("/multi_synthesis", {
     params: { query: { speaker: speakerId } },
     body: audioQueries,
@@ -57,8 +63,8 @@ export const executeMultiSynthesis = async (
     { speakerId, count: audioQueries.length },
   ) as ArrayBuffer;
 
-  // ZIP形式で受け取った音声データを保存
-  writeFileSync(outputFile, Buffer.from(zipData));
+  // 保存
+  saveBuffer(outputFile, zipData);
 
   if (outputFormat === "json") {
     outputJson({
@@ -104,7 +110,6 @@ export const executeSingleSynthesis = async (
     shouldPlay,
   } = options;
 
-  // 音声合成を実行 (POST /synthesis?speaker) with audioQuery body
   const synthesisRes = await client.POST("/synthesis", {
     params: { query: { speaker: speakerId } },
     body: audioQuery,
@@ -116,10 +121,9 @@ export const executeSingleSynthesis = async (
     { speakerId, text },
   ) as ArrayBuffer;
 
-  // 音声データをファイルに保存
-  writeFileSync(outputFile, Buffer.from(synthesisData));
+  // 保存
+  saveBuffer(outputFile, synthesisData);
 
-  // JSON形式で出力する場合
   if (outputFormat === "json") {
     const result = {
       success: true,
@@ -192,92 +196,47 @@ export const createAudioQueriesFromLines = async (
   return audioQueries;
 };
 
-// 入力ファイルからテキスト行を読み込み
-const parseTextFile = (fileContent: string): string[] => {
-  return fileContent
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
-};
-
-// JSON配列ファイルからAudioQueryを読み込み
-const parseJsonArrayFile = (fileContent: string): AudioQuery[] => {
-  const parsedData = JSON.parse(fileContent);
-
-  if (!Array.isArray(parsedData)) {
-    throw new Error("Expected JSON array");
-  }
-
-  return parsedData.map((item) => audioQueryDataSchema.parse(item));
-};
-
-// JSONオブジェクトファイルからAudioQueryを読み込み
-const parseJsonObjectFile = (fileContent: string): AudioQuery => {
-  const parsedData = JSON.parse(fileContent);
-  return audioQueryDataSchema.parse(parsedData);
-};
-
-type InputFileResult =
-  | { type: "multi"; audioQueries: AudioQuery[] }
-  | { type: "single"; audioQuery: AudioQuery }
-  | { type: "text-multi"; lines: string[] }
-  | { type: "text-single"; text: string };
-
 // 入力ファイルを処理
 export const processInputFile = (inputFile: string): InputFileResult => {
   log.debug("Loading input file", { inputFile });
 
-  const fileContent = readFileSync(inputFile, "utf-8");
+  const fileContent = readFileUtf8(inputFile);
 
-  // まずJSONとしてパースを試みる
-  try {
-    const parsedData = JSON.parse(fileContent);
-
-    // 配列の場合はmulti mode用のaudio queriesとして処理
-    if (Array.isArray(parsedData)) {
-      const audioQueries = parseJsonArrayFile(fileContent);
-      return { type: "multi", audioQueries };
-    }
-
-    // オブジェクトの場合は単一のaudio queryとして処理
-    const audioQuery = parseJsonObjectFile(fileContent);
-    return { type: "single", audioQuery };
-  } catch {
-    // JSONパースに失敗した場合、テキストファイルとして処理
-    log.debug("Input file is not JSON, treating as text file", { inputFile });
-
-    const lines = parseTextFile(fileContent);
-
-    if (lines.length > 1) {
-      return { type: "text-multi", lines };
-    }
-
-    if (lines.length === 1) {
-      return { type: "text-single", text: lines[0] ?? "" };
-    }
-
-    throw new VoicevoxError(
-      "Input file is empty",
-      ErrorType.VALIDATION,
-      undefined,
-      { inputFile },
-    );
+  // まずJSONとしてパースを試みる（安全に）
+  const parsedAudioQuery = parseJsonSafe(fileContent, audioQueryDataSchema);
+  if (parsedAudioQuery !== undefined) {
+    return { type: "single", audioQuery: parsedAudioQuery };
   }
+
+  const parsedAudioQueries = parseJsonSafe(
+    fileContent,
+    audioQueryDataSchema.array(),
+  );
+  if (parsedAudioQueries !== undefined) {
+    return { type: "multi", audioQueries: parsedAudioQueries };
+  }
+
+  // JSONパースに失敗 => テキスト
+  log.debug("Input file is not JSON, treating as text file", { inputFile });
+  const lines = parseTextLines(fileContent);
+
+  if (lines.length > 1) return { type: "text-multi", lines };
+  if (lines.length === 1) return { type: "text-single", text: lines[0] ?? "" };
+
+  throw new VoicevoxError(
+    "Input file is empty",
+    ErrorType.VALIDATION,
+    undefined,
+    { inputFile },
+  );
 };
 
 // マルチモード（--multi オプション）での入力ファイル処理
 export const processMultiModeInput = (inputFile: string): AudioQuery[] => {
   try {
-    const fileContent = readFileSync(inputFile, "utf-8");
-    const parsedData = JSON.parse(fileContent);
-
-    // 配列かどうかチェック
-    if (!Array.isArray(parsedData)) {
-      throw new Error("Multi mode requires an array of audio queries");
-    }
-
-    // 各要素をバリデーション
-    return parsedData.map((item) => audioQueryDataSchema.parse(item));
+    const fileContent = readFileUtf8(inputFile);
+    const parsedData = parseJsonArray(fileContent, audioQueryDataSchema);
+    return parsedData;
   } catch (error) {
     throw new VoicevoxError(
       `Failed to read or parse multi input file: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -287,3 +246,9 @@ export const processMultiModeInput = (inputFile: string): AudioQuery[] => {
     );
   }
 };
+
+type InputFileResult =
+  | { type: "multi"; audioQueries: AudioQuery[] }
+  | { type: "single"; audioQuery: AudioQuery }
+  | { type: "text-multi"; lines: string[] }
+  | { type: "text-single"; text: string };
