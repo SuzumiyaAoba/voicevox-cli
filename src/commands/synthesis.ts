@@ -249,39 +249,223 @@ export const synthesisCommand = defineCommand({
       let audioQuery: AudioQuery;
 
       if (validatedArgs.input) {
-        // ファイルから音声クエリを読み込み
-        log.debug("Loading audio query from file", {
+        // ファイルから読み込み
+        log.debug("Loading input file", {
           inputFile: validatedArgs.input,
         });
 
+        const fileContent = readFileSync(validatedArgs.input, "utf-8");
+
+        // まずJSONとしてパースを試みる（audio query形式）
         try {
-          const fileContent = readFileSync(validatedArgs.input, "utf-8");
           const parsedData = JSON.parse(fileContent);
-          // Zodでバリデーション（exactOptionalPropertyTypes: falseにより型が一致）
+
+          // 配列の場合はmulti mode用のaudio queriesとして処理
+          if (Array.isArray(parsedData)) {
+            const audioQueries = parsedData.map((item) =>
+              audioQueryDataSchema.parse(item),
+            );
+
+            log.debug("Making multi synthesis API request", {
+              baseUrl: validatedArgs.baseUrl,
+              speaker: speakerId,
+              count: audioQueries.length,
+            });
+
+            // /multi_synthesis エンドポイントを使用
+            const multiSynthesisRes = await client.POST("/multi_synthesis", {
+              params: { query: { speaker: speakerId } },
+              body: audioQueries,
+              parseAs: "arrayBuffer",
+            });
+
+            const zipData = validateResponse(
+              multiSynthesisRes,
+              "Multi synthesis failed: empty response",
+              { speakerId, count: audioQueries.length },
+            );
+
+            // ZIP形式で受け取った音声データを保存
+            const outputFile =
+              validatedArgs.output || "output/multi_synthesis.zip";
+            writeFileSync(outputFile, Buffer.from(zipData));
+
+            const outputFormat = resolveOutputFormat(
+              validatedArgs.type,
+              validatedArgs.json,
+            );
+
+            if (outputFormat === "json") {
+              outputJson({
+                success: true,
+                output: outputFile,
+                speaker: speakerId,
+                count: audioQueries.length,
+                fileSize: zipData.byteLength,
+                format: "zip",
+              });
+              return;
+            }
+
+            display.info(
+              t("commands.synthesis.multiSynthesisComplete", {
+                count: String(audioQueries.length),
+              }),
+            );
+            display.info(
+              t("commands.synthesis.synthesisComplete", { output: outputFile }),
+            );
+
+            log.debug("Multi synthesis command completed successfully", {
+              totalItems: audioQueries.length,
+              outputFile,
+            });
+
+            return;
+          }
+
+          // オブジェクトの場合は単一のaudio queryとして処理
           audioQuery = audioQueryDataSchema.parse(parsedData);
-        } catch (error) {
-          throw new VoicevoxError(
-            `Failed to read or parse input file: ${error instanceof Error ? error.message : "Unknown error"}`,
-            ErrorType.VALIDATION,
-            undefined,
-            { inputFile: validatedArgs.input },
-          );
+        } catch {
+          // JSONパースに失敗した場合、テキストファイルとして処理
+          log.debug("Input file is not JSON, treating as text file", {
+            inputFile: validatedArgs.input,
+          });
+
+          const lines = fileContent
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0);
+
+          // 複数行の場合は multi_synthesis を使用
+          if (lines.length > 1) {
+            display.info(
+              t("commands.synthesis.loadingMultiText", {
+                count: String(lines.length),
+              }),
+            );
+
+            const audioQueries: AudioQuery[] = [];
+
+            // 各行に対して audio_query を生成
+            for (const line of lines) {
+              log.debug("Making audio query API request for line", {
+                baseUrl: validatedArgs.baseUrl,
+                speaker: speakerId,
+                text: line,
+              });
+
+              const audioQueryRes = await client.POST("/audio_query", {
+                params: { query: { speaker: speakerId, text: line } },
+              });
+              const audioQuery = validateResponse(
+                audioQueryRes,
+                "Audio query failed: empty response",
+                { speakerId, text: line },
+              );
+              audioQueries.push(audioQuery);
+            }
+
+            log.debug("Making multi synthesis API request", {
+              baseUrl: validatedArgs.baseUrl,
+              speaker: speakerId,
+              count: audioQueries.length,
+            });
+
+            // /multi_synthesis エンドポイントを使用
+            const multiSynthesisRes = await client.POST("/multi_synthesis", {
+              params: { query: { speaker: speakerId } },
+              body: audioQueries,
+              parseAs: "arrayBuffer",
+            });
+
+            const zipData = validateResponse(
+              multiSynthesisRes,
+              "Multi synthesis failed: empty response",
+              { speakerId, count: audioQueries.length },
+            );
+
+            // ZIP形式で受け取った音声データを保存
+            const outputFile =
+              validatedArgs.output || "output/multi_synthesis.zip";
+            writeFileSync(outputFile, Buffer.from(zipData));
+
+            const outputFormat = resolveOutputFormat(
+              validatedArgs.type,
+              validatedArgs.json,
+            );
+
+            if (outputFormat === "json") {
+              outputJson({
+                success: true,
+                output: outputFile,
+                speaker: speakerId,
+                count: audioQueries.length,
+                fileSize: zipData.byteLength,
+                format: "zip",
+              });
+              return;
+            }
+
+            display.info(
+              t("commands.synthesis.multiSynthesisComplete", {
+                count: String(audioQueries.length),
+              }),
+            );
+            display.info(
+              t("commands.synthesis.synthesisComplete", { output: outputFile }),
+            );
+
+            log.debug("Multi synthesis command completed successfully", {
+              totalItems: audioQueries.length,
+              outputFile,
+            });
+
+            return;
+          }
+
+          // 1行の場合は通常のテキストとして処理
+          if (lines.length === 1) {
+            const text = lines[0] ?? "";
+            log.debug("Making audio query API request", {
+              baseUrl: validatedArgs.baseUrl,
+              speaker: speakerId,
+              text,
+            });
+
+            const audioQueryRes = await client.POST("/audio_query", {
+              params: { query: { speaker: speakerId, text } },
+            });
+            audioQuery = validateResponse(
+              audioQueryRes,
+              "Audio query failed: empty response",
+              { speakerId, text },
+            );
+          } else {
+            throw new VoicevoxError(
+              "Input file is empty",
+              ErrorType.VALIDATION,
+              undefined,
+              { inputFile: validatedArgs.input },
+            );
+          }
         }
       } else {
         // テキストから音声クエリを生成
+        const text = validatedArgs.text ?? "";
         log.debug("Making audio query API request", {
           baseUrl: validatedArgs.baseUrl,
-          speaker: validatedArgs.speaker,
-          text: validatedArgs.text,
+          speaker: speakerId,
+          text,
         });
 
         const audioQueryRes = await client.POST("/audio_query", {
-          params: { query: { speaker: speakerId, text: validatedArgs.text } },
+          params: { query: { speaker: speakerId, text } },
         });
         audioQuery = validateResponse(
           audioQueryRes,
           "Audio query failed: empty response",
-          { speakerId, text: validatedArgs.text },
+          { speakerId, text },
         );
       }
 

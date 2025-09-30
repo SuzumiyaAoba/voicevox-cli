@@ -24,6 +24,7 @@
       "synthesizing": "Synthesizing: \"{text}\"",
       "loadingInput": "Loading input file: {input}",
       "loadingMultiInput": "Loading multiple audio queries: {input}",
+      "loadingMultiText": "Loading multi-line text file: {count} lines",
       "speakerId": "Speaker ID: {speaker}",
       "output": "Output: {output}",
       "play": "Play: {play}",
