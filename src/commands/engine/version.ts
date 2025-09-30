@@ -1,8 +1,8 @@
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
-import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+import { commonCommandOptions } from "@/utils/command-helpers.js";
 import {
   ErrorType,
   handleError,
@@ -16,12 +16,7 @@ export const engineVersionCommand = defineCommand({
     description: t("commands.engine.version.description"),
   },
   args: {
-    json: {
-      type: "boolean",
-      description: t("commands.engine.version.args.json"),
-      alias: "j",
-    },
-    ...baseUrlOption,
+    ...commonCommandOptions,
   },
   async run({ args }) {
     try {

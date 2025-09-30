@@ -11,7 +11,7 @@ export const commonCommandOptions = {
     alias: "j" as const,
   },
   ...baseUrlOption,
-};
+} as const;
 
 /**
  * コマンド引数定義のヘルパー型

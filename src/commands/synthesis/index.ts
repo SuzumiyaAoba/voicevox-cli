@@ -1,9 +1,9 @@
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
-import { baseUrlOption } from "@/options.js";
 import { createClient } from "@/utils/api-helpers.js";
 import { playAudio } from "@/utils/audio-player.js";
+import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
 import { synthesisMessages } from "@/utils/messages.js";
 import { resolveOutputFormat } from "@/utils/output.js";
@@ -56,17 +56,12 @@ export const synthesisCommand = defineCommand({
       alias: "t",
       choices: ["json", "text"],
     },
-    json: {
-      type: "boolean",
-      description: t("commands.synthesis.args.json"),
-      alias: "j",
-    },
     multi: {
       type: "boolean",
       description: t("commands.synthesis.args.multi"),
       alias: "m",
     },
-    ...baseUrlOption,
+    ...commonCommandOptions,
   },
   async run({ args }) {
     // 引数のバリデーション

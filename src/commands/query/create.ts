@@ -2,8 +2,8 @@ import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
-import { baseUrlOption } from "@/options.js";
 import { createVoicevoxClient } from "@/utils/client.js";
+import { commonCommandOptions } from "@/utils/command-helpers.js";
 import {
   ErrorType,
   handleError,
@@ -127,12 +127,7 @@ export const createCommand = defineCommand({
       type: "boolean",
       description: t("commands.query.create.args.enableKatakanaEnglish"),
     },
-    json: {
-      type: "boolean",
-      description: t("commands.query.create.args.json"),
-      alias: "j",
-    },
-    ...baseUrlOption,
+    ...commonCommandOptions,
   },
   async run({ args }) {
     // 引数のバリデーション
