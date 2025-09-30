@@ -3,6 +3,7 @@
 import { defineCommand, runMain } from "citty";
 import { coreCommand } from "@/commands/core/index.js";
 import { engineCommand } from "@/commands/engine/index.js";
+import { kanaCommand } from "@/commands/kana/index.js";
 import { presetsCommand } from "@/commands/presets/index.js";
 import { queryCommand } from "@/commands/query/index.js";
 import { speakersCommand } from "@/commands/speakers.js";
@@ -24,6 +25,7 @@ const main = defineCommand({
     version: versionCommand,
     engine: engineCommand,
     core: coreCommand,
+    kana: kanaCommand,
   },
 });
 

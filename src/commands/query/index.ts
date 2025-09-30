@@ -1,6 +1,7 @@
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { createCommand } from "./create.js";
+import { validateKanaCommand } from "./validate-kana.js";
 
 // クエリコマンド
 export const queryCommand = defineCommand({
@@ -10,5 +11,6 @@ export const queryCommand = defineCommand({
   },
   subCommands: {
     create: createCommand,
+    "validate-kana": validateKanaCommand,
   },
 });
