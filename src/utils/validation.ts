@@ -28,12 +28,7 @@ export const outputFileSchema = z
   .string()
   .min(1, "Output file path is required");
 
-export const inputFileSchema = z
-  .string()
-  .min(1, "Input file path is required")
-  .refine((val) => val.endsWith(".json"), {
-    message: "Input file must be a JSON file",
-  });
+export const inputFileSchema = z.string().min(1, "Input file path is required");
 
 export const outputTypeSchema = z.union([z.literal("json"), z.literal("text")]);
 
