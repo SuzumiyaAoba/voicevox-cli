@@ -14,8 +14,6 @@ import { outputJson, resolveOutputFormat } from "@/utils/output.js";
 import {
   type AudioQuery,
   audioQueryDataSchema,
-  type MultiSynthesisInput,
-  multiSynthesisInputSchema,
   synthesisSchema,
   validateArgs,
 } from "@/utils/validation.js";
@@ -164,19 +162,21 @@ export const synthesisCommand = defineCommand({
           }),
         );
 
-        let multiInputs: MultiSynthesisInput[];
+        const speakerId = Number(validatedArgs.speaker);
+        let audioQueries: AudioQuery[];
+
         try {
           const fileContent = readFileSync(validatedArgs.input, "utf-8");
           const parsedData = JSON.parse(fileContent);
 
           // 配列かどうかチェック
           if (!Array.isArray(parsedData)) {
-            throw new Error("Multi mode requires an array of synthesis inputs");
+            throw new Error("Multi mode requires an array of audio queries");
           }
 
           // 各要素をバリデーション
-          multiInputs = parsedData.map((item) =>
-            multiSynthesisInputSchema.parse(item),
+          audioQueries = parsedData.map((item) =>
+            audioQueryDataSchema.parse(item),
           );
         } catch (error) {
           throw new VoicevoxError(
@@ -187,44 +187,28 @@ export const synthesisCommand = defineCommand({
           );
         }
 
-        const results = [];
+        log.debug("Making multi synthesis API request", {
+          baseUrl: validatedArgs.baseUrl,
+          speaker: speakerId,
+          count: audioQueries.length,
+        });
 
-        for (const [i, item] of multiInputs.entries()) {
-          display.info(
-            t("commands.synthesis.processingMulti", {
-              current: String(i + 1),
-              total: String(multiInputs.length),
-            }),
-          );
+        // /multi_synthesis エンドポイントを使用
+        const multiSynthesisRes = await client.POST("/multi_synthesis", {
+          params: { query: { speaker: speakerId } },
+          body: audioQueries,
+          parseAs: "arrayBuffer",
+        });
 
-          const synthesisRes = await client.POST("/synthesis", {
-            params: { query: { speaker: item.speaker } },
-            body: item.audioQuery,
-            parseAs: "arrayBuffer",
-          });
-          const synthesisData = validateResponse(
-            synthesisRes,
-            "Synthesis failed: empty response",
-            { speaker: item.speaker, index: i },
-          );
+        const zipData = validateResponse(
+          multiSynthesisRes,
+          "Multi synthesis failed: empty response",
+          { speakerId, count: audioQueries.length },
+        );
 
-          const outputFile = item.output || `output/synthesis_${i + 1}.wav`;
-          writeFileSync(outputFile, Buffer.from(synthesisData));
-
-          results.push({
-            success: true,
-            output: outputFile,
-            speaker: item.speaker,
-            audioQuery: item.audioQuery,
-            fileSize: synthesisData.byteLength,
-          });
-
-          log.debug("Multi synthesis item completed", {
-            index: i,
-            outputFile,
-            speaker: item.speaker,
-          });
-        }
+        // ZIP形式で受け取った音声データを保存
+        const outputFile = validatedArgs.output || "output/multi_synthesis.zip";
+        writeFileSync(outputFile, Buffer.from(zipData));
 
         const outputFormat = resolveOutputFormat(
           validatedArgs.type,
@@ -232,18 +216,29 @@ export const synthesisCommand = defineCommand({
         );
 
         if (outputFormat === "json") {
-          outputJson({ success: true, count: results.length, results });
+          outputJson({
+            success: true,
+            output: outputFile,
+            speaker: speakerId,
+            count: audioQueries.length,
+            fileSize: zipData.byteLength,
+            format: "zip",
+          });
           return;
         }
 
         display.info(
           t("commands.synthesis.multiSynthesisComplete", {
-            count: String(results.length),
+            count: String(audioQueries.length),
           }),
+        );
+        display.info(
+          t("commands.synthesis.synthesisComplete", { output: outputFile }),
         );
 
         log.debug("Multi synthesis command completed successfully", {
-          totalItems: results.length,
+          totalItems: audioQueries.length,
+          outputFile,
         });
 
         return;

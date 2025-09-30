@@ -11,13 +11,6 @@ import {
 
 export type AudioQuery = components["schemas"]["AudioQuery"];
 
-// 複数音声合成用の型定義
-export type MultiSynthesisInput = {
-  speaker: number;
-  audioQuery: AudioQuery;
-  output?: string;
-};
-
 // ========================================
 // 共通の基本スキーマ
 // ========================================
@@ -105,14 +98,6 @@ export const audioQueryDataSchema: z.ZodType<AudioQuery> = z.object({
   outputStereo: z.boolean(),
   kana: z.string().optional(),
 });
-
-// 複数音声合成用のスキーマ
-export const multiSynthesisInputSchema: z.ZodType<MultiSynthesisInput> =
-  z.object({
-    speaker: z.number(),
-    audioQuery: audioQueryDataSchema,
-    output: z.string().optional(),
-  });
 
 // ========================================
 // 共通のコマンドオプションスキーマ
