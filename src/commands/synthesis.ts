@@ -14,6 +14,8 @@ import { outputJson, resolveOutputFormat } from "@/utils/output.js";
 import {
   type AudioQuery,
   audioQueryDataSchema,
+  type MultiSynthesisInput,
+  multiSynthesisInputSchema,
   synthesisSchema,
   validateArgs,
 } from "@/utils/validation.js";
@@ -102,6 +104,11 @@ export const synthesisCommand = defineCommand({
       description: t("commands.synthesis.args.json"),
       alias: "j",
     },
+    multi: {
+      type: "boolean",
+      description: t("commands.synthesis.args.multi"),
+      alias: "m",
+    },
     ...baseUrlOption,
   },
   async run({ args }) {
@@ -147,9 +154,103 @@ export const synthesisCommand = defineCommand({
     });
 
     try {
-      const speakerId = Number(validatedArgs.speaker);
       const client = createClient(validatedArgs.baseUrl);
 
+      // マルチモードの処理
+      if (validatedArgs.multi && validatedArgs.input) {
+        display.info(
+          t("commands.synthesis.loadingMultiInput", {
+            input: validatedArgs.input,
+          }),
+        );
+
+        let multiInputs: MultiSynthesisInput[];
+        try {
+          const fileContent = readFileSync(validatedArgs.input, "utf-8");
+          const parsedData = JSON.parse(fileContent);
+
+          // 配列かどうかチェック
+          if (!Array.isArray(parsedData)) {
+            throw new Error("Multi mode requires an array of synthesis inputs");
+          }
+
+          // 各要素をバリデーション
+          multiInputs = parsedData.map((item) =>
+            multiSynthesisInputSchema.parse(item),
+          );
+        } catch (error) {
+          throw new VoicevoxError(
+            `Failed to read or parse multi input file: ${error instanceof Error ? error.message : "Unknown error"}`,
+            ErrorType.VALIDATION,
+            undefined,
+            { inputFile: validatedArgs.input },
+          );
+        }
+
+        const results = [];
+
+        for (const [i, item] of multiInputs.entries()) {
+          display.info(
+            t("commands.synthesis.processingMulti", {
+              current: String(i + 1),
+              total: String(multiInputs.length),
+            }),
+          );
+
+          const synthesisRes = await client.POST("/synthesis", {
+            params: { query: { speaker: item.speaker } },
+            body: item.audioQuery,
+            parseAs: "arrayBuffer",
+          });
+          const synthesisData = validateResponse(
+            synthesisRes,
+            "Synthesis failed: empty response",
+            { speaker: item.speaker, index: i },
+          );
+
+          const outputFile = item.output || `output/synthesis_${i + 1}.wav`;
+          writeFileSync(outputFile, Buffer.from(synthesisData));
+
+          results.push({
+            success: true,
+            output: outputFile,
+            speaker: item.speaker,
+            audioQuery: item.audioQuery,
+            fileSize: synthesisData.byteLength,
+          });
+
+          log.debug("Multi synthesis item completed", {
+            index: i,
+            outputFile,
+            speaker: item.speaker,
+          });
+        }
+
+        const outputFormat = resolveOutputFormat(
+          validatedArgs.type,
+          validatedArgs.json,
+        );
+
+        if (outputFormat === "json") {
+          outputJson({ success: true, count: results.length, results });
+          return;
+        }
+
+        display.info(
+          t("commands.synthesis.multiSynthesisComplete", {
+            count: String(results.length),
+          }),
+        );
+
+        log.debug("Multi synthesis command completed successfully", {
+          totalItems: results.length,
+        });
+
+        return;
+      }
+
+      // シングルモードの処理
+      const speakerId = Number(validatedArgs.speaker);
       let audioQuery: AudioQuery;
 
       if (validatedArgs.input) {

@@ -18,17 +18,23 @@
         "output": "出力ファイル名",
         "play": "音声を再生する",
         "type": "出力形式（json|text）",
-        "json": "JSON形式で出力する"
+        "json": "JSON形式で出力する",
+        "multi": "入力ファイルから複数のクエリを処理する"
       },
       "synthesizing": "音声合成中: \"{text}\"",
       "loadingInput": "入力ファイルを読み込み中: {input}",
+      "loadingMultiInput": "複数の音声クエリを読み込み中: {input}",
+      "processingMulti": "{current}/{total} 件目を処理中...",
       "speakerId": "話者ID: {speaker}",
       "output": "出力: {output}",
       "play": "再生: {play}",
       "synthesisComplete": "音声合成完了: {output}",
+      "multiSynthesisComplete": "複数音声合成完了: {count} 件処理しました",
       "playingAudio": "音声を再生中...",
       "synthesisError": "音声合成中にエラーが発生しました",
-      "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください"
+      "makeSureEngineRunning": "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      "playerNotFound": "音声プレイヤーが見つかりませんでした",
+      "playerError": "音声プレイヤーでエラーが発生しました"
     },
     "create": {
       "name": "create",

@@ -11,6 +11,13 @@ import {
 
 export type AudioQuery = components["schemas"]["AudioQuery"];
 
+// 複数音声合成用の型定義
+export type MultiSynthesisInput = {
+  speaker: number;
+  audioQuery: AudioQuery;
+  output?: string;
+};
+
 // ========================================
 // 共通の基本スキーマ
 // ========================================
@@ -99,6 +106,14 @@ export const audioQueryDataSchema: z.ZodType<AudioQuery> = z.object({
   kana: z.string().optional(),
 });
 
+// 複数音声合成用のスキーマ
+export const multiSynthesisInputSchema: z.ZodType<MultiSynthesisInput> =
+  z.object({
+    speaker: z.number(),
+    audioQuery: audioQueryDataSchema,
+    output: z.string().optional(),
+  });
+
 // ========================================
 // 共通のコマンドオプションスキーマ
 // ========================================
@@ -126,6 +141,7 @@ export const synthesisSchema = z
     type: outputTypeSchema.optional(),
     baseUrl: baseUrlSchema,
     json: z.boolean().optional(),
+    multi: z.boolean().optional(),
   })
   .refine(
     (data) => {
@@ -145,6 +161,19 @@ export const synthesisSchema = z
     {
       message: "Cannot specify both type and json options",
       path: ["type", "json"],
+    },
+  )
+  .refine(
+    (data) => {
+      // multi は input と一緒にのみ使用可能
+      if (data.multi && !data.input) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Multi mode requires input file",
+      path: ["multi"],
     },
   )
   .transform((data) => {
