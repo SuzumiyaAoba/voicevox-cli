@@ -34,7 +34,7 @@ type SingleSynthesisOptions = {
 // マルチ合成を実行
 export const executeMultiSynthesis = async (
   options: MultiSynthesisOptions,
-): Promise<string> => {
+): Promise<{ outputFile: string }> => {
   const { client, audioQueries, speakerId, outputFile, outputFormat, baseUrl } =
     options;
 
@@ -69,7 +69,7 @@ export const executeMultiSynthesis = async (
       fileSize: zipData.byteLength,
       format: "zip",
     });
-    return outputFile;
+    return { outputFile };
   }
 
   display.info(
@@ -86,13 +86,13 @@ export const executeMultiSynthesis = async (
     outputFile,
   });
 
-  return outputFile;
+  return { outputFile };
 };
 
 // シングル合成を実行
 export const executeSingleSynthesis = async (
   options: SingleSynthesisOptions,
-): Promise<void> => {
+): Promise<{ outputFile: string }> => {
   const {
     client,
     audioQuery,
@@ -132,7 +132,7 @@ export const executeSingleSynthesis = async (
       play: shouldPlay,
     };
     outputJson(result);
-    return;
+    return { outputFile };
   }
 
   display.info(
@@ -143,6 +143,8 @@ export const executeSingleSynthesis = async (
     outputFile,
     played: shouldPlay,
   });
+
+  return { outputFile };
 };
 
 // テキストから音声クエリを生成
