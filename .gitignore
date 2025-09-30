@@ -129,3 +129,9 @@ result-*
 .docker/
 docker-compose.override.yml
 .env.docker
+# Build artifacts
+dist/
+# Output audio
+output/*.zip
+output/*.wav
+
