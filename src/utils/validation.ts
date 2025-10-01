@@ -163,6 +163,7 @@ export const synthesisSchema = z
       text: data.text ?? "",
     };
   });
+export type SynthesisArgs = z.infer<typeof synthesisSchema>;
 
 // --- Audio Query Command ---
 export const audioQuerySchema = z
@@ -186,6 +187,7 @@ export const audioQuerySchema = z
       });
     }
   });
+export type AudioQueryArgs = z.infer<typeof audioQuerySchema>;
 
 // --- Presets Commands ---
 export const presetsAddSchema = z.object({
@@ -202,6 +204,7 @@ export const presetsAddSchema = z.object({
   baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
+export type PresetsAddArgs = z.infer<typeof presetsAddSchema>;
 
 export const presetsUpdateSchema = z.object({
   id: presetIdSchema,
@@ -217,24 +220,31 @@ export const presetsUpdateSchema = z.object({
   baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
+export type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 
 export const presetsDeleteSchema = z.object({
   id: presetIdSchema,
   baseUrl: baseUrlSchema,
   json: z.boolean().optional(),
 });
+export type PresetsDeleteArgs = z.infer<typeof presetsDeleteSchema>;
 
 export const presetsListSchema = baseCommandOptionsSchema;
+export type PresetsListArgs = z.infer<typeof presetsListSchema>;
 
 // --- Speakers Command ---
 export const speakersSchema = baseCommandOptionsSchema;
+export type SpeakersArgs = z.infer<typeof speakersSchema>;
 
 // --- Version Commands ---
 export const versionSchema = baseCommandOptionsSchema;
+export type VersionArgs = z.infer<typeof versionSchema>;
 
 export const engineVersionSchema = baseCommandOptionsSchema;
+export type EngineVersionArgs = z.infer<typeof engineVersionSchema>;
 
 export const engineVersionsSchema = baseCommandOptionsSchema;
+export type EngineVersionsArgs = z.infer<typeof engineVersionsSchema>;
 
 // ========================================
 // バリデーションヘルパー

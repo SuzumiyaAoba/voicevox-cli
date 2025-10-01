@@ -16,27 +16,21 @@ type UpdatePresetJson =
 
 type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 
+type UpdateBody = { id: string | number } & Partial<UpdatePresetJson>;
+
 const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
-): { id: string | number } & Partial<UpdatePresetJson> => {
-  type UpdateBody = { id: string | number } & Partial<UpdatePresetJson>;
+): UpdateBody => {
   return produce<UpdateBody>({ id: validatedArgs.id }, (draft) => {
-    if (validatedArgs.name !== undefined) draft.name = validatedArgs.name;
-    if (validatedArgs.speaker !== undefined)
-      draft.speaker_uuid = validatedArgs.speaker;
-    if (validatedArgs.style !== undefined) draft.style_id = validatedArgs.style;
-    if (validatedArgs.speed !== undefined)
-      draft.speedScale = validatedArgs.speed;
-    if (validatedArgs.pitch !== undefined)
-      draft.pitchScale = validatedArgs.pitch;
-    if (validatedArgs.intonation !== undefined)
-      draft.intonationScale = validatedArgs.intonation;
-    if (validatedArgs.volume !== undefined)
-      draft.volumeScale = validatedArgs.volume;
-    if (validatedArgs.prePhonemeLength !== undefined)
-      draft.prePhonemeLength = validatedArgs.prePhonemeLength;
-    if (validatedArgs.postPhonemeLength !== undefined)
-      draft.postPhonemeLength = validatedArgs.postPhonemeLength;
+    draft.name = validatedArgs.name;
+    draft.speaker_uuid = validatedArgs.speaker;
+    draft.style_id = validatedArgs.style;
+    draft.speedScale = validatedArgs.speed;
+    draft.pitchScale = validatedArgs.pitch;
+    draft.intonationScale = validatedArgs.intonation;
+    draft.volumeScale = validatedArgs.volume;
+    draft.prePhonemeLength = validatedArgs.prePhonemeLength;
+    draft.postPhonemeLength = validatedArgs.postPhonemeLength;
   });
 };
 
