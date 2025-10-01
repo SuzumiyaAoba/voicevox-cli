@@ -1,18 +1,62 @@
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
+import type { z } from "zod";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
+import { validateResponse } from "@/utils/api-helpers.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
-import {
-  ErrorType,
-  handleError,
-  VoicevoxError,
-} from "@/utils/error-handler.js";
+import { handleError } from "@/utils/error-handler.js";
 import { presetsUpdateSchema, validateArgs } from "@/utils/validation.js";
 
 type UpdatePresetJson =
   paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];
+
+type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
+
+const buildUpdatePresetData = (
+  validatedArgs: PresetsUpdateArgs,
+): { id: string | number } & Partial<UpdatePresetJson> => {
+  return {
+    id: validatedArgs.id,
+    ...(validatedArgs.name !== undefined ? { name: validatedArgs.name } : {}),
+    ...(validatedArgs.speaker !== undefined
+      ? { speaker_uuid: validatedArgs.speaker }
+      : {}),
+    ...(validatedArgs.style !== undefined
+      ? { style_id: validatedArgs.style }
+      : {}),
+    ...(validatedArgs.speed !== undefined
+      ? { speedScale: validatedArgs.speed }
+      : {}),
+    ...(validatedArgs.pitch !== undefined
+      ? { pitchScale: validatedArgs.pitch }
+      : {}),
+    ...(validatedArgs.intonation !== undefined
+      ? { intonationScale: validatedArgs.intonation }
+      : {}),
+    ...(validatedArgs.volume !== undefined
+      ? { volumeScale: validatedArgs.volume }
+      : {}),
+    ...(validatedArgs.prePhonemeLength !== undefined
+      ? { prePhonemeLength: validatedArgs.prePhonemeLength }
+      : {}),
+    ...(validatedArgs.postPhonemeLength !== undefined
+      ? { postPhonemeLength: validatedArgs.postPhonemeLength }
+      : {}),
+  };
+};
+
+const requestUpdatePreset = async (
+  client: ReturnType<typeof createVoicevoxClient>,
+  body: UpdatePresetJson,
+) => {
+  const response = await client.POST("/update_preset", { body });
+  return validateResponse(
+    response,
+    "Invalid response format from update preset API",
+  );
+};
 
 // プリセット更新コマンド
 export const presetsUpdateCommand = defineCommand({
@@ -79,38 +123,7 @@ export const presetsUpdateCommand = defineCommand({
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 更新するフィールドのみを含むプリセットデータを構築
-      const presetData: { id: string | number } & Partial<UpdatePresetJson> = {
-        id: validatedArgs.id,
-      };
-
-      // 提供されたフィールドのみを追加
-      if (validatedArgs.name !== undefined) {
-        presetData.name = validatedArgs.name;
-      }
-      if (validatedArgs.speaker !== undefined) {
-        presetData.speaker_uuid = validatedArgs.speaker;
-      }
-      if (validatedArgs.style !== undefined) {
-        presetData.style_id = validatedArgs.style;
-      }
-      if (validatedArgs.speed !== undefined) {
-        presetData.speedScale = validatedArgs.speed;
-      }
-      if (validatedArgs.pitch !== undefined) {
-        presetData.pitchScale = validatedArgs.pitch;
-      }
-      if (validatedArgs.intonation !== undefined) {
-        presetData.intonationScale = validatedArgs.intonation;
-      }
-      if (validatedArgs.volume !== undefined) {
-        presetData.volumeScale = validatedArgs.volume;
-      }
-      if (validatedArgs.prePhonemeLength !== undefined) {
-        presetData.prePhonemeLength = validatedArgs.prePhonemeLength;
-      }
-      if (validatedArgs.postPhonemeLength !== undefined) {
-        presetData.postPhonemeLength = validatedArgs.postPhonemeLength;
-      }
+      const presetData = buildUpdatePresetData(validatedArgs);
 
       log.debug("Making update preset API request", {
         baseUrl: validatedArgs.baseUrl,
@@ -122,26 +135,16 @@ export const presetsUpdateCommand = defineCommand({
       );
 
       // APIクライアントを使用してupdate_presetエンドポイントにアクセス
-      const response = await client.POST("/update_preset", {
-        body: presetData as UpdatePresetJson,
-      });
+      const responseData = await requestUpdatePreset(
+        client,
+        presetData as UpdatePresetJson,
+      );
 
-      log.debug("API response received", {
-        hasData: !!response.data,
-      });
-
-      if (!response.data) {
-        throw new VoicevoxError(
-          "Invalid response format from update preset API",
-          ErrorType.API,
-          undefined,
-          { baseUrl: validatedArgs.baseUrl, presetData },
-        );
-      }
+      log.debug("API response received", { hasData: !!responseData });
 
       // JSON形式で出力する場合
       if (validatedArgs.json) {
-        const output = JSON.stringify(response.data, null, 2);
+        const output = JSON.stringify(responseData, null, 2);
         display.info(output);
         return;
       }
