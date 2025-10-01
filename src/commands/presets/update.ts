@@ -11,6 +11,9 @@ import {
 } from "@/utils/error-handler.js";
 import { presetsUpdateSchema, validateArgs } from "@/utils/validation.js";
 
+type UpdatePresetJson =
+  paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];
+
 // プリセット更新コマンド
 export const presetsUpdateCommand = defineCommand({
   meta: {
@@ -76,8 +79,6 @@ export const presetsUpdateCommand = defineCommand({
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 更新するフィールドのみを含むプリセットデータを構築
-      type UpdatePresetJson =
-        paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];
       const presetData: { id: string | number } & Partial<UpdatePresetJson> = {
         id: validatedArgs.id,
       };
