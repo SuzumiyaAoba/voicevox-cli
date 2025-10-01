@@ -18,39 +18,33 @@ type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
 ): { id: string | number } & Partial<UpdatePresetJson> => {
-  const presetData: { id: string | number } & Partial<UpdatePresetJson> = {
-    id: validatedArgs.id,
-  };
-
-  if (validatedArgs.name !== undefined) {
-    presetData.name = validatedArgs.name;
-  }
-  if (validatedArgs.speaker !== undefined) {
-    presetData.speaker_uuid = validatedArgs.speaker;
-  }
-  if (validatedArgs.style !== undefined) {
-    presetData.style_id = validatedArgs.style;
-  }
-  if (validatedArgs.speed !== undefined) {
-    presetData.speedScale = validatedArgs.speed;
-  }
-  if (validatedArgs.pitch !== undefined) {
-    presetData.pitchScale = validatedArgs.pitch;
-  }
-  if (validatedArgs.intonation !== undefined) {
-    presetData.intonationScale = validatedArgs.intonation;
-  }
-  if (validatedArgs.volume !== undefined) {
-    presetData.volumeScale = validatedArgs.volume;
-  }
-  if (validatedArgs.prePhonemeLength !== undefined) {
-    presetData.prePhonemeLength = validatedArgs.prePhonemeLength;
-  }
-  if (validatedArgs.postPhonemeLength !== undefined) {
-    presetData.postPhonemeLength = validatedArgs.postPhonemeLength;
-  }
-
-  return presetData;
+  return Object.assign(
+    {},
+    { id: validatedArgs.id },
+    validatedArgs.name !== undefined ? { name: validatedArgs.name } : {},
+    validatedArgs.speaker !== undefined
+      ? { speaker_uuid: validatedArgs.speaker }
+      : {},
+    validatedArgs.style !== undefined ? { style_id: validatedArgs.style } : {},
+    validatedArgs.speed !== undefined
+      ? { speedScale: validatedArgs.speed }
+      : {},
+    validatedArgs.pitch !== undefined
+      ? { pitchScale: validatedArgs.pitch }
+      : {},
+    validatedArgs.intonation !== undefined
+      ? { intonationScale: validatedArgs.intonation }
+      : {},
+    validatedArgs.volume !== undefined
+      ? { volumeScale: validatedArgs.volume }
+      : {},
+    validatedArgs.prePhonemeLength !== undefined
+      ? { prePhonemeLength: validatedArgs.prePhonemeLength }
+      : {},
+    validatedArgs.postPhonemeLength !== undefined
+      ? { postPhonemeLength: validatedArgs.postPhonemeLength }
+      : {},
+  );
 };
 
 const requestUpdatePreset = async (
