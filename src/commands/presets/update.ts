@@ -1,5 +1,6 @@
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
+import { mapKeys, pickBy } from "remeda";
 import type { z } from "zod";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
@@ -17,34 +18,34 @@ type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
 ): { id: string | number } & Partial<UpdatePresetJson> => {
-  return {
+  const raw = {
     id: validatedArgs.id,
-    ...(validatedArgs.name !== undefined ? { name: validatedArgs.name } : {}),
-    ...(validatedArgs.speaker !== undefined
-      ? { speaker_uuid: validatedArgs.speaker }
-      : {}),
-    ...(validatedArgs.style !== undefined
-      ? { style_id: validatedArgs.style }
-      : {}),
-    ...(validatedArgs.speed !== undefined
-      ? { speedScale: validatedArgs.speed }
-      : {}),
-    ...(validatedArgs.pitch !== undefined
-      ? { pitchScale: validatedArgs.pitch }
-      : {}),
-    ...(validatedArgs.intonation !== undefined
-      ? { intonationScale: validatedArgs.intonation }
-      : {}),
-    ...(validatedArgs.volume !== undefined
-      ? { volumeScale: validatedArgs.volume }
-      : {}),
-    ...(validatedArgs.prePhonemeLength !== undefined
-      ? { prePhonemeLength: validatedArgs.prePhonemeLength }
-      : {}),
-    ...(validatedArgs.postPhonemeLength !== undefined
-      ? { postPhonemeLength: validatedArgs.postPhonemeLength }
-      : {}),
+    name: validatedArgs.name,
+    speaker: validatedArgs.speaker,
+    style: validatedArgs.style,
+    speedScale: validatedArgs.speed,
+    pitchScale: validatedArgs.pitch,
+    intonationScale: validatedArgs.intonation,
+    volumeScale: validatedArgs.volume,
+    prePhonemeLength: validatedArgs.prePhonemeLength,
+    postPhonemeLength: validatedArgs.postPhonemeLength,
+  } as const;
+
+  const nonUndefined = pickBy(raw, (v) => v !== undefined) as Omit<
+    typeof raw,
+    "speaker" | "style"
+  > & {
+    speaker?: string | number;
+    style?: number;
   };
+
+  const mapped = mapKeys(nonUndefined, (key) => {
+    if (key === "speaker") return "speaker_uuid" as const;
+    if (key === "style") return "style_id" as const;
+    return key;
+  }) as { id: string | number } & Partial<UpdatePresetJson>;
+
+  return mapped;
 };
 
 const requestUpdatePreset = async (
