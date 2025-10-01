@@ -1,5 +1,6 @@
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
+import { produce } from "immer";
 // (no utility needed here)
 import type { z } from "zod";
 import { t } from "@/i18n/index.js";
@@ -19,42 +20,24 @@ const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
 ): { id: string | number } & Partial<UpdatePresetJson> => {
   type UpdateBody = { id: string | number } & Partial<UpdatePresetJson>;
-  const add = <V>(
-    acc: UpdateBody,
-    value: V | undefined,
-    build: (v: V) => Partial<UpdatePresetJson>,
-  ): UpdateBody => {
-    if (value === undefined) return acc;
-    return Object.assign({}, acc, build(value));
-  };
-
-  const base: UpdateBody = { id: validatedArgs.id };
-  const withName = add(base, validatedArgs.name, (v) => ({ name: v }));
-  const withSpeaker = add(withName, validatedArgs.speaker, (v) => ({
-    speaker_uuid: v,
-  }));
-  const withStyle = add(withSpeaker, validatedArgs.style, (v) => ({
-    style_id: v,
-  }));
-  const withSpeed = add(withStyle, validatedArgs.speed, (v) => ({
-    speedScale: v,
-  }));
-  const withPitch = add(withSpeed, validatedArgs.pitch, (v) => ({
-    pitchScale: v,
-  }));
-  const withIntonation = add(withPitch, validatedArgs.intonation, (v) => ({
-    intonationScale: v,
-  }));
-  const withVolume = add(withIntonation, validatedArgs.volume, (v) => ({
-    volumeScale: v,
-  }));
-  const withPre = add(withVolume, validatedArgs.prePhonemeLength, (v) => ({
-    prePhonemeLength: v,
-  }));
-  const withPost = add(withPre, validatedArgs.postPhonemeLength, (v) => ({
-    postPhonemeLength: v,
-  }));
-  return withPost;
+  return produce<UpdateBody>({ id: validatedArgs.id }, (draft) => {
+    if (validatedArgs.name !== undefined) draft.name = validatedArgs.name;
+    if (validatedArgs.speaker !== undefined)
+      draft.speaker_uuid = validatedArgs.speaker;
+    if (validatedArgs.style !== undefined) draft.style_id = validatedArgs.style;
+    if (validatedArgs.speed !== undefined)
+      draft.speedScale = validatedArgs.speed;
+    if (validatedArgs.pitch !== undefined)
+      draft.pitchScale = validatedArgs.pitch;
+    if (validatedArgs.intonation !== undefined)
+      draft.intonationScale = validatedArgs.intonation;
+    if (validatedArgs.volume !== undefined)
+      draft.volumeScale = validatedArgs.volume;
+    if (validatedArgs.prePhonemeLength !== undefined)
+      draft.prePhonemeLength = validatedArgs.prePhonemeLength;
+    if (validatedArgs.postPhonemeLength !== undefined)
+      draft.postPhonemeLength = validatedArgs.postPhonemeLength;
+  });
 };
 
 const requestUpdatePreset = async (
