@@ -1,6 +1,6 @@
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import { isNonNullish, pickBy } from "remeda";
+// (no utility needed here)
 import type { z } from "zod";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
@@ -18,49 +18,39 @@ type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
 ): { id: string | number } & Partial<UpdatePresetJson> => {
-  const raw = {
+  const presetData: { id: string | number } & Partial<UpdatePresetJson> = {
     id: validatedArgs.id,
-    name: validatedArgs.name,
-    speaker: validatedArgs.speaker,
-    style: validatedArgs.style,
-    speedScale: validatedArgs.speed,
-    pitchScale: validatedArgs.pitch,
-    intonationScale: validatedArgs.intonation,
-    volumeScale: validatedArgs.volume,
-    prePhonemeLength: validatedArgs.prePhonemeLength,
-    postPhonemeLength: validatedArgs.postPhonemeLength,
-  } as const;
-
-  const nonUndefined = pickBy(raw, isNonNullish);
-
-  return {
-    id: nonUndefined.id,
-    ...(nonUndefined.name !== undefined ? { name: nonUndefined.name } : {}),
-    ...(nonUndefined.speaker !== undefined
-      ? { speaker_uuid: nonUndefined.speaker }
-      : {}),
-    ...(nonUndefined.style !== undefined
-      ? { style_id: nonUndefined.style }
-      : {}),
-    ...(nonUndefined.speedScale !== undefined
-      ? { speedScale: nonUndefined.speedScale }
-      : {}),
-    ...(nonUndefined.pitchScale !== undefined
-      ? { pitchScale: nonUndefined.pitchScale }
-      : {}),
-    ...(nonUndefined.intonationScale !== undefined
-      ? { intonationScale: nonUndefined.intonationScale }
-      : {}),
-    ...(nonUndefined.volumeScale !== undefined
-      ? { volumeScale: nonUndefined.volumeScale }
-      : {}),
-    ...(nonUndefined.prePhonemeLength !== undefined
-      ? { prePhonemeLength: nonUndefined.prePhonemeLength }
-      : {}),
-    ...(nonUndefined.postPhonemeLength !== undefined
-      ? { postPhonemeLength: nonUndefined.postPhonemeLength }
-      : {}),
   };
+
+  if (validatedArgs.name !== undefined) {
+    presetData.name = validatedArgs.name;
+  }
+  if (validatedArgs.speaker !== undefined) {
+    presetData.speaker_uuid = validatedArgs.speaker;
+  }
+  if (validatedArgs.style !== undefined) {
+    presetData.style_id = validatedArgs.style;
+  }
+  if (validatedArgs.speed !== undefined) {
+    presetData.speedScale = validatedArgs.speed;
+  }
+  if (validatedArgs.pitch !== undefined) {
+    presetData.pitchScale = validatedArgs.pitch;
+  }
+  if (validatedArgs.intonation !== undefined) {
+    presetData.intonationScale = validatedArgs.intonation;
+  }
+  if (validatedArgs.volume !== undefined) {
+    presetData.volumeScale = validatedArgs.volume;
+  }
+  if (validatedArgs.prePhonemeLength !== undefined) {
+    presetData.prePhonemeLength = validatedArgs.prePhonemeLength;
+  }
+  if (validatedArgs.postPhonemeLength !== undefined) {
+    presetData.postPhonemeLength = validatedArgs.postPhonemeLength;
+  }
+
+  return presetData;
 };
 
 const requestUpdatePreset = async (
