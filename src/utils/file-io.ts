@@ -18,19 +18,7 @@ export const parseJsonSafe = <T>(
   }
 };
 
-export const parseJsonArray = <T>(
-  content: string,
-  schema: z.ZodType<T>,
-): T[] => {
-  const raw = JSON.parse(content);
-  if (!Array.isArray(raw)) throw new Error("Expected JSON array");
-  return raw.map((item) => schema.parse(item));
-};
-
-export const parseJsonObject = <T>(
-  content: string,
-  schema: z.ZodType<T>,
-): T => {
+export const parseJson = <T>(content: string, schema: z.ZodType<T>): T => {
   const raw = JSON.parse(content);
   return schema.parse(raw);
 };

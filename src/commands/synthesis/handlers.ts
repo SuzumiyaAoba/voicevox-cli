@@ -5,7 +5,7 @@ import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { ErrorType, VoicevoxError } from "@/utils/error-handler.js";
 import {
-  parseJsonArray,
+  parseJson,
   parseJsonSafe,
   parseTextLines,
   readFileUtf8,
@@ -235,7 +235,7 @@ export const processInputFile = (inputFile: string): InputFileResult => {
 export const processMultiModeInput = (inputFile: string): AudioQuery[] => {
   try {
     const fileContent = readFileUtf8(inputFile);
-    const parsedData = parseJsonArray(fileContent, audioQueryDataSchema);
+    const parsedData = parseJson(fileContent, audioQueryDataSchema.array());
     return parsedData;
   } catch (error) {
     throw new VoicevoxError(
