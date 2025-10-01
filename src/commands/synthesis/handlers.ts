@@ -5,7 +5,7 @@ import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { ErrorType, VoicevoxError } from "@/utils/error-handler.js";
 import {
-  parseJson,
+  parseJsonResult,
   parseJsonSafe,
   parseTextLines,
   readFileUtf8,
@@ -233,18 +233,15 @@ export const processInputFile = (inputFile: string): InputFileResult => {
 
 // マルチモード（--multi オプション）での入力ファイル処理
 export const processMultiModeInput = (inputFile: string): AudioQuery[] => {
-  try {
-    const fileContent = readFileUtf8(inputFile);
-    const parsedData = parseJson(fileContent, audioQueryDataSchema.array());
-    return parsedData;
-  } catch (error) {
-    throw new VoicevoxError(
-      `Failed to read or parse multi input file: ${error instanceof Error ? error.message : "Unknown error"}`,
-      ErrorType.VALIDATION,
-      undefined,
-      { inputFile },
-    );
-  }
+  const fileContent = readFileUtf8(inputFile);
+  const result = parseJsonResult(fileContent, audioQueryDataSchema.array());
+  if (result.isOk()) return result.value;
+  throw new VoicevoxError(
+    `Failed to read or parse multi input file: ${result.error.message}`,
+    ErrorType.VALIDATION,
+    result.error,
+    { inputFile },
+  );
 };
 
 type InputFileResult =

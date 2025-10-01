@@ -1,3 +1,4 @@
+import { Result } from "neverthrow";
 import { createVoicevoxClient } from "./client.js";
 import { ErrorType, VoicevoxError } from "./error-handler.js";
 
@@ -30,3 +31,13 @@ export const validateResponse = <T>(
   }
   return response.data;
 };
+
+export const validateResponseResult = <T>(
+  response: { data?: T },
+  errorMessage: string,
+  context?: Record<string, unknown>,
+) =>
+  Result.fromThrowable(
+    () => validateResponse(response, errorMessage, context),
+    (e) => e as Error,
+  )();

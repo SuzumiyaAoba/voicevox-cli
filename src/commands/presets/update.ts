@@ -75,37 +75,47 @@ export const presetsUpdateCommand = defineCommand({
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 更新するフィールドのみを含むプリセットデータを構築
-      const presetData: Record<string, unknown> = {
+      const presetData: { id: string | number } & Partial<{
+        name: string;
+        speaker_uuid: string | number;
+        style_id: number;
+        speedScale: number;
+        pitchScale: number;
+        intonationScale: number;
+        volumeScale: number;
+        prePhonemeLength: number;
+        postPhonemeLength: number;
+      }> = {
         id: validatedArgs.id,
       };
 
       // 提供されたフィールドのみを追加
       if (validatedArgs.name !== undefined) {
-        presetData["name"] = validatedArgs.name;
+        presetData.name = validatedArgs.name;
       }
       if (validatedArgs.speaker !== undefined) {
-        presetData["speaker_uuid"] = validatedArgs.speaker;
+        presetData.speaker_uuid = validatedArgs.speaker;
       }
       if (validatedArgs.style !== undefined) {
-        presetData["style_id"] = validatedArgs.style;
+        presetData.style_id = validatedArgs.style;
       }
       if (validatedArgs.speed !== undefined) {
-        presetData["speedScale"] = validatedArgs.speed;
+        presetData.speedScale = validatedArgs.speed;
       }
       if (validatedArgs.pitch !== undefined) {
-        presetData["pitchScale"] = validatedArgs.pitch;
+        presetData.pitchScale = validatedArgs.pitch;
       }
       if (validatedArgs.intonation !== undefined) {
-        presetData["intonationScale"] = validatedArgs.intonation;
+        presetData.intonationScale = validatedArgs.intonation;
       }
       if (validatedArgs.volume !== undefined) {
-        presetData["volumeScale"] = validatedArgs.volume;
+        presetData.volumeScale = validatedArgs.volume;
       }
       if (validatedArgs.prePhonemeLength !== undefined) {
-        presetData["prePhonemeLength"] = validatedArgs.prePhonemeLength;
+        presetData.prePhonemeLength = validatedArgs.prePhonemeLength;
       }
       if (validatedArgs.postPhonemeLength !== undefined) {
-        presetData["postPhonemeLength"] = validatedArgs.postPhonemeLength;
+        presetData.postPhonemeLength = validatedArgs.postPhonemeLength;
       }
 
       log.debug("Making update preset API request", {

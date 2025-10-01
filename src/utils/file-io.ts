@@ -1,4 +1,5 @@
 import { readFileSync, writeFileSync } from "node:fs";
+import { Result } from "neverthrow";
 import type { z } from "zod";
 
 export const readFileUtf8 = (path: string): string => {
@@ -22,6 +23,17 @@ export const parseJson = <T>(content: string, schema: z.ZodType<T>): T => {
   const raw = JSON.parse(content);
   return schema.parse(raw);
 };
+
+export const parseJsonResult = <T>(content: string, schema: z.ZodType<T>) =>
+  Result.fromThrowable(
+    () => JSON.parse(content),
+    (e) => e as Error,
+  )().andThen((raw) =>
+    Result.fromThrowable(
+      () => schema.parse(raw),
+      (e) => e as Error,
+    )(),
+  );
 
 export const parseTextLines = (content: string): string[] => {
   return content
