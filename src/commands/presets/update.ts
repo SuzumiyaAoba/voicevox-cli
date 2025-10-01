@@ -1,6 +1,6 @@
 import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
-import { mapKeys, pickBy } from "remeda";
+import { isNonNullish, pickBy } from "remeda";
 import type { z } from "zod";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
@@ -31,21 +31,36 @@ const buildUpdatePresetData = (
     postPhonemeLength: validatedArgs.postPhonemeLength,
   } as const;
 
-  const nonUndefined = pickBy(raw, (v) => v !== undefined) as Omit<
-    typeof raw,
-    "speaker" | "style"
-  > & {
-    speaker?: string | number;
-    style?: number;
+  const nonUndefined = pickBy(raw, isNonNullish);
+
+  return {
+    id: nonUndefined.id,
+    ...(nonUndefined.name !== undefined ? { name: nonUndefined.name } : {}),
+    ...(nonUndefined.speaker !== undefined
+      ? { speaker_uuid: nonUndefined.speaker }
+      : {}),
+    ...(nonUndefined.style !== undefined
+      ? { style_id: nonUndefined.style }
+      : {}),
+    ...(nonUndefined.speedScale !== undefined
+      ? { speedScale: nonUndefined.speedScale }
+      : {}),
+    ...(nonUndefined.pitchScale !== undefined
+      ? { pitchScale: nonUndefined.pitchScale }
+      : {}),
+    ...(nonUndefined.intonationScale !== undefined
+      ? { intonationScale: nonUndefined.intonationScale }
+      : {}),
+    ...(nonUndefined.volumeScale !== undefined
+      ? { volumeScale: nonUndefined.volumeScale }
+      : {}),
+    ...(nonUndefined.prePhonemeLength !== undefined
+      ? { prePhonemeLength: nonUndefined.prePhonemeLength }
+      : {}),
+    ...(nonUndefined.postPhonemeLength !== undefined
+      ? { postPhonemeLength: nonUndefined.postPhonemeLength }
+      : {}),
   };
-
-  const mapped = mapKeys(nonUndefined, (key) => {
-    if (key === "speaker") return "speaker_uuid" as const;
-    if (key === "style") return "style_id" as const;
-    return key;
-  }) as { id: string | number } & Partial<UpdatePresetJson>;
-
-  return mapped;
 };
 
 const requestUpdatePreset = async (
