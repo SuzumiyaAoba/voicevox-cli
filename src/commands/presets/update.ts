@@ -1,3 +1,4 @@
+import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
@@ -75,17 +76,9 @@ export const presetsUpdateCommand = defineCommand({
       const client = createVoicevoxClient({ baseUrl: validatedArgs.baseUrl });
 
       // 更新するフィールドのみを含むプリセットデータを構築
-      const presetData: { id: string | number } & Partial<{
-        name: string;
-        speaker_uuid: string | number;
-        style_id: number;
-        speedScale: number;
-        pitchScale: number;
-        intonationScale: number;
-        volumeScale: number;
-        prePhonemeLength: number;
-        postPhonemeLength: number;
-      }> = {
+      type UpdatePresetJson =
+        paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];
+      const presetData: { id: string | number } & Partial<UpdatePresetJson> = {
         id: validatedArgs.id,
       };
 
@@ -129,8 +122,7 @@ export const presetsUpdateCommand = defineCommand({
 
       // APIクライアントを使用してupdate_presetエンドポイントにアクセス
       const response = await client.POST("/update_preset", {
-        // @ts-expect-error - API型定義が厳密すぎるため、部分更新データを許可
-        body: presetData,
+        body: presetData as UpdatePresetJson,
       });
 
       log.debug("API response received", {
