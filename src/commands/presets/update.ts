@@ -18,33 +18,43 @@ type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
 const buildUpdatePresetData = (
   validatedArgs: PresetsUpdateArgs,
 ): { id: string | number } & Partial<UpdatePresetJson> => {
-  return Object.assign(
-    {},
-    { id: validatedArgs.id },
-    validatedArgs.name !== undefined ? { name: validatedArgs.name } : {},
-    validatedArgs.speaker !== undefined
-      ? { speaker_uuid: validatedArgs.speaker }
-      : {},
-    validatedArgs.style !== undefined ? { style_id: validatedArgs.style } : {},
-    validatedArgs.speed !== undefined
-      ? { speedScale: validatedArgs.speed }
-      : {},
-    validatedArgs.pitch !== undefined
-      ? { pitchScale: validatedArgs.pitch }
-      : {},
-    validatedArgs.intonation !== undefined
-      ? { intonationScale: validatedArgs.intonation }
-      : {},
-    validatedArgs.volume !== undefined
-      ? { volumeScale: validatedArgs.volume }
-      : {},
-    validatedArgs.prePhonemeLength !== undefined
-      ? { prePhonemeLength: validatedArgs.prePhonemeLength }
-      : {},
-    validatedArgs.postPhonemeLength !== undefined
-      ? { postPhonemeLength: validatedArgs.postPhonemeLength }
-      : {},
-  );
+  type UpdateBody = { id: string | number } & Partial<UpdatePresetJson>;
+  const add = <V>(
+    acc: UpdateBody,
+    value: V | undefined,
+    build: (v: V) => Partial<UpdatePresetJson>,
+  ): UpdateBody => {
+    if (value === undefined) return acc;
+    return Object.assign({}, acc, build(value));
+  };
+
+  const base: UpdateBody = { id: validatedArgs.id };
+  const withName = add(base, validatedArgs.name, (v) => ({ name: v }));
+  const withSpeaker = add(withName, validatedArgs.speaker, (v) => ({
+    speaker_uuid: v,
+  }));
+  const withStyle = add(withSpeaker, validatedArgs.style, (v) => ({
+    style_id: v,
+  }));
+  const withSpeed = add(withStyle, validatedArgs.speed, (v) => ({
+    speedScale: v,
+  }));
+  const withPitch = add(withSpeed, validatedArgs.pitch, (v) => ({
+    pitchScale: v,
+  }));
+  const withIntonation = add(withPitch, validatedArgs.intonation, (v) => ({
+    intonationScale: v,
+  }));
+  const withVolume = add(withIntonation, validatedArgs.volume, (v) => ({
+    volumeScale: v,
+  }));
+  const withPre = add(withVolume, validatedArgs.prePhonemeLength, (v) => ({
+    prePhonemeLength: v,
+  }));
+  const withPost = add(withPre, validatedArgs.postPhonemeLength, (v) => ({
+    postPhonemeLength: v,
+  }));
+  return withPost;
 };
 
 const requestUpdatePreset = async (
