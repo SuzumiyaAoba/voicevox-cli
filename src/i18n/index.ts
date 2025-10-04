@@ -35,8 +35,11 @@ export const translations: Record<Locale, TranslationData> = {
         args: {
           text: "合成するテキスト",
           speaker: "話者ID（デフォルト: 2）",
+          input: "入力ファイルパス",
           output: "出力ファイルパス",
           play: "合成後に音声を再生",
+          type: "入力タイプ（text/audio_query）",
+          multi: "複数行テキストファイルの処理",
         },
         synthesisError: "音声合成中にエラーが発生しました",
         synthesisComplete: "音声合成が完了しました: {{output}}",
@@ -295,8 +298,11 @@ export const translations: Record<Locale, TranslationData> = {
         args: {
           text: "Text to synthesize",
           speaker: "Speaker ID (default: 2)",
+          input: "Input file path",
           output: "Output file path",
           play: "Play audio after synthesis",
+          type: "Input type (text/audio_query)",
+          multi: "Process multi-line text file",
         },
         synthesisError: "Error occurred during synthesis",
         synthesisComplete: "Synthesis completed: {{output}}",
