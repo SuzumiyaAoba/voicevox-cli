@@ -275,6 +275,9 @@ export const translations: Record<Locale, TranslationData> = {
     common: {
       error: "エラー",
       unknown: "不明",
+      args: {
+        json: "JSON形式で出力",
+      },
     },
   },
   en: {
@@ -533,6 +536,9 @@ export const translations: Record<Locale, TranslationData> = {
     common: {
       error: "Error",
       unknown: "Unknown",
+      args: {
+        json: "Output in JSON format",
+      },
     },
   },
 };
