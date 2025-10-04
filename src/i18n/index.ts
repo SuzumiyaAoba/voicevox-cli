@@ -210,6 +210,30 @@ const translations: Record<Locale, TranslationData> = {
         },
       },
     },
+    engine: {
+      name: "engine",
+      description: "VOICEVOX Engine関連のコマンド",
+      manifest: {
+        name: "manifest",
+        description: "VOICEVOX Engineのマニフェスト情報を表示",
+        fetching: "エンジンマニフェストを取得中...",
+        manifestInfo: "エンジンマニフェスト情報",
+        engineName: "エンジン名",
+        brandName: "ブランド名",
+        version: "マニフェストバージョン",
+        uuid: "エンジンUUID",
+        url: "エンジンURL",
+        defaultSamplingRate: "デフォルトサンプリングレート",
+        frameRate: "フレームレート",
+        supportedFeatures: "対応機能",
+        args: {
+          json: "JSON形式で出力",
+        },
+        errorFetching: "エンジンマニフェストの取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      },
+    },
     core: {
       name: "core",
       description: "VOICEVOX Core関連のコマンド",
@@ -420,6 +444,30 @@ const translations: Record<Locale, TranslationData> = {
             json: "Output in JSON format",
           },
         },
+      },
+    },
+    engine: {
+      name: "engine",
+      description: "VOICEVOX Engine related commands",
+      manifest: {
+        name: "manifest",
+        description: "Display VOICEVOX Engine manifest information",
+        fetching: "Fetching engine manifest...",
+        manifestInfo: "Engine Manifest Information",
+        engineName: "Engine Name",
+        brandName: "Brand Name",
+        version: "Manifest Version",
+        uuid: "Engine UUID",
+        url: "Engine URL",
+        defaultSamplingRate: "Default Sampling Rate",
+        frameRate: "Frame Rate",
+        supportedFeatures: "Supported Features",
+        args: {
+          json: "Output in JSON format",
+        },
+        errorFetching: "Error fetching engine manifest:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
       },
     },
     core: {
