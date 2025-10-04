@@ -75,6 +75,22 @@ export const translations: Record<Locale, TranslationData> = {
           queryResult: "音声クエリ結果:",
           makeSureEngineRunning:
             "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+          audioQueryInfo: {
+            title: "音声クエリ情報",
+            speed: "速度",
+            pitch: "ピッチ",
+            intonation: "イントネーション",
+            volume: "音量",
+            prePhonemeLength: "前音素長",
+            postPhonemeLength: "後音素長",
+            sampling: "サンプリング",
+            stereo: "ステレオ",
+            kana: "カナ",
+            on: "ON",
+            off: "OFF",
+            accentPhrases: "アクセント句",
+            accent: "アクセント",
+          },
         },
       },
       speakers: {
@@ -88,6 +104,12 @@ export const translations: Record<Locale, TranslationData> = {
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         args: {
           json: "JSON形式で出力",
+        },
+        tableHeaders: {
+          name: "名前",
+          uuid: "UUID",
+          styleName: "Style名",
+          styleId: "StyleID",
         },
       },
       setting: {
@@ -131,6 +153,18 @@ export const translations: Record<Locale, TranslationData> = {
           errorFetching: "プリセット一覧の取得中にエラーが発生しました:",
           makeSureEngineRunning:
             "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+          defaultName: "プリセット {{index}}",
+          labels: {
+            id: "ID",
+            speakerUuid: "Speaker UUID",
+            styleId: "Style ID",
+            speed: "Speed",
+            pitch: "Pitch",
+            intonation: "Intonation",
+            volume: "Volume",
+            prePhonemeLength: "Pre-phoneme Length",
+            postPhonemeLength: "Post-phoneme Length",
+          },
         },
         add: {
           name: "add",
@@ -220,6 +254,7 @@ export const translations: Record<Locale, TranslationData> = {
         errorFetching: "対応デバイス一覧の取得中にエラーが発生しました:",
         makeSureEngineRunning:
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        noDeviceInfo: "デバイス情報が利用できません",
       },
       engine: {
         name: "engine",
@@ -282,6 +317,12 @@ export const translations: Record<Locale, TranslationData> = {
         json: "JSON形式で出力",
       },
     },
+    errors: {
+      network: "ネットワークエラーが発生しました: {{command}}",
+      api: "APIエラーが発生しました: {{command}}",
+      validation: "バリデーションエラーが発生しました: {{command}}",
+      unknown: "不明なエラーが発生しました: {{command}}",
+    },
   },
   en: {
     commands: {
@@ -339,6 +380,22 @@ export const translations: Record<Locale, TranslationData> = {
           queryResult: "Audio query result:",
           makeSureEngineRunning:
             "Make sure VOICEVOX Engine is running on the specified URL",
+          audioQueryInfo: {
+            title: "Audio Query Information",
+            speed: "Speed",
+            pitch: "Pitch",
+            intonation: "Intonation",
+            volume: "Volume",
+            prePhonemeLength: "Pre-phoneme Length",
+            postPhonemeLength: "Post-phoneme Length",
+            sampling: "Sampling",
+            stereo: "Stereo",
+            kana: "Kana",
+            on: "ON",
+            off: "OFF",
+            accentPhrases: "Accent Phrases",
+            accent: "Accent",
+          },
         },
       },
       speakers: {
@@ -352,6 +409,12 @@ export const translations: Record<Locale, TranslationData> = {
           "Make sure VOICEVOX Engine is running on the specified URL",
         args: {
           json: "Output in JSON format",
+        },
+        tableHeaders: {
+          name: "Name",
+          uuid: "UUID",
+          styleName: "Style Name",
+          styleId: "Style ID",
         },
       },
       setting: {
@@ -395,6 +458,18 @@ export const translations: Record<Locale, TranslationData> = {
           errorFetching: "Error fetching presets:",
           makeSureEngineRunning:
             "Make sure VOICEVOX Engine is running on the specified URL",
+          defaultName: "Preset {{index}}",
+          labels: {
+            id: "ID",
+            speakerUuid: "Speaker UUID",
+            styleId: "Style ID",
+            speed: "Speed",
+            pitch: "Pitch",
+            intonation: "Intonation",
+            volume: "Volume",
+            prePhonemeLength: "Pre-phoneme Length",
+            postPhonemeLength: "Post-phoneme Length",
+          },
         },
         add: {
           name: "add",
@@ -484,6 +559,7 @@ export const translations: Record<Locale, TranslationData> = {
         errorFetching: "Error fetching supported devices list:",
         makeSureEngineRunning:
           "Make sure VOICEVOX Engine is running on the specified URL",
+        noDeviceInfo: "No device information available",
       },
       engine: {
         name: "engine",
@@ -545,6 +621,12 @@ export const translations: Record<Locale, TranslationData> = {
       args: {
         json: "Output in JSON format",
       },
+    },
+    errors: {
+      network: "Network error occurred: {{command}}",
+      api: "API error occurred: {{command}}",
+      validation: "Validation error occurred: {{command}}",
+      unknown: "Unknown error occurred: {{command}}",
     },
   },
 };

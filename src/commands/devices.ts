@@ -46,7 +46,7 @@ export const devicesCommand = defineCommand({
             devicesInfo += `\n${key}: ${value}`;
           });
         } else {
-          devicesInfo += "\nNo device information available";
+          devicesInfo += `\n${i18next.t("commands.devices.noDeviceInfo")}`;
         }
 
         display.info(devicesInfo);

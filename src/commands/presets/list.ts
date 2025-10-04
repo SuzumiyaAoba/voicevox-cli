@@ -63,37 +63,51 @@ export const presetsListCommand = defineCommand({
         response.data.forEach((preset: unknown, index: number) => {
           const presetData = preset as Record<string, unknown>;
           display.info(
-            `${index + 1}. ${presetData["name"] || `Preset ${index + 1}`}`,
+            `${index + 1}. ${presetData["name"] || i18next.t("commands.presets.list.defaultName", { index: index + 1 })}`,
           );
           if (presetData["id"]) {
-            display.info(`   ID: ${presetData["id"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.id")}: ${presetData["id"]}`,
+            );
           }
           if (presetData["speaker_uuid"]) {
-            display.info(`   Speaker UUID: ${presetData["speaker_uuid"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.speakerUuid")}: ${presetData["speaker_uuid"]}`,
+            );
           }
           if (presetData["style_id"]) {
-            display.info(`   Style ID: ${presetData["style_id"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.styleId")}: ${presetData["style_id"]}`,
+            );
           }
           if (presetData["speedScale"] !== undefined) {
-            display.info(`   Speed: ${presetData["speedScale"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.speed")}: ${presetData["speedScale"]}`,
+            );
           }
           if (presetData["pitchScale"] !== undefined) {
-            display.info(`   Pitch: ${presetData["pitchScale"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.pitch")}: ${presetData["pitchScale"]}`,
+            );
           }
           if (presetData["intonationScale"] !== undefined) {
-            display.info(`   Intonation: ${presetData["intonationScale"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.intonation")}: ${presetData["intonationScale"]}`,
+            );
           }
           if (presetData["volumeScale"] !== undefined) {
-            display.info(`   Volume: ${presetData["volumeScale"]}`);
+            display.info(
+              `   ${i18next.t("commands.presets.list.labels.volume")}: ${presetData["volumeScale"]}`,
+            );
           }
           if (presetData["prePhonemeLength"] !== undefined) {
             display.info(
-              `   Pre-phoneme Length: ${presetData["prePhonemeLength"]}`,
+              `   ${i18next.t("commands.presets.list.labels.prePhonemeLength")}: ${presetData["prePhonemeLength"]}`,
             );
           }
           if (presetData["postPhonemeLength"] !== undefined) {
             display.info(
-              `   Post-phoneme Length: ${presetData["postPhonemeLength"]}`,
+              `   ${i18next.t("commands.presets.list.labels.postPhonemeLength")}: ${presetData["postPhonemeLength"]}`,
             );
           }
           display.info(""); // 空行を追加

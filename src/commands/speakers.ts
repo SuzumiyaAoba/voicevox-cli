@@ -25,7 +25,7 @@ export const speakersCommand = defineCommand({
       const response = await client.GET("/speakers");
       const speakers = validateResponse(
         response,
-        "Invalid response format from speakers API",
+        i18next.t("commands.speakers.invalidResponse"),
         { baseUrl: args.baseUrl },
       );
 
@@ -34,13 +34,18 @@ export const speakersCommand = defineCommand({
       });
 
       if (!Array.isArray(speakers)) {
-        throw new Error("Expected speakers to be an array");
+        throw new Error(i18next.t("commands.speakers.invalidResponse"));
       }
 
       // 出力処理
       outputConditional(args.json || false, speakers, () => {
         // テーブル形式の出力を構築
-        const headers = ["名前", "UUID", "Style名", "StyleID"];
+        const headers = [
+          i18next.t("commands.speakers.tableHeaders.name"),
+          i18next.t("commands.speakers.tableHeaders.uuid"),
+          i18next.t("commands.speakers.tableHeaders.styleName"),
+          i18next.t("commands.speakers.tableHeaders.styleId"),
+        ];
         const columnWidths = [20, 40, 20, 10];
 
         const rows: string[][] = speakers.flatMap((speaker: unknown) => {
