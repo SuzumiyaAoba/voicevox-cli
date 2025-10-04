@@ -2,19 +2,22 @@ import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { produce } from "immer";
 // (no utility needed here)
-import type { z } from "zod";
 import { t } from "@/i18n/index.js";
 import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
-import { presetsUpdateSchema, validateArgs } from "@/utils/validation.js";
+import {
+  type PresetsUpdateArgs,
+  presetsUpdateSchema,
+  validateArgs,
+} from "@/utils/validation.js";
 
 type UpdatePresetJson =
   paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];
 
-type PresetsUpdateArgs = z.infer<typeof presetsUpdateSchema>;
+// Using exported inferred type from validation.ts
 
 type UpdateBody = { id: string | number } & Partial<UpdatePresetJson>;
 

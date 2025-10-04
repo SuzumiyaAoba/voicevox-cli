@@ -6,6 +6,7 @@ import { engineCommand } from "@/commands/engine/index.js";
 import { kanaCommand } from "@/commands/kana/index.js";
 import { presetsCommand } from "@/commands/presets/index.js";
 import { queryCommand } from "@/commands/query/index.js";
+import { settingCommand } from "@/commands/setting.js";
 import { speakersCommand } from "@/commands/speakers.js";
 import { synthesisCommand } from "@/commands/synthesis/index.js";
 import { versionCommand } from "@/commands/version.js";
@@ -21,6 +22,7 @@ const main = defineCommand({
     synthesis: synthesisCommand,
     query: queryCommand,
     speakers: speakersCommand,
+    setting: settingCommand,
     presets: presetsCommand,
     version: versionCommand,
     engine: engineCommand,

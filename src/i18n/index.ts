@@ -87,6 +87,19 @@ const translations: Record<Locale, TranslationData> = {
           json: "JSON形式で出力",
         },
       },
+      setting: {
+        name: "setting",
+        description: "VOICEVOX Engineの設定情報を表示",
+        fetching: "設定情報を取得中...",
+        settingInfo: "設定情報",
+        settingData: "設定データ",
+        args: {
+          json: "JSON形式で出力",
+        },
+        errorFetching: "設定情報の取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      },
       presets: {
         name: "presets",
         description: "プリセット関連のコマンド",
@@ -272,6 +285,19 @@ const translations: Record<Locale, TranslationData> = {
         args: {
           json: "Output in JSON format",
         },
+      },
+      setting: {
+        name: "setting",
+        description: "Display VOICEVOX Engine settings",
+        fetching: "Fetching settings...",
+        settingInfo: "Settings",
+        settingData: "Setting data",
+        args: {
+          json: "Output in JSON format",
+        },
+        errorFetching: "Error fetching settings:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
       },
       presets: {
         name: "presets",
