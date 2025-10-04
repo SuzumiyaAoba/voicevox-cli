@@ -99,6 +99,19 @@ const translations: Record<Locale, TranslationData> = {
         errorFetching: "エンジン情報の取得中にエラーが発生しました:",
         makeSureEngineRunning:
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        update: {
+          name: "update",
+          description: "VOICEVOX Engineの設定を更新",
+          success: "設定の更新が完了しました",
+          updatedSettings: "更新された設定",
+          corsPolicyMode: "CORSポリシーモード",
+          allowOrigin: "許可オリジン",
+          args: {
+            corsPolicyMode: "CORSポリシーモード (all または localapps)",
+            allowOrigin: "許可するオリジン (corsPolicyModeがallの場合のみ)",
+          },
+          errorUpdating: "設定の更新中にエラーが発生しました:",
+        },
       },
       presets: {
         name: "presets",
@@ -298,6 +311,19 @@ const translations: Record<Locale, TranslationData> = {
         errorFetching: "Error fetching engine information:",
         makeSureEngineRunning:
           "Make sure VOICEVOX Engine is running on the specified URL",
+        update: {
+          name: "update",
+          description: "Update VOICEVOX Engine settings",
+          success: "Settings updated successfully",
+          updatedSettings: "Updated Settings",
+          corsPolicyMode: "CORS Policy Mode",
+          allowOrigin: "Allow Origin",
+          args: {
+            corsPolicyMode: "CORS policy mode (all or localapps)",
+            allowOrigin: "Allowed origin (only when corsPolicyMode is all)",
+          },
+          errorUpdating: "Error updating settings:",
+        },
       },
       presets: {
         name: "presets",
