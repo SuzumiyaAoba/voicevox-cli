@@ -1,4 +1,5 @@
 import i18next from "i18next";
+import { getLocale } from "./index.js";
 
 // 翻訳データ
 const resources = {
@@ -120,12 +121,13 @@ const resources = {
 
 // i18nextの初期化
 i18next.init({
-  lng: "ja", // デフォルト言語
+  lng: getLocale(), // 現在のロケールを使用
   fallbackLng: "en",
   resources,
   interpolation: {
     escapeValue: false, // Reactは使用していないのでfalse
   },
+  debug: false, // デバッグを無効にする
 });
 
 export default i18next;

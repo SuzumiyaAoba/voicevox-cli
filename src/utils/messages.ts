@@ -1,34 +1,34 @@
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display } from "@/logger.js";
 
 export const synthesisMessages = {
   showLoadingInput: (input: string) =>
-    display.info(t("commands.synthesis.loadingInput", { input })),
+    display.info(i18next.t("commands.synthesis.loadingInput", { input })),
 
   showLoadingMultiInput: (input: string) =>
-    display.info(t("commands.synthesis.loadingMultiInput", { input })),
+    display.info(i18next.t("commands.synthesis.loadingMultiInput", { input })),
 
   showLoadingMultiText: (count: number) =>
     display.info(
-      t("commands.synthesis.loadingMultiText", { count: String(count) }),
+      i18next.t("commands.synthesis.loadingMultiText", { count: count }),
     ),
 
   showSpeaker: (speaker: string | number) =>
-    display.info(t("commands.synthesis.speakerId", { speaker })),
+    display.info(i18next.t("commands.synthesis.speakerId", { speaker })),
 
   showOutput: (output: string) =>
-    display.info(t("commands.synthesis.output", { output })),
+    display.info(i18next.t("commands.synthesis.output", { output })),
 
   showPlayFlag: (play: boolean) =>
-    display.info(t("commands.synthesis.play", { play: String(play) })),
+    display.info(i18next.t("commands.synthesis.play", { play: String(play) })),
 
   showSynthesisComplete: (output: string) =>
-    display.info(t("commands.synthesis.synthesisComplete", { output })),
+    display.info(i18next.t("commands.synthesis.synthesisComplete", { output })),
 
   showMultiSynthesisComplete: (count: number) =>
     display.info(
-      t("commands.synthesis.multiSynthesisComplete", { count: String(count) }),
+      i18next.t("commands.synthesis.multiSynthesisComplete", { count: count }),
     ),
 
-  showPlaying: () => display.info(t("commands.synthesis.playingAudio")),
+  showPlaying: () => display.info(i18next.t("commands.synthesis.playingAudio")),
 };

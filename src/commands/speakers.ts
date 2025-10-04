@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -10,8 +10,8 @@ import { outputConditional } from "@/utils/output.js";
 // 話者一覧コマンド
 export const speakersCommand = defineCommand({
   meta: {
-    name: t("commands.speakers.name"),
-    description: t("commands.speakers.description"),
+    name: i18next.t("commands.speakers.name"),
+    description: i18next.t("commands.speakers.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -43,28 +43,41 @@ export const speakersCommand = defineCommand({
         const headers = ["名前", "UUID", "Style名", "StyleID"];
         const columnWidths = [20, 40, 20, 10];
 
-        const rows: string[][] = speakers.flatMap((speaker) => {
+        const rows: string[][] = speakers.flatMap((speaker: unknown) => {
+          const speakerData = speaker as Record<string, unknown>;
           log.debug("Processing speaker", {
-            name: speaker.name,
-            uuid: speaker.speaker_uuid,
-            stylesCount: speaker.styles?.length || 0,
+            name: speakerData["name"],
+            uuid: speakerData["speaker_uuid"],
+            stylesCount: Array.isArray(speakerData["styles"])
+              ? speakerData["styles"].length
+              : 0,
           });
 
-          if (speaker.styles && Array.isArray(speaker.styles)) {
-            return speaker.styles.map((style) => [
-              speaker.name,
-              speaker.speaker_uuid,
-              style.name,
-              style.id.toString(),
-            ]);
+          if (speakerData["styles"] && Array.isArray(speakerData["styles"])) {
+            return speakerData["styles"].map((style: unknown) => {
+              const styleData = style as Record<string, unknown>;
+              return [
+                String(speakerData["name"]),
+                String(speakerData["speaker_uuid"]),
+                String(styleData["name"]),
+                String(styleData["id"]),
+              ];
+            });
           }
           // スタイルがない場合
-          return [[speaker.name, speaker.speaker_uuid, "-", "-"]];
+          return [
+            [
+              String(speakerData["name"]),
+              String(speakerData["speaker_uuid"]),
+              "-",
+              "-",
+            ],
+          ];
         });
 
         // テーブル形式の出力を生成
         const tableOutput = createTable(headers, rows, columnWidths);
-        const fullOutput = `${t("commands.speakers.fetching")}\n\n${tableOutput}\n${t("commands.speakers.totalSpeakers", { count: speakers.length })}\n`;
+        const fullOutput = `${i18next.t("commands.speakers.fetching")}\n\n${tableOutput}\n${i18next.t("commands.speakers.totalSpeakers", { count: speakers.length })}\n`;
 
         // 直接出力
         display.info(fullOutput);

@@ -1,4 +1,4 @@
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 
 export const baseUrlOption = {
   baseUrl: {
@@ -14,7 +14,7 @@ export const baseUrlOption = {
 export const commonCommandOptions = {
   json: {
     type: "boolean" as const,
-    description: t("common.args.json"),
+    description: i18next.t("common.args.json"),
     alias: "j" as const,
   },
   ...baseUrlOption,

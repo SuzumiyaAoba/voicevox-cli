@@ -38,8 +38,8 @@ export const parseJsonResult = <T>(content: string, schema: z.ZodType<T>) =>
 export const parseTextLines = (content: string): string[] => {
   return content
     .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
+    .map((line: string) => line.trim())
+    .filter((line: string) => line.length > 0);
 };
 
 export const saveBuffer = (path: string, data: ArrayBuffer | Buffer): void => {

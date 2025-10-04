@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import AdmZip from "adm-zip";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { playAudio } from "./audio-player.js";
 
@@ -30,14 +30,14 @@ export const extractAndPlayZip = async (zipFilePath: string): Promise<void> => {
 
     if (audioFiles.length === 0) {
       log.warn("No audio files found in ZIP", { zipFilePath });
-      display.warn(t("commands.synthesis.noAudioFilesInZip"));
+      display.warn(i18next.t("commands.synthesis.noAudioFilesInZip"));
       return;
     }
 
     log.debug("Found audio files in ZIP", { count: audioFiles.length });
     display.info(
-      t("commands.synthesis.playingMultipleAudio", {
-        count: String(audioFiles.length),
+      i18next.t("commands.synthesis.playingMultipleAudio", {
+        count: audioFiles.length,
       }),
     );
 
@@ -47,7 +47,7 @@ export const extractAndPlayZip = async (zipFilePath: string): Promise<void> => {
       if (!audioFile) continue;
 
       display.info(
-        t("commands.synthesis.playingAudioFile", {
+        i18next.t("commands.synthesis.playingAudioFile", {
           current: String(i + 1),
           total: String(audioFiles.length),
           file: audioFile,

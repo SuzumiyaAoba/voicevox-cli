@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -10,8 +10,8 @@ import { engineVersionsSchema, validateArgs } from "@/utils/validation.js";
 // コアバージョン一覧コマンド
 export const coreVersionsCommand = defineCommand({
   meta: {
-    name: t("commands.core.versions.name"),
-    description: t("commands.core.versions.description"),
+    name: i18next.t("commands.core.versions.name"),
+    description: i18next.t("commands.core.versions.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -25,7 +25,7 @@ export const coreVersionsCommand = defineCommand({
 
       const client = createClient(validatedArgs.baseUrl);
 
-      display.info(t("commands.core.versions.fetching"));
+      display.info(i18next.t("commands.core.versions.fetching"));
 
       const response = await client.GET("/core_versions");
       const versions = validateResponse(
@@ -41,7 +41,7 @@ export const coreVersionsCommand = defineCommand({
 
       // 出力処理
       outputConditional(validatedArgs.json || false, versions, () => {
-        display.info(t("commands.core.versions.versionsFound"));
+        display.info(i18next.t("commands.core.versions.versionsFound"));
 
         if (Array.isArray(versions)) {
           versions.forEach((version: unknown, index: number) => {

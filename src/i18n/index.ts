@@ -10,7 +10,7 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 const DEFAULT_LOCALE: Locale = "ja";
 
 // 現在のロケールを取得（環境変数から）
-const getCurrentLocale = (): Locale => {
+export const getLocale = (): Locale => {
   const envLocale = process.env.LANG?.split(".")[0]?.split("_")[0];
   if (envLocale && SUPPORTED_LOCALES.includes(envLocale as Locale)) {
     return envLocale as Locale;
@@ -19,7 +19,7 @@ const getCurrentLocale = (): Locale => {
 };
 
 // 翻訳データを直接埋め込み
-const translations: Record<Locale, TranslationData> = {
+export const translations: Record<Locale, TranslationData> = {
   ja: {
     commands: {
       synthesis: {
@@ -545,51 +545,10 @@ const translations: Record<Locale, TranslationData> = {
 };
 
 // 現在のロケール
-const currentLocale = getCurrentLocale();
+// const currentLocale = getLocale();
 
 // 現在の翻訳データ
-const currentTranslations = translations[currentLocale];
-
-/**
- * 翻訳キーから値を取得する
- * @param key 翻訳キー（ドット記法でネストしたオブジェクトにアクセス）
- * @param params 置換パラメータ
- * @returns 翻訳された文字列
- */
-export const t = (
-  key: string,
-  params: Record<string, string | number> = {},
-): string => {
-  const keys = key.split(".");
-  let value: unknown = currentTranslations;
-
-  // ネストしたキーを辿る
-  for (const k of keys) {
-    if (value && typeof value === "object" && value !== null && k in value) {
-      value = (value as Record<string, unknown>)[k];
-    } else {
-      // キーが見つからない場合はキー自体を返す
-      return key;
-    }
-  }
-
-  if (typeof value !== "string") {
-    return key;
-  }
-
-  // パラメータを置換
-  return value.replace(/\{(\w+)\}/g, (match, paramKey) => {
-    return String(params[paramKey] || match);
-  });
-};
-
-/**
- * 現在のロケールを取得
- * @returns 現在のロケール
- */
-export const getLocale = (): Locale => {
-  return currentLocale;
-};
+// const currentTranslations = translations[currentLocale];
 
 /**
  * 利用可能なロケールを取得

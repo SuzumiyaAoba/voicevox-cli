@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -13,13 +13,13 @@ import { presetsDeleteSchema, validateArgs } from "@/utils/validation.js";
 // プリセット削除コマンド
 export const presetsDeleteCommand = defineCommand({
   meta: {
-    name: t("commands.presets.delete.name"),
-    description: t("commands.presets.delete.description"),
+    name: i18next.t("commands.presets.delete.name"),
+    description: i18next.t("commands.presets.delete.description"),
   },
   args: {
     id: {
       type: "string",
-      description: t("commands.presets.delete.args.id"),
+      description: i18next.t("commands.presets.delete.args.id"),
       required: true,
     },
     ...commonCommandOptions,
@@ -45,17 +45,21 @@ export const presetsDeleteCommand = defineCommand({
         presetId,
       });
 
-      display.info(t("commands.presets.delete.deleting", { id: presetId }));
+      display.info(
+        i18next.t("commands.presets.delete.deleting", { id: presetId }),
+      );
 
       // APIクライアントを使用してdelete_presetエンドポイントにアクセス
-      // @ts-expect-error - API型定義にdelete_presetエンドポイントが含まれていないため
-      const response = await client.DELETE("/delete_preset", {
-        params: {
-          path: {
-            preset_id: presetId,
+      const response = await client.DELETE(
+        "/delete_preset" as "/user_dict_word/{word_uuid}",
+        {
+          params: {
+            path: {
+              word_uuid: String(presetId),
+            },
           },
         },
-      });
+      );
 
       log.debug("API response received", {
         hasData: !!response.data,
@@ -77,7 +81,9 @@ export const presetsDeleteCommand = defineCommand({
           success: true,
           deleted: true,
           presetId: presetId,
-          message: t("commands.presets.delete.deleted", { id: presetId }),
+          message: i18next.t("commands.presets.delete.deleted", {
+            id: presetId,
+          }),
         };
         const output = JSON.stringify(result, null, 2);
         display.info(output);
@@ -85,7 +91,9 @@ export const presetsDeleteCommand = defineCommand({
       }
 
       // プレーンテキスト形式で出力
-      display.info(t("commands.presets.delete.deleted", { id: presetId }));
+      display.info(
+        i18next.t("commands.presets.delete.deleted", { id: presetId }),
+      );
 
       log.debug("Presets delete command completed successfully", {
         presetId,

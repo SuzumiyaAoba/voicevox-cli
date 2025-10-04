@@ -1,12 +1,12 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { coreVersionsCommand } from "./versions.js";
 
 // コア関連コマンド
 export const coreCommand = defineCommand({
   meta: {
-    name: t("commands.core.name"),
-    description: t("commands.core.description"),
+    name: i18next.t("commands.core.name"),
+    description: i18next.t("commands.core.description"),
   },
   subCommands: {
     versions: coreVersionsCommand,

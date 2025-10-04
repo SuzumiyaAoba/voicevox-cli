@@ -31,8 +31,9 @@ export const validateKanaCommand = defineCommand({
       log.debug("Validating kana", { baseUrl: args.baseUrl, text: args.text });
 
       const res = await client.POST("/validate_kana", {
-        // @ts-expect-error - API accepts JSON { text }
-        body: { text: String(args.text) },
+        params: {
+          query: { text: String(args.text) },
+        },
       });
 
       const status = res.response?.status;

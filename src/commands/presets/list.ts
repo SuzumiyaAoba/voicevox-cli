@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -12,8 +12,8 @@ import {
 // プリセット一覧コマンド
 export const presetsListCommand = defineCommand({
   meta: {
-    name: t("commands.presets.list.name"),
-    description: t("commands.presets.list.description"),
+    name: i18next.t("commands.presets.list.name"),
+    description: i18next.t("commands.presets.list.description"),
   },
   args: {
     ...commonCommandOptions,
@@ -51,48 +51,55 @@ export const presetsListCommand = defineCommand({
       }
 
       // プレーンテキスト形式で出力
-      display.info(t("commands.presets.list.fetching"));
+      display.info(i18next.t("commands.presets.list.fetching"));
 
       if (Array.isArray(response.data) && response.data.length > 0) {
         display.info(
-          t("commands.presets.list.totalPresets", {
+          i18next.t("commands.presets.list.totalPresets", {
             count: response.data.length,
           }),
         );
 
-        response.data.forEach((preset, index) => {
-          display.info(`${index + 1}. ${preset.name || `Preset ${index + 1}`}`);
-          if (preset.id) {
-            display.info(`   ID: ${preset.id}`);
+        response.data.forEach((preset: unknown, index: number) => {
+          const presetData = preset as Record<string, unknown>;
+          display.info(
+            `${index + 1}. ${presetData["name"] || `Preset ${index + 1}`}`,
+          );
+          if (presetData["id"]) {
+            display.info(`   ID: ${presetData["id"]}`);
           }
-          if (preset.speaker_uuid) {
-            display.info(`   Speaker UUID: ${preset.speaker_uuid}`);
+          if (presetData["speaker_uuid"]) {
+            display.info(`   Speaker UUID: ${presetData["speaker_uuid"]}`);
           }
-          if (preset.style_id) {
-            display.info(`   Style ID: ${preset.style_id}`);
+          if (presetData["style_id"]) {
+            display.info(`   Style ID: ${presetData["style_id"]}`);
           }
-          if (preset.speedScale !== undefined) {
-            display.info(`   Speed: ${preset.speedScale}`);
+          if (presetData["speedScale"] !== undefined) {
+            display.info(`   Speed: ${presetData["speedScale"]}`);
           }
-          if (preset.pitchScale !== undefined) {
-            display.info(`   Pitch: ${preset.pitchScale}`);
+          if (presetData["pitchScale"] !== undefined) {
+            display.info(`   Pitch: ${presetData["pitchScale"]}`);
           }
-          if (preset.intonationScale !== undefined) {
-            display.info(`   Intonation: ${preset.intonationScale}`);
+          if (presetData["intonationScale"] !== undefined) {
+            display.info(`   Intonation: ${presetData["intonationScale"]}`);
           }
-          if (preset.volumeScale !== undefined) {
-            display.info(`   Volume: ${preset.volumeScale}`);
+          if (presetData["volumeScale"] !== undefined) {
+            display.info(`   Volume: ${presetData["volumeScale"]}`);
           }
-          if (preset.prePhonemeLength !== undefined) {
-            display.info(`   Pre-phoneme Length: ${preset.prePhonemeLength}`);
+          if (presetData["prePhonemeLength"] !== undefined) {
+            display.info(
+              `   Pre-phoneme Length: ${presetData["prePhonemeLength"]}`,
+            );
           }
-          if (preset.postPhonemeLength !== undefined) {
-            display.info(`   Post-phoneme Length: ${preset.postPhonemeLength}`);
+          if (presetData["postPhonemeLength"] !== undefined) {
+            display.info(
+              `   Post-phoneme Length: ${presetData["postPhonemeLength"]}`,
+            );
           }
           display.info(""); // 空行を追加
         });
       } else {
-        display.info(t("commands.presets.list.noPresets"));
+        display.info(i18next.t("commands.presets.list.noPresets"));
       }
 
       log.debug("Presets list command completed successfully");

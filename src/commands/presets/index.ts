@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { presetsAddCommand } from "./add.js";
 import { presetsDeleteCommand } from "./delete.js";
 import { presetsListCommand } from "./list.js";
@@ -8,8 +8,8 @@ import { presetsUpdateCommand } from "./update.js";
 // プリセットコマンド
 export const presetsCommand = defineCommand({
   meta: {
-    name: t("commands.presets.name"),
-    description: t("commands.presets.description"),
+    name: i18next.t("commands.presets.name"),
+    description: i18next.t("commands.presets.description"),
   },
   subCommands: {
     list: presetsListCommand,
