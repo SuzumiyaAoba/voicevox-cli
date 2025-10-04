@@ -89,14 +89,14 @@ const translations: Record<Locale, TranslationData> = {
       },
       setting: {
         name: "setting",
-        description: "VOICEVOX Engineの設定情報を表示",
-        fetching: "設定情報を取得中...",
-        settingInfo: "設定情報",
-        settingData: "設定データ",
+        description: "VOICEVOX Engineの情報を表示",
+        fetching: "エンジン情報を取得中...",
+        settingInfo: "エンジン情報",
+        settingData: "エンジンデータ",
         args: {
           json: "JSON形式で出力",
         },
-        errorFetching: "設定情報の取得中にエラーが発生しました:",
+        errorFetching: "エンジン情報の取得中にエラーが発生しました:",
         makeSureEngineRunning:
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
       },
@@ -288,14 +288,14 @@ const translations: Record<Locale, TranslationData> = {
       },
       setting: {
         name: "setting",
-        description: "Display VOICEVOX Engine settings",
-        fetching: "Fetching settings...",
-        settingInfo: "Settings",
-        settingData: "Setting data",
+        description: "Display VOICEVOX Engine information",
+        fetching: "Fetching engine information...",
+        settingInfo: "Engine Information",
+        settingData: "Engine Data",
         args: {
           json: "Output in JSON format",
         },
-        errorFetching: "Error fetching settings:",
+        errorFetching: "Error fetching engine information:",
         makeSureEngineRunning:
           "Make sure VOICEVOX Engine is running on the specified URL",
       },
