@@ -1,5 +1,5 @@
-import { client } from "@suzumiyaaoba/voicevox-client";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { createClient } from "./utils/api-helpers.js";
 
 // VOICEVOX APIのベースURLを設定
 const VOICEVOX_BASE_URL = "http://localhost:50021";
@@ -23,9 +23,11 @@ const createCustomFetch = (baseUrl: string) => {
 };
 
 describe("VOICEVOX Client Integration Tests", () => {
+  let client: ReturnType<typeof createClient>;
+
   beforeAll(async () => {
-    // グローバルfetchをカスタムfetchに置き換えてベースURLを設定
-    globalThis.fetch = createCustomFetch(VOICEVOX_BASE_URL);
+    // クライアントを作成
+    client = createClient(VOICEVOX_BASE_URL);
 
     // VOICEVOX エンジンの起動確認（globalSetupで起動済み）
     const response = await originalFetch("http://localhost:50021/version");
