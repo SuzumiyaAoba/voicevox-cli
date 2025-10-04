@@ -8,11 +8,8 @@ import { validateResponse } from "@/utils/api-helpers.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
-import {
-  type PresetsUpdateArgs,
-  presetsUpdateSchema,
-  validateArgs,
-} from "@/utils/validation.js";
+import { validateArgs } from "@/utils/validation.js";
+import { type PresetsUpdateArgs, presetsUpdateSchema } from "./schemas.js";
 
 type UpdatePresetJson =
   paths["/update_preset"]["post"]["requestBody"]["content"]["application/json"];

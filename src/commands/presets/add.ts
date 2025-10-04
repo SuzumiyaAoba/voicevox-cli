@@ -8,7 +8,8 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
-import { presetsAddSchema, validateArgs } from "@/utils/validation.js";
+import { validateArgs } from "@/utils/validation.js";
+import { presetsAddSchema } from "./schemas.js";
 
 // プリセット追加コマンド
 export const presetsAddCommand = defineCommand({

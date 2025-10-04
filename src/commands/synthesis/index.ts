@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { z } from "zod";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient } from "@/utils/api-helpers.js";
@@ -7,7 +8,15 @@ import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
 import { synthesisMessages } from "@/utils/messages.js";
 import { resolveOutputFormat } from "@/utils/output.js";
-import { synthesisSchema, validateArgs } from "@/utils/validation.js";
+import {
+  baseUrlSchema,
+  inputFileSchema,
+  outputFileSchema,
+  outputTypeSchema,
+  speakerIdSchema,
+  textSchema,
+  validateArgs,
+} from "@/utils/validation.js";
 import { extractAndPlayZip } from "@/utils/zip-player.js";
 import {
   createAudioQueriesFromLines,
@@ -17,6 +26,67 @@ import {
   processInputFile,
   processMultiModeInput,
 } from "./handlers.js";
+
+/**
+ * 音声合成コマンド用のバリデーションスキーマ
+ */
+const synthesisSchema = z
+  .object({
+    speaker: speakerIdSchema,
+    text: textSchema.optional(),
+    input: inputFileSchema.optional(),
+    output: outputFileSchema.optional(),
+    play: z.boolean().optional(),
+    type: outputTypeSchema.optional(),
+    baseUrl: baseUrlSchema,
+    json: z.boolean().optional(),
+    multi: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      // text または input のいずれかが必須
+      return data.text !== undefined || data.input !== undefined;
+    },
+    {
+      message: "Either text or input file must be provided",
+      path: ["text", "input"],
+    },
+  )
+  .refine(
+    (data) => {
+      // type と json は同時に指定できない
+      return !(data.type !== undefined && data.json !== undefined);
+    },
+    {
+      message: "Cannot specify both type and json options",
+      path: ["type", "json"],
+    },
+  )
+  .refine(
+    (data) => {
+      // multi は input と一緒にのみ使用可能
+      if (data.multi && !data.input) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Multi mode requires input file",
+      path: ["multi"],
+    },
+  )
+  .transform((data) => {
+    // text が undefined の場合は空文字列に変換（実際には refine でチェック済み）
+    return {
+      ...data,
+      text: data.text ?? "",
+    };
+  });
+
+/**
+ * 音声合成コマンドの引数型
+ */
+export type SynthesisArgs = z.infer<typeof synthesisSchema>;
 
 /**
  * 音声合成コマンド

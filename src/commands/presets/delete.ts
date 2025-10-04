@@ -8,7 +8,8 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
-import { presetsDeleteSchema, validateArgs } from "@/utils/validation.js";
+import { validateArgs } from "@/utils/validation.js";
+import { presetsDeleteSchema } from "./schemas.js";
 
 // プリセット削除コマンド
 export const presetsDeleteCommand = defineCommand({

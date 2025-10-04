@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { z } from "zod";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { displayAudioQueryInfo } from "@/utils/audio-query-display.js";
@@ -9,7 +10,48 @@ import {
   handleError,
   VoicevoxError,
 } from "@/utils/error-handler.js";
-import { audioQuerySchema, validateArgs } from "@/utils/validation.js";
+import { createNonNegativeIntSchema } from "@/utils/number-parser.js";
+import {
+  baseUrlSchema,
+  speakerIdSchema,
+  textSchema,
+  validateArgs,
+} from "@/utils/validation.js";
+
+/**
+ * プリセットID検証スキーマ
+ */
+const presetIdSchema = createNonNegativeIntSchema("Preset ID");
+
+/**
+ * 音声クエリ作成コマンド用のバリデーションスキーマ
+ */
+const audioQuerySchema = z
+  .object({
+    speaker: speakerIdSchema.optional(),
+    presetId: presetIdSchema.optional(),
+    text: textSchema,
+    baseUrl: baseUrlSchema,
+    json: z.boolean().optional(),
+    enableKatakanaEnglish: z.boolean().optional(),
+  })
+  .superRefine((val, ctx) => {
+    const hasSpeaker =
+      typeof val.speaker === "string" && val.speaker.length > 0;
+    const hasPreset = typeof val.presetId === "number";
+    if (!hasSpeaker && !hasPreset) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Either speaker or presetId is required",
+        path: ["presetId"],
+      });
+    }
+  });
+
+/**
+ * 音声クエリ作成コマンドの引数型
+ */
+export type AudioQueryArgs = z.infer<typeof audioQuerySchema>;
 
 // 音声クエリ作成コマンド
 export const createCommand = defineCommand({

@@ -1,5 +1,6 @@
-import type { paths } from "@suzumiyaaoba/voicevox-client";
+import type { components, paths } from "@suzumiyaaoba/voicevox-client";
 import type openapiFetch from "openapi-fetch";
+import { z } from "zod";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
@@ -12,7 +13,52 @@ import {
   saveBuffer,
 } from "@/utils/file-io.js";
 import { outputJson } from "@/utils/output.js";
-import { type AudioQuery, audioQueryDataSchema } from "@/utils/validation.js";
+
+/**
+ * VOICEVOX Engine APIのAudioQuery型
+ */
+export type AudioQuery = components["schemas"]["AudioQuery"];
+
+/**
+ * Moraのスキーマ
+ */
+const moraSchema: z.ZodType<components["schemas"]["Mora"]> = z.object({
+  text: z.string(),
+  consonant: z.string().optional(),
+  consonant_length: z.number().optional(),
+  vowel: z.string(),
+  vowel_length: z.number(),
+  pitch: z.number(),
+});
+
+/**
+ * AccentPhraseのスキーマ
+ */
+const accentPhraseSchema: z.ZodType<components["schemas"]["AccentPhrase"]> =
+  z.object({
+    moras: z.array(moraSchema),
+    accent: z.number(),
+    pause_mora: moraSchema.optional(),
+    is_interrogative: z.boolean(),
+  });
+
+/**
+ * AudioQueryのZodスキーマ
+ */
+export const audioQueryDataSchema: z.ZodType<AudioQuery> = z.object({
+  accent_phrases: z.array(accentPhraseSchema),
+  speedScale: z.number(),
+  pitchScale: z.number(),
+  intonationScale: z.number(),
+  volumeScale: z.number(),
+  prePhonemeLength: z.number(),
+  postPhonemeLength: z.number(),
+  pauseLength: z.number().nullable().optional(),
+  pauseLengthScale: z.number(),
+  outputSamplingRate: z.number(),
+  outputStereo: z.boolean(),
+  kana: z.string().optional(),
+});
 
 // 型定義
 type Client = ReturnType<typeof openapiFetch<paths>>;

@@ -7,13 +7,27 @@
  */
 
 import { defineCommand } from "citty";
+import { z } from "zod";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
-import { engineVersionsSchema, validateArgs } from "@/utils/validation.js";
+import { baseUrlSchema, validateArgs } from "@/utils/validation.js";
+
+/**
+ * コアバージョン一覧コマンド用のバリデーションスキーマ
+ */
+const engineVersionsSchema = z.object({
+  baseUrl: baseUrlSchema.optional(),
+  json: z.boolean().optional(),
+});
+
+/**
+ * コアバージョン一覧コマンドの引数型
+ */
+export type EngineVersionsArgs = z.infer<typeof engineVersionsSchema>;
 
 /**
  * コアバージョン一覧コマンド定義
