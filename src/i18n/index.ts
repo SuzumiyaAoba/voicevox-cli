@@ -25,13 +25,13 @@ export const translations: Record<Locale, TranslationData> = {
       synthesis: {
         name: "synthesis",
         description: "テキストから音声を合成する",
-        synthesizing: '音声合成中: "{text}"',
-        loadingInput: "入力ファイルを読み込み中: {input}",
-        loadingMultiInput: "複数の音声クエリを読み込み中: {input}",
-        loadingMultiText: "複数行のテキストファイルを読み込み中: {count} 行",
-        speakerId: "話者ID: {speaker}",
-        output: "出力: {output}",
-        play: "再生: {play}",
+        synthesizing: "音声合成中: {{text}}",
+        loadingInput: "入力ファイルを読み込み中: {{input}}",
+        loadingMultiInput: "複数の音声クエリを読み込み中: {{input}}",
+        loadingMultiText: "複数行のテキストファイルを読み込み中: {{count}} 行",
+        speakerId: "話者ID: {{speaker}}",
+        output: "出力: {{output}}",
+        play: "再生: {{play}}",
         args: {
           text: "合成するテキスト",
           speaker: "話者ID（デフォルト: 2）",
@@ -39,12 +39,12 @@ export const translations: Record<Locale, TranslationData> = {
           play: "合成後に音声を再生",
         },
         synthesisError: "音声合成中にエラーが発生しました",
-        synthesisComplete: "音声合成が完了しました: {output}",
+        synthesisComplete: "音声合成が完了しました: {{output}}",
         multiSynthesisComplete:
-          "複数音声合成完了: {count} 件の音声クエリを処理しました",
+          "複数音声合成完了: {{count}} 件の音声クエリを処理しました",
         playingAudio: "音声を再生中...",
-        playingMultipleAudio: "複数の音声ファイルを再生中: {count} 件",
-        playingAudioFile: "再生中 ({current}/{total}): {file}",
+        playingMultipleAudio: "複数の音声ファイルを再生中: {{count}} 件",
+        playingAudioFile: "再生中 ({{current}}/{{total}}): {{file}}",
         noAudioFilesInZip: "ZIPファイル内に音声ファイルが見つかりませんでした",
         makeSureEngineRunning:
           "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
@@ -57,9 +57,9 @@ export const translations: Record<Locale, TranslationData> = {
         create: {
           name: "create",
           description: "テキストから音声クエリを生成する",
-          querying: '音声クエリ生成中: "{text}"',
-          speakerId: "話者ID: {speaker}",
-          usingPreset: "プリセットIDで生成: {presetId}",
+          querying: '音声クエリ生成中: "{{text}}"',
+          speakerId: "話者ID: {{speaker}}",
+          usingPreset: "プリセットIDで生成: {{presetId}}",
           args: {
             text: "クエリを生成するテキスト",
             speaker: "話者ID（デフォルト: 2）",
@@ -78,7 +78,7 @@ export const translations: Record<Locale, TranslationData> = {
         name: "speakers",
         description: "利用可能な話者一覧を表示",
         fetching: "利用可能な話者を取得中...",
-        totalSpeakers: "合計 {count} 人の話者が見つかりました",
+        totalSpeakers: "合計 {{count}} 人の話者が見つかりました",
         invalidResponse: "無効なレスポンス形式",
         errorFetching: "話者一覧の取得中にエラーが発生しました:",
         makeSureEngineRunning:
@@ -120,7 +120,7 @@ export const translations: Record<Locale, TranslationData> = {
           name: "list",
           description: "利用可能なプリセット一覧を表示",
           fetching: "利用可能なプリセットを取得中...",
-          totalPresets: "合計 {count} 個のプリセットが見つかりました",
+          totalPresets: "合計 {{count}} 個のプリセットが見つかりました",
           noPresets: "プリセットが見つかりませんでした",
           args: {
             json: "JSON形式で出力する",
@@ -132,9 +132,9 @@ export const translations: Record<Locale, TranslationData> = {
         add: {
           name: "add",
           description: "新しいプリセットを追加する",
-          adding: "プリセットを追加中: {name}",
-          added: "プリセットが追加されました: {name}",
-          presetId: "プリセットID: {id}",
+          adding: "プリセットを追加中: {{name}}",
+          added: "プリセットが追加されました: {{name}}",
+          presetId: "プリセットID: {{id}}",
           args: {
             id: "プリセットID",
             name: "プリセット名",
@@ -155,8 +155,8 @@ export const translations: Record<Locale, TranslationData> = {
         update: {
           name: "update",
           description: "既存のプリセットを更新する",
-          updating: "プリセットを更新中: ID {id}",
-          updated: "プリセットが更新されました: ID {id}",
+          updating: "プリセットを更新中: ID {{id}}",
+          updated: "プリセットが更新されました: ID {{id}}",
           args: {
             id: "プリセットID",
             name: "プリセット名",
@@ -177,8 +177,8 @@ export const translations: Record<Locale, TranslationData> = {
         delete: {
           name: "delete",
           description: "既存のプリセットを削除する",
-          deleting: "プリセットを削除中: ID {id}",
-          deleted: "プリセットが削除されました: ID {id}",
+          deleting: "プリセットを削除中: ID {{id}}",
+          deleted: "プリセットが削除されました: ID {{id}}",
           args: {
             id: "プリセットID",
             json: "JSON形式で出力する",
@@ -192,13 +192,59 @@ export const translations: Record<Locale, TranslationData> = {
         name: "version",
         description: "バージョン情報を表示",
       },
+      devices: {
+        name: "devices",
+        description: "対応デバイス一覧を表示",
+        fetching: "対応デバイス一覧を取得中...",
+        devicesInfo: "対応デバイス情報",
+        deviceName: "デバイス名",
+        deviceType: "デバイスタイプ",
+        deviceId: "デバイスID",
+        deviceUuid: "デバイスUUID",
+        deviceModel: "デバイスモデル",
+        deviceSpeaker: "デバイススピーカー",
+        deviceSpeakerUuid: "デバイススピーカーUUID",
+        deviceSpeakerName: "デバイススピーカー名",
+        deviceSpeakerSpeakerUuid: "デバイススピーカースピーカーUUID",
+        deviceSpeakerSpeakerName: "デバイススピーカースピーカー名",
+        deviceSpeakerSpeakerStyleId: "デバイススピーカースピーカースタイルID",
+        deviceSpeakerSpeakerStyleName: "デバイススピーカースピーカースタイル名",
+        deviceSpeakerSpeakerVoiceSamples:
+          "デバイススピーカースピーカーボイスサンプル",
+        args: {
+          json: "JSON形式で出力",
+        },
+        errorFetching: "対応デバイス一覧の取得中にエラーが発生しました:",
+        makeSureEngineRunning:
+          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+      },
       engine: {
         name: "engine",
         description: "VOICEVOX Engine関連のコマンド",
+        manifest: {
+          name: "manifest",
+          description: "VOICEVOX Engineのマニフェスト情報を表示",
+          fetching: "エンジンマニフェストを取得中...",
+          manifestInfo: "エンジンマニフェスト情報",
+          engineName: "エンジン名",
+          brandName: "ブランド名",
+          version: "マニフェストバージョン",
+          uuid: "エンジンUUID",
+          url: "エンジンURL",
+          defaultSamplingRate: "デフォルトサンプリングレート",
+          frameRate: "フレームレート",
+          supportedFeatures: "対応機能",
+          args: {
+            json: "JSON形式で出力",
+          },
+          errorFetching: "エンジンマニフェストの取得中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
+        },
         version: {
           name: "version",
           description: "VOICEVOX Engineのバージョン情報を表示",
-          engineVersion: "VOICEVOX Engine バージョン: {version}",
+          engineVersion: "VOICEVOX Engine バージョン: {{version}}",
           invalidResponse: "無効なレスポンス形式",
           errorFetching: "エンジンバージョンの取得中にエラーが発生しました:",
           makeSureEngineRunning:
@@ -209,71 +255,21 @@ export const translations: Record<Locale, TranslationData> = {
           },
         },
       },
-    },
-    devices: {
-      name: "devices",
-      description: "対応デバイス一覧を表示",
-      fetching: "対応デバイス一覧を取得中...",
-      devicesInfo: "対応デバイス情報",
-      deviceName: "デバイス名",
-      deviceType: "デバイスタイプ",
-      deviceId: "デバイスID",
-      deviceUuid: "デバイスUUID",
-      deviceModel: "デバイスモデル",
-      deviceSpeaker: "デバイススピーカー",
-      deviceSpeakerUuid: "デバイススピーカーUUID",
-      deviceSpeakerName: "デバイススピーカー名",
-      deviceSpeakerSpeakerUuid: "デバイススピーカースピーカーUUID",
-      deviceSpeakerSpeakerName: "デバイススピーカースピーカー名",
-      deviceSpeakerSpeakerStyleId: "デバイススピーカースピーカースタイルID",
-      deviceSpeakerSpeakerStyleName: "デバイススピーカースピーカースタイル名",
-      deviceSpeakerSpeakerVoiceSamples:
-        "デバイススピーカースピーカーボイスサンプル",
-      args: {
-        json: "JSON形式で出力",
-      },
-      errorFetching: "対応デバイス一覧の取得中にエラーが発生しました:",
-      makeSureEngineRunning:
-        "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
-    },
-    engine: {
-      name: "engine",
-      description: "VOICEVOX Engine関連のコマンド",
-      manifest: {
-        name: "manifest",
-        description: "VOICEVOX Engineのマニフェスト情報を表示",
-        fetching: "エンジンマニフェストを取得中...",
-        manifestInfo: "エンジンマニフェスト情報",
-        engineName: "エンジン名",
-        brandName: "ブランド名",
-        version: "マニフェストバージョン",
-        uuid: "エンジンUUID",
-        url: "エンジンURL",
-        defaultSamplingRate: "デフォルトサンプリングレート",
-        frameRate: "フレームレート",
-        supportedFeatures: "対応機能",
-        args: {
-          json: "JSON形式で出力",
+      core: {
+        name: "core",
+        description: "VOICEVOX Core関連のコマンド",
+        versions: {
+          name: "versions",
+          description: "利用可能なコアバージョン一覧を表示",
+          fetching: "コアバージョン一覧を取得中...",
+          versionsFound: "利用可能なコアバージョン:",
+          args: {
+            json: "JSON形式で出力",
+          },
+          errorFetching: "コアバージョン一覧の取得中にエラーが発生しました:",
+          makeSureEngineRunning:
+            "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
         },
-        errorFetching: "エンジンマニフェストの取得中にエラーが発生しました:",
-        makeSureEngineRunning:
-          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
-      },
-    },
-    core: {
-      name: "core",
-      description: "VOICEVOX Core関連のコマンド",
-      versions: {
-        name: "versions",
-        description: "利用可能なコアバージョン一覧を表示",
-        fetching: "コアバージョン一覧を取得中...",
-        versionsFound: "利用可能なコアバージョン:",
-        args: {
-          json: "JSON形式で出力",
-        },
-        errorFetching: "コアバージョン一覧の取得中にエラーが発生しました:",
-        makeSureEngineRunning:
-          "指定されたURLでVOICEVOX Engineが起動していることを確認してください",
       },
     },
     common: {
@@ -286,13 +282,13 @@ export const translations: Record<Locale, TranslationData> = {
       synthesis: {
         name: "synthesis",
         description: "Synthesize speech from text",
-        synthesizing: 'Synthesizing: "{text}"',
-        loadingInput: "Loading input file: {input}",
-        loadingMultiInput: "Loading multiple audio queries: {input}",
-        loadingMultiText: "Loading multi-line text file: {count} lines",
-        speakerId: "Speaker ID: {speaker}",
-        output: "Output: {output}",
-        play: "Play: {play}",
+        synthesizing: 'Synthesizing: "{{text}}"',
+        loadingInput: "Loading input file: {{input}}",
+        loadingMultiInput: "Loading multiple audio queries: {{input}}",
+        loadingMultiText: "Loading multi-line text file: {{count}} lines",
+        speakerId: "Speaker ID: {{speaker}}",
+        output: "Output: {{output}}",
+        play: "Play: {{play}}",
         args: {
           text: "Text to synthesize",
           speaker: "Speaker ID (default: 2)",
@@ -300,12 +296,12 @@ export const translations: Record<Locale, TranslationData> = {
           play: "Play audio after synthesis",
         },
         synthesisError: "Error occurred during synthesis",
-        synthesisComplete: "Synthesis completed: {output}",
+        synthesisComplete: "Synthesis completed: {{output}}",
         multiSynthesisComplete:
-          "Multi-synthesis complete: {count} audio queries processed",
+          "Multi-synthesis complete: {{count}} audio queries processed",
         playingAudio: "Playing audio...",
-        playingMultipleAudio: "Playing multiple audio files: {count} files",
-        playingAudioFile: "Playing ({current}/{total}): {file}",
+        playingMultipleAudio: "Playing multiple audio files: {{count}} files",
+        playingAudioFile: "Playing ({{current}}/{{total}}): {{file}}",
         noAudioFilesInZip: "No audio files found in ZIP",
         makeSureEngineRunning:
           "Make sure VOICEVOX Engine is running on the specified URL",
@@ -318,9 +314,9 @@ export const translations: Record<Locale, TranslationData> = {
         create: {
           name: "create",
           description: "Generate audio query from text",
-          querying: 'Generating audio query: "{text}"',
-          speakerId: "Speaker ID: {speaker}",
-          usingPreset: "Using preset ID: {presetId}",
+          querying: 'Generating audio query: "{{text}}"',
+          speakerId: "Speaker ID: {{speaker}}",
+          usingPreset: "Using preset ID: {{presetId}}",
           args: {
             text: "Text to generate query for",
             speaker: "Speaker ID (default: 2)",
@@ -340,7 +336,7 @@ export const translations: Record<Locale, TranslationData> = {
         name: "speakers",
         description: "List available speakers",
         fetching: "Fetching available speakers...",
-        totalSpeakers: "Total {count} speakers found",
+        totalSpeakers: "Total {{count}} speakers found",
         invalidResponse: "Invalid response format",
         errorFetching: "Error fetching speakers:",
         makeSureEngineRunning:
@@ -382,7 +378,7 @@ export const translations: Record<Locale, TranslationData> = {
           name: "list",
           description: "List available presets",
           fetching: "Fetching available presets...",
-          totalPresets: "Total {count} presets found",
+          totalPresets: "Total {{count}} presets found",
           noPresets: "No presets found",
           args: {
             json: "Output in JSON format",
@@ -394,9 +390,9 @@ export const translations: Record<Locale, TranslationData> = {
         add: {
           name: "add",
           description: "Add a new preset",
-          adding: "Adding preset: {name}",
-          added: "Preset added: {name}",
-          presetId: "Preset ID: {id}",
+          adding: "Adding preset: {{name}}",
+          added: "Preset added: {{name}}",
+          presetId: "Preset ID: {{id}}",
           args: {
             id: "Preset ID",
             name: "Preset name",
@@ -417,8 +413,8 @@ export const translations: Record<Locale, TranslationData> = {
         update: {
           name: "update",
           description: "Update an existing preset",
-          updating: "Updating preset: ID {id}",
-          updated: "Preset updated: ID {id}",
+          updating: "Updating preset: ID {{id}}",
+          updated: "Preset updated: ID {{id}}",
           args: {
             id: "Preset ID",
             name: "Preset name",
@@ -439,8 +435,8 @@ export const translations: Record<Locale, TranslationData> = {
         delete: {
           name: "delete",
           description: "Delete an existing preset",
-          deleting: "Deleting preset: ID {id}",
-          deleted: "Preset deleted: ID {id}",
+          deleting: "Deleting preset: ID {{id}}",
+          deleted: "Preset deleted: ID {{id}}",
           args: {
             id: "Preset ID",
             json: "Output in JSON format",
@@ -454,13 +450,59 @@ export const translations: Record<Locale, TranslationData> = {
         name: "version",
         description: "Show version information",
       },
+      devices: {
+        name: "devices",
+        description: "Display supported devices list",
+        fetching: "Fetching supported devices list...",
+        devicesInfo: "Supported Devices Information",
+        deviceName: "Device Name",
+        deviceType: "Device Type",
+        deviceId: "Device ID",
+        deviceUuid: "Device UUID",
+        deviceModel: "Device Model",
+        deviceSpeaker: "Device Speaker",
+        deviceSpeakerUuid: "Device Speaker UUID",
+        deviceSpeakerName: "Device Speaker Name",
+        deviceSpeakerSpeakerUuid: "Device Speaker Speaker UUID",
+        deviceSpeakerSpeakerName: "Device Speaker Speaker Name",
+        deviceSpeakerSpeakerStyleId: "Device Speaker Speaker Style ID",
+        deviceSpeakerSpeakerStyleName: "Device Speaker Speaker Style Name",
+        deviceSpeakerSpeakerVoiceSamples:
+          "Device Speaker Speaker Voice Samples",
+        args: {
+          json: "Output in JSON format",
+        },
+        errorFetching: "Error fetching supported devices list:",
+        makeSureEngineRunning:
+          "Make sure VOICEVOX Engine is running on the specified URL",
+      },
       engine: {
         name: "engine",
         description: "VOICEVOX Engine related commands",
+        manifest: {
+          name: "manifest",
+          description: "Display VOICEVOX Engine manifest information",
+          fetching: "Fetching engine manifest...",
+          manifestInfo: "Engine Manifest Information",
+          engineName: "Engine Name",
+          brandName: "Brand Name",
+          version: "Manifest Version",
+          uuid: "Engine UUID",
+          url: "Engine URL",
+          defaultSamplingRate: "Default Sampling Rate",
+          frameRate: "Frame Rate",
+          supportedFeatures: "Supported Features",
+          args: {
+            json: "Output in JSON format",
+          },
+          errorFetching: "Error fetching engine manifest:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
+        },
         version: {
           name: "version",
           description: "Show VOICEVOX Engine version information",
-          engineVersion: "VOICEVOX Engine Version: {version}",
+          engineVersion: "VOICEVOX Engine Version: {{version}}",
           invalidResponse: "Invalid response format",
           errorFetching: "Error fetching engine version:",
           makeSureEngineRunning:
@@ -471,70 +513,21 @@ export const translations: Record<Locale, TranslationData> = {
           },
         },
       },
-    },
-    devices: {
-      name: "devices",
-      description: "Display supported devices list",
-      fetching: "Fetching supported devices list...",
-      devicesInfo: "Supported Devices Information",
-      deviceName: "Device Name",
-      deviceType: "Device Type",
-      deviceId: "Device ID",
-      deviceUuid: "Device UUID",
-      deviceModel: "Device Model",
-      deviceSpeaker: "Device Speaker",
-      deviceSpeakerUuid: "Device Speaker UUID",
-      deviceSpeakerName: "Device Speaker Name",
-      deviceSpeakerSpeakerUuid: "Device Speaker Speaker UUID",
-      deviceSpeakerSpeakerName: "Device Speaker Speaker Name",
-      deviceSpeakerSpeakerStyleId: "Device Speaker Speaker Style ID",
-      deviceSpeakerSpeakerStyleName: "Device Speaker Speaker Style Name",
-      deviceSpeakerSpeakerVoiceSamples: "Device Speaker Speaker Voice Samples",
-      args: {
-        json: "Output in JSON format",
-      },
-      errorFetching: "Error fetching supported devices list:",
-      makeSureEngineRunning:
-        "Make sure VOICEVOX Engine is running on the specified URL",
-    },
-    engine: {
-      name: "engine",
-      description: "VOICEVOX Engine related commands",
-      manifest: {
-        name: "manifest",
-        description: "Display VOICEVOX Engine manifest information",
-        fetching: "Fetching engine manifest...",
-        manifestInfo: "Engine Manifest Information",
-        engineName: "Engine Name",
-        brandName: "Brand Name",
-        version: "Manifest Version",
-        uuid: "Engine UUID",
-        url: "Engine URL",
-        defaultSamplingRate: "Default Sampling Rate",
-        frameRate: "Frame Rate",
-        supportedFeatures: "Supported Features",
-        args: {
-          json: "Output in JSON format",
+      core: {
+        name: "core",
+        description: "VOICEVOX Core related commands",
+        versions: {
+          name: "versions",
+          description: "Display available core versions",
+          fetching: "Fetching core versions...",
+          versionsFound: "Available core versions:",
+          args: {
+            json: "Output in JSON format",
+          },
+          errorFetching: "Error occurred while fetching core versions:",
+          makeSureEngineRunning:
+            "Make sure VOICEVOX Engine is running on the specified URL",
         },
-        errorFetching: "Error fetching engine manifest:",
-        makeSureEngineRunning:
-          "Make sure VOICEVOX Engine is running on the specified URL",
-      },
-    },
-    core: {
-      name: "core",
-      description: "VOICEVOX Core related commands",
-      versions: {
-        name: "versions",
-        description: "Display available core versions",
-        fetching: "Fetching core versions...",
-        versionsFound: "Available core versions:",
-        args: {
-          json: "Output in JSON format",
-        },
-        errorFetching: "Error occurred while fetching core versions:",
-        makeSureEngineRunning:
-          "Make sure VOICEVOX Engine is running on the specified URL",
       },
     },
     common: {
