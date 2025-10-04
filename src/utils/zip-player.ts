@@ -1,3 +1,12 @@
+/**
+ * ZIPファイル音声プレイヤーユーティリティ
+ *
+ * ZIPファイルに含まれる複数の音声ファイルを展開して順番に再生する機能を提供します。
+ * マルチモード音声合成で生成されたZIPファイルの再生に使用されます。
+ *
+ * @module zip-player
+ */
+
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -8,7 +17,20 @@ import { playAudio } from "./audio-player.js";
 
 /**
  * ZIPファイルを展開して各音声ファイルを順番に再生する
- * @param zipFilePath - ZIPファイルのパス
+ *
+ * ZIPファイル内のすべてのWAVファイルを一時ディレクトリに展開し、
+ * ファイル名順にソートして順番に再生します。
+ * 再生後は一時ディレクトリを自動的にクリーンアップします。
+ *
+ * @param zipFilePath - 再生するZIPファイルのパス
+ * @returns Promise<void> - すべての音声ファイルの再生完了時にresolveされる
+ * @throws ZIPファイルの読み込みに失敗した場合
+ *
+ * @example
+ * ```typescript
+ * // マルチモード音声合成の結果を再生
+ * await extractAndPlayZip("output/multi.zip");
+ * ```
  */
 export const extractAndPlayZip = async (zipFilePath: string): Promise<void> => {
   // 一時ディレクトリを作成

@@ -1,3 +1,11 @@
+/**
+ * コアバージョン一覧コマンド
+ *
+ * VOICEVOX Engineの利用可能なコアバージョン一覧を取得して表示します。
+ *
+ * @module commands/core/versions
+ */
+
 import { defineCommand } from "citty";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
@@ -7,7 +15,18 @@ import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
 import { engineVersionsSchema, validateArgs } from "@/utils/validation.js";
 
-// コアバージョン一覧コマンド
+/**
+ * コアバージョン一覧コマンド定義
+ *
+ * @example
+ * ```bash
+ * # コアバージョン一覧を表示
+ * voicevox core versions
+ *
+ * # JSON形式で出力
+ * voicevox core versions --json
+ * ```
+ */
 export const coreVersionsCommand = defineCommand({
   meta: {
     name: i18next.t("commands.core.versions.name"),

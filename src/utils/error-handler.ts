@@ -51,7 +51,14 @@ export class VoicevoxError extends Error {
   }
 }
 
-// エラーの種類を判定する関数
+/**
+ * エラーの種類を判定する内部関数
+ *
+ * エラーメッセージやエラータイプから適切なエラー種類を分類します。
+ *
+ * @param error - 判定対象のエラー
+ * @returns エラータイプ
+ */
 const classifyError = (error: unknown): ErrorType => {
   if (error instanceof VoicevoxError) {
     return error.type;
@@ -92,7 +99,13 @@ const classifyError = (error: unknown): ErrorType => {
   return ErrorType.UNKNOWN;
 };
 
-// エラーメッセージを生成する関数
+/**
+ * エラータイプに応じた適切なエラーメッセージを生成する内部関数
+ *
+ * @param errorType - エラータイプ
+ * @param command - 実行されたコマンド名
+ * @returns ローカライズされたエラーメッセージ
+ */
 const getErrorMessage = (errorType: ErrorType, command: string): string => {
   switch (errorType) {
     case ErrorType.NETWORK:
@@ -106,7 +119,12 @@ const getErrorMessage = (errorType: ErrorType, command: string): string => {
   }
 };
 
-// エラーの詳細メッセージを生成する関数
+/**
+ * エラーオブジェクトから詳細メッセージを抽出する内部関数
+ *
+ * @param error - エラーオブジェクト
+ * @returns エラーの詳細メッセージ
+ */
 const getErrorDetails = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;
@@ -114,7 +132,12 @@ const getErrorDetails = (error: unknown): string => {
   return String(error);
 };
 
-// エラーのヘルプメッセージを生成する関数
+/**
+ * エラータイプに応じたヘルプメッセージを取得する内部関数
+ *
+ * @param errorType - エラータイプ
+ * @returns ローカライズされたヘルプメッセージ、または null
+ */
 const getErrorHelp = (errorType: ErrorType): string | null => {
   switch (errorType) {
     case ErrorType.NETWORK:
@@ -128,7 +151,26 @@ const getErrorHelp = (errorType: ErrorType): string | null => {
   }
 };
 
-// メインのエラーハンドリング関数
+/**
+ * メインのエラーハンドリング関数
+ *
+ * エラーを適切に分類し、ユーザー向けメッセージを表示してプロセスを終了します。
+ * エラーの詳細はデバッグログに記録されます。
+ *
+ * @param error - 処理するエラー
+ * @param command - エラーが発生したコマンド名
+ * @param context - 追加のコンテキスト情報
+ * @throws プロセスを終了するため、この関数は決して正常に戻りません
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   // ... some operation
+ * } catch (error) {
+ *   handleError(error, "synthesis", { speaker: "1" });
+ * }
+ * ```
+ */
 export const handleError = (
   error: unknown,
   command: string,
@@ -160,7 +202,22 @@ export const handleError = (
   process.exit(1);
 };
 
-// 非同期関数のエラーハンドリング用のラッパー
+/**
+ * 非同期関数のエラーハンドリングラッパー
+ *
+ * 非同期関数を実行し、エラーが発生した場合は適切にハンドリングします。
+ *
+ * @param fn - ラップする非同期関数
+ * @param command - コマンド名
+ * @returns エラーハンドリングが追加された関数
+ *
+ * @example
+ * ```typescript
+ * const safeFunction = withErrorHandling(async (text: string) => {
+ *   return await synthesize(text);
+ * }, "synthesis");
+ * ```
+ */
 export const withErrorHandling = <T extends unknown[], R>(
   fn: (...args: T) => Promise<R>,
   command: string,
@@ -176,7 +233,22 @@ export const withErrorHandling = <T extends unknown[], R>(
   };
 };
 
-// 同期関数のエラーハンドリング用のラッパー
+/**
+ * 同期関数のエラーハンドリングラッパー
+ *
+ * 同期関数を実行し、エラーが発生した場合は適切にハンドリングします。
+ *
+ * @param fn - ラップする同期関数
+ * @param command - コマンド名
+ * @returns エラーハンドリングが追加された関数
+ *
+ * @example
+ * ```typescript
+ * const safeFunction = withErrorHandlingSync((data: string) => {
+ *   return JSON.parse(data);
+ * }, "parse");
+ * ```
+ */
 export const withErrorHandlingSync = <T extends unknown[], R>(
   fn: (...args: T) => R,
   command: string,

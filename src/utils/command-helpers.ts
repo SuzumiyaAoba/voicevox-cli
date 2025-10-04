@@ -1,5 +1,18 @@
+/**
+ * コマンドヘルパーユーティリティ
+ *
+ * 共通のコマンドオプション定義を提供します。
+ * すべてのコマンドで使用される基本的なオプション（baseUrl, json）を統一的に管理します。
+ *
+ * @module command-helpers
+ */
+
 import i18next from "@/i18n/config.js";
 
+/**
+ * ベースURLオプションの定義
+ * VOICEVOX Engine APIのエンドポイントURLを指定するためのオプション
+ */
 export const baseUrlOption = {
   baseUrl: {
     type: "string" as const,
@@ -10,6 +23,10 @@ export const baseUrlOption = {
 
 /**
  * 共通のコマンドオプション定義（baseUrl, json）
+ *
+ * すべてのコマンドで共通して使用されるオプションを定義します。
+ * - json: JSON形式で出力するかどうか
+ * - baseUrl: VOICEVOX Engine APIのエンドポイント
  */
 export const commonCommandOptions = {
   json: {

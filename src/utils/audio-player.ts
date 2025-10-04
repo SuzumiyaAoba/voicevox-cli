@@ -1,3 +1,12 @@
+/**
+ * 音声プレイヤーユーティリティ
+ *
+ * プラットフォームに応じた音声ファイルの再生機能を提供します。
+ * macOS、Windows、Linuxの各プラットフォームに対応しています。
+ *
+ * @module audio-player
+ */
+
 import { spawn } from "node:child_process";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
@@ -5,8 +14,14 @@ import { display, log } from "@/logger.js";
 /**
  * 音声ファイルを再生する関数
  *
- * プラットフォームに応じて適切な音声プレイヤーを使用して音声ファイルを再生する。
- * macOSではafplay、WindowsではPowerShell、Linuxではaplayを使用する。
+ * プラットフォームに応じて適切な音声プレイヤーを使用して音声ファイルを再生します。
+ *
+ * - macOS: afplayコマンドを使用
+ * - Windows: PowerShellのMedia.SoundPlayerを使用
+ * - Linux: aplayコマンドを使用
+ *
+ * プレイヤーが見つからない場合やエラーが発生した場合は警告を表示しますが、
+ * 処理は継続します（例外を投げません）。
  *
  * @param filePath - 再生する音声ファイルのパス
  * @returns Promise<void> - 再生完了時にresolveされるPromise

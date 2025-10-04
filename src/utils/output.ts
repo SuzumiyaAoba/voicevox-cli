@@ -1,7 +1,19 @@
+/**
+ * 出力ユーティリティ
+ *
+ * データをJSON形式またはテキスト形式で出力するための関数を提供します。
+ * コマンドラインオプション（--json, --type）に基づいた出力制御をサポートします。
+ *
+ * @module output
+ */
+
 import { display } from "@/logger.js";
 
 /**
  * JSON形式でデータを出力する
+ *
+ * データをJSON.stringifyで整形（インデント2）して標準出力に表示します。
+ *
  * @param data - 出力するデータ
  */
 export const outputJson = (data: unknown): void => {

@@ -1,3 +1,12 @@
+/**
+ * バリデーションユーティリティ
+ *
+ * Zodを使用したコマンド引数のバリデーションスキーマとヘルパー関数を提供します。
+ * VOICEVOX CLIの全コマンドで使用される共通のバリデーションロジックを定義します。
+ *
+ * @module validation
+ */
+
 import type { components } from "@suzumiyaaoba/voicevox-client";
 import { z } from "zod";
 import {
@@ -9,12 +18,18 @@ import {
 // API型定義
 // ========================================
 
+/**
+ * VOICEVOX Engine APIのAudioQuery型
+ */
 export type AudioQuery = components["schemas"]["AudioQuery"];
 
 // ========================================
 // 共通の基本スキーマ
 // ========================================
 
+/**
+ * ベースURL検証スキーマ
+ */
 export const baseUrlSchema = z.string().url("Invalid base URL format");
 
 export const speakerIdSchema = z.string().min(1, "Speaker ID is required");

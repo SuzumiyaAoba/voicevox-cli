@@ -1,9 +1,19 @@
+/**
+ * 数値パーサーユーティリティ
+ *
+ * コマンドライン引数からの数値パース用のZodスキーマファクトリを提供します。
+ * バリデーション機能を含む型安全なパーサーを生成します。
+ *
+ * @module number-parser
+ */
+
 import { z } from "zod";
 
 /**
  * 文字列を非負の整数に変換するZodスキーマファクトリ
+ *
  * @param fieldName - フィールド名（エラーメッセージ用）
- * @returns Zodスキーマ
+ * @returns 非負整数検証用のZodスキーマ
  */
 export const createNonNegativeIntSchema = (fieldName: string) =>
   z.string().transform((val) => {

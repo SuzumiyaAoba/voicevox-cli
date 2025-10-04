@@ -1,3 +1,12 @@
+/**
+ * 音声クエリ表示ユーティリティ
+ *
+ * VOICEVOX Engine APIの音声クエリ情報を人間が読みやすい形式で表示する機能を提供します。
+ * パラメータ値やアクセント句の詳細情報を整形して出力します。
+ *
+ * @module audio-query-display
+ */
+
 import i18next from "@/i18n/config.js";
 import { display } from "@/logger.js";
 import { getDisplayWidth, padToWidth } from "@/utils/display.js";
@@ -6,7 +15,7 @@ import { getDisplayWidth, padToWidth } from "@/utils/display.js";
  * アクセント句の型定義
  *
  * 音声クエリのアクセント句情報を表す型。
- * アクセント位置、疑問文フラグ、モーラ情報を含む。
+ * アクセント位置、疑問文フラグ、モーラ情報を含みます。
  */
 type AccentPhrase = {
   /** アクセント位置 */
