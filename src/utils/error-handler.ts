@@ -1,16 +1,45 @@
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 
-// エラータイプの定義
+/**
+ * エラータイプの定義
+ *
+ * VOICEVOX CLIで発生する可能性のあるエラーの種類を定義する。
+ */
 export enum ErrorType {
+  /** ネットワーク関連のエラー */
   NETWORK = "NETWORK",
+  /** API関連のエラー */
   API = "API",
+  /** バリデーション関連のエラー */
   VALIDATION = "VALIDATION",
+  /** 不明なエラー */
   UNKNOWN = "UNKNOWN",
 }
 
-// カスタムエラークラス
+/**
+ * VOICEVOX CLI専用のカスタムエラークラス
+ *
+ * エラーの種類、元のエラー、コンテキスト情報を含む拡張エラークラス。
+ * エラーハンドリングとログ出力の改善に使用される。
+ *
+ * @example
+ * ```typescript
+ * throw new VoicevoxError(
+ *   "API request failed",
+ *   ErrorType.API,
+ *   originalError,
+ *   { baseUrl: "http://localhost:50021" }
+ * );
+ * ```
+ */
 export class VoicevoxError extends Error {
+  /**
+   * @param message - エラーメッセージ
+   * @param type - エラーの種類
+   * @param originalError - 元のエラー（オプション）
+   * @param context - エラーコンテキスト（オプション）
+   */
   constructor(
     message: string,
     public type: ErrorType,

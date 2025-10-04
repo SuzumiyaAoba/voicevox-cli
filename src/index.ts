@@ -12,7 +12,24 @@ import { speakersCommand } from "@/commands/speakers.js";
 import { synthesisCommand } from "@/commands/synthesis/index.js";
 import { versionCommand } from "@/commands/version.js";
 
-// メインコマンド
+/**
+ * VOICEVOX CLI メインコマンド定義
+ *
+ * VOICEVOX Engine APIを使用した音声合成CLIツールのメインエントリーポイント。
+ * 複数のサブコマンドを提供し、音声合成、話者管理、設定管理などの機能を提供する。
+ *
+ * @example
+ * ```bash
+ * # 音声合成
+ * voicevox synthesis "こんにちは"
+ *
+ * # 話者一覧表示
+ * voicevox speakers
+ *
+ * # エンジン情報表示
+ * voicevox engine manifest
+ * ```
+ */
 const main = defineCommand({
   meta: {
     name: "voicevox",
@@ -33,5 +50,10 @@ const main = defineCommand({
   },
 });
 
-// CLIの実行
+/**
+ * CLIアプリケーションの実行
+ *
+ * メインコマンドを実行し、ユーザーからの引数に基づいて適切なサブコマンドを呼び出す。
+ * エラーハンドリングは各コマンド内で行われる。
+ */
 runMain(main);

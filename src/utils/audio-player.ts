@@ -2,7 +2,21 @@ import { spawn } from "node:child_process";
 import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 
-// 音声ファイルを再生する関数
+/**
+ * 音声ファイルを再生する関数
+ *
+ * プラットフォームに応じて適切な音声プレイヤーを使用して音声ファイルを再生する。
+ * macOSではafplay、WindowsではPowerShell、Linuxではaplayを使用する。
+ *
+ * @param filePath - 再生する音声ファイルのパス
+ * @returns Promise<void> - 再生完了時にresolveされるPromise
+ *
+ * @example
+ * ```typescript
+ * // WAVファイルを再生
+ * await playAudio("output.wav");
+ * ```
+ */
 export const playAudio = (filePath: string): Promise<void> => {
   return new Promise((resolve) => {
     // プラットフォームに応じて適切なプレイヤーを選択

@@ -7,7 +7,24 @@ import { createTable } from "@/utils/display.js";
 import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
 
-// 話者一覧コマンド
+/**
+ * 話者一覧コマンド
+ *
+ * VOICEVOX Engineから利用可能な話者一覧を取得し、表示する。
+ * 話者名、UUID、スタイル情報をテーブル形式で表示する。
+ *
+ * @example
+ * ```bash
+ * # 話者一覧を表示
+ * voicevox speakers
+ *
+ * # JSON形式で出力
+ * voicevox speakers --json
+ *
+ * # 別のエンジンから取得
+ * voicevox speakers --baseUrl http://localhost:8080
+ * ```
+ */
 export const speakersCommand = defineCommand({
   meta: {
     name: i18next.t("commands.speakers.name"),

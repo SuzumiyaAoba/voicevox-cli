@@ -18,7 +18,24 @@ import {
   processMultiModeInput,
 } from "./handlers.js";
 
-// 音声合成コマンド
+/**
+ * 音声合成コマンド
+ *
+ * テキストから音声を合成し、WAVファイルとして出力する。
+ * 単一テキストの合成と複数テキストの一括合成をサポートする。
+ *
+ * @example
+ * ```bash
+ * # 単一テキストの音声合成
+ * voicevox synthesis "こんにちは" --speaker 2 --output hello.wav
+ *
+ * # 複数テキストの一括合成
+ * voicevox synthesis --multi --input texts.txt --output output.zip
+ *
+ * # 音声合成後に再生
+ * voicevox synthesis "テスト" --play
+ * ```
+ */
 export const synthesisCommand = defineCommand({
   meta: {
     name: i18next.t("commands.synthesis.name"),

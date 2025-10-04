@@ -6,7 +6,24 @@ import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
 
-// 対応デバイス一覧コマンド
+/**
+ * 対応デバイス一覧コマンド
+ *
+ * VOICEVOX Engineがサポートするデバイス情報を取得し、表示する。
+ * CPU、CUDA、DMLなどの対応状況を確認できる。
+ *
+ * @example
+ * ```bash
+ * # 対応デバイス一覧を表示
+ * voicevox devices
+ *
+ * # JSON形式で出力
+ * voicevox devices --json
+ *
+ * # 別のエンジンから取得
+ * voicevox devices --baseUrl http://localhost:8080
+ * ```
+ */
 export const devicesCommand = defineCommand({
   meta: {
     name: i18next.t("commands.devices.name"),

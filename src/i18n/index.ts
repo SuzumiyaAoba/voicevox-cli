@@ -1,15 +1,45 @@
-// 翻訳データの型定義
-// 厳密な型定義の代わりに、より柔軟で保守しやすい型を使用
+/**
+ * 翻訳データの型定義
+ *
+ * 厳密な型定義の代わりに、より柔軟で保守しやすい型を使用する。
+ * ネストされた翻訳キーをサポートする。
+ */
 type TranslationData = Record<string, unknown>;
 
-// 利用可能なロケール
+/**
+ * サポートされているロケールの定数
+ *
+ * 現在は日本語（ja）と英語（en）をサポートしている。
+ */
 export const SUPPORTED_LOCALES = ["ja", "en"] as const;
+
+/**
+ * ロケール型の定義
+ *
+ * サポートされているロケールのいずれかを表す型。
+ */
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
-// デフォルトロケール
+/**
+ * デフォルトロケール
+ *
+ * 環境変数からロケールが取得できない場合のフォールバック。
+ */
 const DEFAULT_LOCALE: Locale = "ja";
 
-// 現在のロケールを取得（環境変数から）
+/**
+ * 現在のロケールを取得する関数
+ *
+ * 環境変数LANGからロケールを取得し、サポートされているロケールかどうかを確認する。
+ * サポートされていない場合はデフォルトロケール（日本語）を返す。
+ *
+ * @returns 現在のロケール
+ *
+ * @example
+ * ```typescript
+ * const locale = getLocale(); // "ja" or "en"
+ * ```
+ */
 export const getLocale = (): Locale => {
   const envLocale = process.env.LANG?.split(".")[0]?.split("_")[0];
   if (envLocale && SUPPORTED_LOCALES.includes(envLocale as Locale)) {
@@ -18,7 +48,21 @@ export const getLocale = (): Locale => {
   return DEFAULT_LOCALE;
 };
 
-// 翻訳データを直接埋め込み
+/**
+ * 翻訳データの定義
+ *
+ * 日本語（ja）と英語（en）の翻訳データを含むオブジェクト。
+ * 各コマンド、メッセージ、ラベルの翻訳を提供する。
+ *
+ * @example
+ * ```typescript
+ * // 日本語の翻訳を取得
+ * const japaneseTranslation = translations.ja;
+ *
+ * // 英語の翻訳を取得
+ * const englishTranslation = translations.en;
+ * ```
+ */
 export const translations: Record<Locale, TranslationData> = {
   ja: {
     commands: {
