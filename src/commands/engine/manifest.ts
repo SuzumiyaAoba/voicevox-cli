@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import { getLocale, t } from "@/i18n/index.js";
+import i18next from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -9,8 +9,8 @@ import { outputConditional } from "@/utils/output.js";
 // エンジンマニフェストコマンド
 export const engineManifestCommand = defineCommand({
   meta: {
-    name: t("commands.engine.manifest.name"),
-    description: t("commands.engine.manifest.description"),
+    name: i18next.t("commands.engine.manifest.name"),
+    description: i18next.t("commands.engine.manifest.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -28,7 +28,7 @@ export const engineManifestCommand = defineCommand({
       const response = await client.GET("/engine_manifest");
       const manifest = validateResponse(
         response,
-        t("commands.engine.manifest.errorFetching"),
+        i18next.t("commands.engine.manifest.errorFetching"),
         { baseUrl: args.baseUrl },
       );
 
@@ -39,33 +39,22 @@ export const engineManifestCommand = defineCommand({
       // 出力処理
       outputConditional(args.json || false, manifest, () => {
         // エンジンマニフェスト情報を整形して表示
-        const locale = getLocale();
-        const labels =
-          locale === "ja"
-            ? {
-                fetching: "エンジンマニフェストを取得中...",
-                manifestInfo: "エンジンマニフェスト情報",
-                engineName: "エンジン名",
-                brandName: "ブランド名",
-                version: "マニフェストバージョン",
-                uuid: "エンジンUUID",
-                url: "エンジンURL",
-                defaultSamplingRate: "デフォルトサンプリングレート",
-                frameRate: "フレームレート",
-                supportedFeatures: "対応機能",
-              }
-            : {
-                fetching: "Fetching engine manifest...",
-                manifestInfo: "Engine Manifest Information",
-                engineName: "Engine Name",
-                brandName: "Brand Name",
-                version: "Manifest Version",
-                uuid: "Engine UUID",
-                url: "Engine URL",
-                defaultSamplingRate: "Default Sampling Rate",
-                frameRate: "Frame Rate",
-                supportedFeatures: "Supported Features",
-              };
+        const labels = {
+          fetching: i18next.t("commands.engine.manifest.fetching"),
+          manifestInfo: i18next.t("commands.engine.manifest.manifestInfo"),
+          engineName: i18next.t("commands.engine.manifest.engineName"),
+          brandName: i18next.t("commands.engine.manifest.brandName"),
+          version: i18next.t("commands.engine.manifest.version"),
+          uuid: i18next.t("commands.engine.manifest.uuid"),
+          url: i18next.t("commands.engine.manifest.url"),
+          defaultSamplingRate: i18next.t(
+            "commands.engine.manifest.defaultSamplingRate",
+          ),
+          frameRate: i18next.t("commands.engine.manifest.frameRate"),
+          supportedFeatures: i18next.t(
+            "commands.engine.manifest.supportedFeatures",
+          ),
+        };
 
         const manifestInfo = `${labels.fetching}
 
