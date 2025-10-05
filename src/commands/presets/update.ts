@@ -2,7 +2,7 @@ import type { paths } from "@suzumiyaaoba/voicevox-client";
 import { defineCommand } from "citty";
 import { produce } from "immer";
 // (no utility needed here)
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { createVoicevoxClient } from "@/utils/client.js";
@@ -48,51 +48,51 @@ const requestUpdatePreset = async (
 // プリセット更新コマンド
 export const presetsUpdateCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.presets.update.name"),
-    description: i18next.t("commands.presets.update.description"),
+    name: t("commands.presets.update.name"),
+    description: t("commands.presets.update.description"),
   },
   args: {
     id: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.id"),
+      description: t("commands.presets.update.args.id"),
       required: true,
     },
     name: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.name"),
+      description: t("commands.presets.update.args.name"),
     },
     speaker: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.speaker"),
+      description: t("commands.presets.update.args.speaker"),
       alias: "s",
     },
     style: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.style"),
+      description: t("commands.presets.update.args.style"),
     },
     speed: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.speed"),
+      description: t("commands.presets.update.args.speed"),
     },
     pitch: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.pitch"),
+      description: t("commands.presets.update.args.pitch"),
     },
     intonation: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.intonation"),
+      description: t("commands.presets.update.args.intonation"),
     },
     volume: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.volume"),
+      description: t("commands.presets.update.args.volume"),
     },
     prePhonemeLength: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.prePhonemeLength"),
+      description: t("commands.presets.update.args.prePhonemeLength"),
     },
     postPhonemeLength: {
       type: "string",
-      description: i18next.t("commands.presets.update.args.postPhonemeLength"),
+      description: t("commands.presets.update.args.postPhonemeLength"),
     },
     ...commonCommandOptions,
   },
@@ -118,7 +118,7 @@ export const presetsUpdateCommand = defineCommand({
       });
 
       display.info(
-        i18next.t("commands.presets.update.updating", { id: validatedArgs.id }),
+        t("commands.presets.update.updating", { id: validatedArgs.id }),
       );
 
       // APIクライアントを使用してupdate_presetエンドポイントにアクセス
@@ -138,7 +138,7 @@ export const presetsUpdateCommand = defineCommand({
 
       // プレーンテキスト形式で出力
       display.info(
-        i18next.t("commands.presets.update.updated", { id: validatedArgs.id }),
+        t("commands.presets.update.updated", { id: validatedArgs.id }),
       );
 
       log.debug("Presets update command completed successfully", {

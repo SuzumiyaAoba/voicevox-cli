@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -14,13 +14,13 @@ import { presetsDeleteSchema } from "./schemas.js";
 // プリセット削除コマンド
 export const presetsDeleteCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.presets.delete.name"),
-    description: i18next.t("commands.presets.delete.description"),
+    name: t("commands.presets.delete.name"),
+    description: t("commands.presets.delete.description"),
   },
   args: {
     id: {
       type: "string",
-      description: i18next.t("commands.presets.delete.args.id"),
+      description: t("commands.presets.delete.args.id"),
       required: true,
     },
     ...commonCommandOptions,
@@ -46,9 +46,7 @@ export const presetsDeleteCommand = defineCommand({
         presetId,
       });
 
-      display.info(
-        i18next.t("commands.presets.delete.deleting", { id: presetId }),
-      );
+      display.info(t("commands.presets.delete.deleting", { id: presetId }));
 
       // APIクライアントを使用してdelete_presetエンドポイントにアクセス
       const response = await client.DELETE(
@@ -82,7 +80,7 @@ export const presetsDeleteCommand = defineCommand({
           success: true,
           deleted: true,
           presetId: presetId,
-          message: i18next.t("commands.presets.delete.deleted", {
+          message: t("commands.presets.delete.deleted", {
             id: presetId,
           }),
         };
@@ -92,9 +90,7 @@ export const presetsDeleteCommand = defineCommand({
       }
 
       // プレーンテキスト形式で出力
-      display.info(
-        i18next.t("commands.presets.delete.deleted", { id: presetId }),
-      );
+      display.info(t("commands.presets.delete.deleted", { id: presetId }));
 
       log.debug("Presets delete command completed successfully", {
         presetId,

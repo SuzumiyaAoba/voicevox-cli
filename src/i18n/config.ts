@@ -45,14 +45,27 @@ i18next.init({
 /**
  * 初期化済みのi18nextインスタンス
  *
- * 翻訳機能を使用する際は、このインスタンスを使用します。
+ * 翻訳機能を使用する際は、型安全なラッパーを使用することを推奨します。
  *
  * @example
  * ```typescript
- * import i18next from "@/i18n/config.js";
+ * import { t } from "@/i18n/wrapper.js";
  *
- * // 翻訳を取得
- * const message = i18next.t("commands.synthesis.name");
+ * // 型安全な翻訳
+ * const message = t("commands.synthesis.name");
  * ```
  */
 export default i18next;
+
+/**
+ * 型安全な翻訳関数を再エクスポート
+ *
+ * 型安全な翻訳機能を使用するための便利なエクスポートです。
+ */
+export {
+  changeLocale,
+  getCurrentLocale,
+  hasTranslation,
+  t,
+  tPlural,
+} from "./wrapper.js";

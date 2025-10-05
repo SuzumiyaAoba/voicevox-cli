@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -27,8 +27,8 @@ import { outputConditional } from "@/utils/output.js";
  */
 export const speakersCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.speakers.name"),
-    description: i18next.t("commands.speakers.description"),
+    name: t("commands.speakers.name"),
+    description: t("commands.speakers.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -42,7 +42,7 @@ export const speakersCommand = defineCommand({
       const response = await client.GET("/speakers");
       const speakers = validateResponse(
         response,
-        i18next.t("commands.speakers.invalidResponse"),
+        t("commands.speakers.invalidResponse"),
         { baseUrl: args.baseUrl },
       );
 
@@ -51,17 +51,17 @@ export const speakersCommand = defineCommand({
       });
 
       if (!Array.isArray(speakers)) {
-        throw new Error(i18next.t("commands.speakers.invalidResponse"));
+        throw new Error(t("commands.speakers.invalidResponse"));
       }
 
       // 出力処理
       outputConditional(args.json || false, speakers, () => {
         // テーブル形式の出力を構築
         const headers = [
-          i18next.t("commands.speakers.tableHeaders.name"),
-          i18next.t("commands.speakers.tableHeaders.uuid"),
-          i18next.t("commands.speakers.tableHeaders.styleName"),
-          i18next.t("commands.speakers.tableHeaders.styleId"),
+          t("commands.speakers.tableHeaders.name"),
+          t("commands.speakers.tableHeaders.uuid"),
+          t("commands.speakers.tableHeaders.styleName"),
+          t("commands.speakers.tableHeaders.styleId"),
         ];
         const columnWidths = [20, 40, 20, 10];
 
@@ -99,7 +99,7 @@ export const speakersCommand = defineCommand({
 
         // テーブル形式の出力を生成
         const tableOutput = createTable(headers, rows, columnWidths);
-        const fullOutput = `${i18next.t("commands.speakers.fetching")}\n\n${tableOutput}\n${i18next.t("commands.speakers.totalSpeakers", { count: speakers.length })}\n`;
+        const fullOutput = `${t("commands.speakers.fetching")}\n\n${tableOutput}\n${t("commands.speakers.totalSpeakers", { count: speakers.length })}\n`;
 
         // 直接出力
         display.info(fullOutput);

@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -9,8 +9,8 @@ import { outputConditional } from "@/utils/output.js";
 // エンジンマニフェストコマンド
 export const engineManifestCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.engine.manifest.name"),
-    description: i18next.t("commands.engine.manifest.description"),
+    name: t("commands.engine.manifest.name"),
+    description: t("commands.engine.manifest.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -28,7 +28,7 @@ export const engineManifestCommand = defineCommand({
       const response = await client.GET("/engine_manifest");
       const manifest = validateResponse(
         response,
-        i18next.t("commands.engine.manifest.errorFetching"),
+        t("commands.engine.manifest.errorFetching"),
         { baseUrl: args.baseUrl },
       );
 
@@ -40,20 +40,18 @@ export const engineManifestCommand = defineCommand({
       outputConditional(args.json || false, manifest, () => {
         // エンジンマニフェスト情報を整形して表示
         const labels = {
-          fetching: i18next.t("commands.engine.manifest.fetching"),
-          manifestInfo: i18next.t("commands.engine.manifest.manifestInfo"),
-          engineName: i18next.t("commands.engine.manifest.engineName"),
-          brandName: i18next.t("commands.engine.manifest.brandName"),
-          version: i18next.t("commands.engine.manifest.version"),
-          uuid: i18next.t("commands.engine.manifest.uuid"),
-          url: i18next.t("commands.engine.manifest.url"),
-          defaultSamplingRate: i18next.t(
+          fetching: t("commands.engine.manifest.fetching"),
+          manifestInfo: t("commands.engine.manifest.manifestInfo"),
+          engineName: t("commands.engine.manifest.engineName"),
+          brandName: t("commands.engine.manifest.brandName"),
+          version: t("commands.engine.manifest.version"),
+          uuid: t("commands.engine.manifest.uuid"),
+          url: t("commands.engine.manifest.url"),
+          defaultSamplingRate: t(
             "commands.engine.manifest.defaultSamplingRate",
           ),
-          frameRate: i18next.t("commands.engine.manifest.frameRate"),
-          supportedFeatures: i18next.t(
-            "commands.engine.manifest.supportedFeatures",
-          ),
+          frameRate: t("commands.engine.manifest.frameRate"),
+          supportedFeatures: t("commands.engine.manifest.supportedFeatures"),
         };
 
         const manifestInfo = `${labels.fetching}

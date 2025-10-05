@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import packageJson from "../../package.json";
 
 /**
@@ -16,8 +16,8 @@ import packageJson from "../../package.json";
  */
 export const versionCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.version.name"),
-    description: i18next.t("commands.version.description"),
+    name: t("commands.version.name"),
+    description: t("commands.version.description"),
   },
   args: {},
   run() {

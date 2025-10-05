@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -14,59 +14,59 @@ import { presetsAddSchema } from "./schemas.js";
 // プリセット追加コマンド
 export const presetsAddCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.presets.add.name"),
-    description: i18next.t("commands.presets.add.description"),
+    name: t("commands.presets.add.name"),
+    description: t("commands.presets.add.description"),
   },
   args: {
     id: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.id"),
+      description: t("commands.presets.add.args.id"),
       required: true,
     },
     name: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.name"),
+      description: t("commands.presets.add.args.name"),
       required: true,
     },
     speaker: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.speaker"),
+      description: t("commands.presets.add.args.speaker"),
       alias: "s",
       required: true,
     },
     style: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.style"),
+      description: t("commands.presets.add.args.style"),
       required: true,
     },
     speed: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.speed"),
+      description: t("commands.presets.add.args.speed"),
       required: true,
     },
     pitch: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.pitch"),
+      description: t("commands.presets.add.args.pitch"),
       required: true,
     },
     intonation: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.intonation"),
+      description: t("commands.presets.add.args.intonation"),
       required: true,
     },
     volume: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.volume"),
+      description: t("commands.presets.add.args.volume"),
       required: true,
     },
     prePhonemeLength: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.prePhonemeLength"),
+      description: t("commands.presets.add.args.prePhonemeLength"),
       required: true,
     },
     postPhonemeLength: {
       type: "string",
-      description: i18next.t("commands.presets.add.args.postPhonemeLength"),
+      description: t("commands.presets.add.args.postPhonemeLength"),
       required: true,
     },
     ...commonCommandOptions,
@@ -106,7 +106,7 @@ export const presetsAddCommand = defineCommand({
       });
 
       display.info(
-        i18next.t("commands.presets.add.adding", { name: validatedArgs.name }),
+        t("commands.presets.add.adding", { name: validatedArgs.name }),
       );
 
       // APIクライアントを使用してadd_presetエンドポイントにアクセス
@@ -136,10 +136,10 @@ export const presetsAddCommand = defineCommand({
 
       // プレーンテキスト形式で出力
       display.info(
-        i18next.t("commands.presets.add.added", { name: validatedArgs.name }),
+        t("commands.presets.add.added", { name: validatedArgs.name }),
       );
       display.info(
-        i18next.t("commands.presets.add.presetId", { id: validatedArgs.id }),
+        t("commands.presets.add.presetId", { id: validatedArgs.id }),
       );
 
       log.debug("Presets add command completed successfully", {

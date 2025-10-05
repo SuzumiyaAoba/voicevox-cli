@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
 import { z } from "zod";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient } from "@/utils/api-helpers.js";
 import { playAudio } from "@/utils/audio-player.js";
@@ -108,44 +108,44 @@ export type SynthesisArgs = z.infer<typeof synthesisSchema>;
  */
 export const synthesisCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.synthesis.name"),
-    description: i18next.t("commands.synthesis.description"),
+    name: t("commands.synthesis.name"),
+    description: t("commands.synthesis.description"),
   },
   args: {
     text: {
       type: "positional",
-      description: i18next.t("commands.synthesis.args.text"),
+      description: t("commands.synthesis.args.text"),
       required: false,
     },
     speaker: {
       type: "string",
-      description: i18next.t("commands.synthesis.args.speaker"),
+      description: t("commands.synthesis.args.speaker"),
       alias: "s",
       default: "2",
     },
     input: {
       type: "string",
-      description: i18next.t("commands.synthesis.args.input"),
+      description: t("commands.synthesis.args.input"),
       alias: "i",
     },
     output: {
       type: "string",
-      description: i18next.t("commands.synthesis.args.output"),
+      description: t("commands.synthesis.args.output"),
       alias: "o",
     },
     play: {
       type: "boolean",
-      description: i18next.t("commands.synthesis.args.play"),
+      description: t("commands.synthesis.args.play"),
     },
     type: {
       type: "string",
-      description: i18next.t("commands.synthesis.args.type"),
+      description: t("commands.synthesis.args.type"),
       alias: "t",
       choices: ["json", "text"],
     },
     multi: {
       type: "boolean",
-      description: i18next.t("commands.synthesis.args.multi"),
+      description: t("commands.synthesis.args.multi"),
       alias: "m",
     },
     ...commonCommandOptions,
@@ -166,7 +166,7 @@ export const synthesisCommand = defineCommand({
     // 初期情報の表示
     if (validatedArgs.text) {
       display.info(
-        i18next.t("commands.synthesis.synthesizing", {
+        t("commands.synthesis.synthesizing", {
           text: validatedArgs.text,
         }),
       );

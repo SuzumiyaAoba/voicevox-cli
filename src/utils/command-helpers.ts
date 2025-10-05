@@ -7,7 +7,7 @@
  * @module command-helpers
  */
 
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 
 /**
  * ベースURLオプションの定義
@@ -31,7 +31,7 @@ export const baseUrlOption = {
 export const commonCommandOptions = {
   json: {
     type: "boolean" as const,
-    description: i18next.t("common.args.json"),
+    description: t("common.args.json"),
     alias: "j" as const,
   },
   ...baseUrlOption,

@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -9,18 +9,18 @@ import { outputConditional } from "@/utils/output.js";
 // 設定更新コマンド
 export const settingUpdateCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.setting.update.name"),
-    description: i18next.t("commands.setting.update.description"),
+    name: t("commands.setting.update.name"),
+    description: t("commands.setting.update.description"),
   },
   args: {
     corsPolicyMode: {
       type: "string",
-      description: i18next.t("commands.setting.update.args.corsPolicyMode"),
+      description: t("commands.setting.update.args.corsPolicyMode"),
       required: true,
     },
     allowOrigin: {
       type: "string",
-      description: i18next.t("commands.setting.update.args.allowOrigin"),
+      description: t("commands.setting.update.args.allowOrigin"),
     },
     ...commonCommandOptions,
   },
@@ -49,13 +49,9 @@ export const settingUpdateCommand = defineCommand({
 
       // 204 No Contentは成功レスポンス
       if (response.response.status !== 204) {
-        validateResponse(
-          response,
-          i18next.t("commands.setting.update.errorUpdating"),
-          {
-            baseUrl: args.baseUrl,
-          },
-        );
+        validateResponse(response, t("commands.setting.update.errorUpdating"), {
+          baseUrl: args.baseUrl,
+        });
       }
 
       log.debug("API response received", {
@@ -72,13 +68,13 @@ export const settingUpdateCommand = defineCommand({
         },
         () => {
           // 設定更新完了メッセージを表示
-          const updateInfo = `${i18next.t("commands.setting.update.success")}
+          const updateInfo = `${t("commands.setting.update.success")}
 
-${i18next.t("commands.setting.update.updatedSettings")}:
-${i18next.t("commands.setting.update.corsPolicyMode")}: ${args.corsPolicyMode}${
+${t("commands.setting.update.updatedSettings")}:
+${t("commands.setting.update.corsPolicyMode")}: ${args.corsPolicyMode}${
             args.allowOrigin
               ? `
-${i18next.t("commands.setting.update.allowOrigin")}: ${args.allowOrigin}`
+${t("commands.setting.update.allowOrigin")}: ${args.allowOrigin}`
               : ""
           }`;
 

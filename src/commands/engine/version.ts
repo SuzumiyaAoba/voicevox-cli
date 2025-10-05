@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -12,8 +12,8 @@ import {
 // エンジンバージョン表示コマンド
 export const engineVersionCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.engine.version.name"),
-    description: i18next.t("commands.engine.version.description"),
+    name: t("commands.engine.version.name"),
+    description: t("commands.engine.version.description"),
   },
   args: {
     ...commonCommandOptions,
@@ -52,8 +52,8 @@ export const engineVersionCommand = defineCommand({
 
       // プレーンテキスト形式で出力
       const versionInfo = response.data;
-      const output = i18next.t("commands.engine.version.engineVersion", {
-        version: versionInfo || i18next.t("common.unknown"),
+      const output = t("commands.engine.version.engineVersion", {
+        version: versionInfo || t("common.unknown"),
       });
       display.info(output);
 

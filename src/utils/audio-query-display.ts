@@ -7,7 +7,7 @@
  * @module audio-query-display
  */
 
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display } from "@/logger.js";
 import { getDisplayWidth, padToWidth } from "@/utils/display.js";
 
@@ -106,18 +106,18 @@ export type AudioQueryLike = {
  */
 export const displayAudioQueryInfo = (audioQuery: AudioQueryLike): void => {
   display.info("");
-  display.info(i18next.t("commands.query.audioQueryInfo.title"));
+  display.info(t("commands.query.audioQueryInfo.title"));
 
   const labels = [
-    i18next.t("commands.query.audioQueryInfo.speed"),
-    i18next.t("commands.query.audioQueryInfo.pitch"),
-    i18next.t("commands.query.audioQueryInfo.intonation"),
-    i18next.t("commands.query.audioQueryInfo.volume"),
-    i18next.t("commands.query.audioQueryInfo.prePhonemeLength"),
-    i18next.t("commands.query.audioQueryInfo.postPhonemeLength"),
-    i18next.t("commands.query.audioQueryInfo.sampling"),
-    i18next.t("commands.query.audioQueryInfo.stereo"),
-    i18next.t("commands.query.audioQueryInfo.kana"),
+    t("commands.query.audioQueryInfo.speed"),
+    t("commands.query.audioQueryInfo.pitch"),
+    t("commands.query.audioQueryInfo.intonation"),
+    t("commands.query.audioQueryInfo.volume"),
+    t("commands.query.audioQueryInfo.prePhonemeLength"),
+    t("commands.query.audioQueryInfo.postPhonemeLength"),
+    t("commands.query.audioQueryInfo.sampling"),
+    t("commands.query.audioQueryInfo.stereo"),
+    t("commands.query.audioQueryInfo.kana"),
   ];
   const maxWidth = Math.max(...labels.map(getDisplayWidth));
 
@@ -143,7 +143,7 @@ export const displayAudioQueryInfo = (audioQuery: AudioQueryLike): void => {
     `${padToWidth(labels[6] || "サンプリング", maxWidth)} : ${audioQuery.outputSamplingRate}Hz`,
   );
   display.info(
-    `${padToWidth(labels[7] || "ステレオ", maxWidth)} : ${audioQuery.outputStereo ? i18next.t("commands.query.audioQueryInfo.on") || "ON" : i18next.t("commands.query.audioQueryInfo.off") || "OFF"}`,
+    `${padToWidth(labels[7] || "ステレオ", maxWidth)} : ${audioQuery.outputStereo ? t("commands.query.audioQueryInfo.on") || "ON" : t("commands.query.audioQueryInfo.off") || "OFF"}`,
   );
 
   if (audioQuery.kana) {
@@ -154,13 +154,13 @@ export const displayAudioQueryInfo = (audioQuery: AudioQueryLike): void => {
 
   display.info("");
   display.info(
-    i18next.t("commands.query.audioQueryInfo.accentPhrases") || "アクセント句",
+    t("commands.query.audioQueryInfo.accentPhrases") || "アクセント句",
   );
   audioQuery.accent_phrases.forEach((phrase, index) => {
     const moraTexts = phrase.moras.map((m) => m.text).join("");
     const accentMark =
       phrase.accent > 0
-        ? ` (${i18next.t("commands.query.audioQueryInfo.accent") || "アクセント"}: ${phrase.accent})`
+        ? ` (${t("commands.query.audioQueryInfo.accent") || "アクセント"}: ${phrase.accent})`
         : "";
     const questionMark = phrase.is_interrogative ? "?" : "";
     display.info(`  ${index + 1}. ${moraTexts}${accentMark}${questionMark}`);

@@ -376,6 +376,11 @@ export const translations: Record<Locale, TranslationData> = {
       api: "APIエラーが発生しました: {{command}}",
       validation: "バリデーションエラーが発生しました: {{command}}",
       unknown: "不明なエラーが発生しました: {{command}}",
+      help: {
+        network: "ネットワーク接続を確認してください",
+        api: "APIエンドポイントを確認してください",
+        validation: "入力パラメータを確認してください",
+      },
     },
   },
   en: {
@@ -681,6 +686,11 @@ export const translations: Record<Locale, TranslationData> = {
       api: "API error occurred: {{command}}",
       validation: "Validation error occurred: {{command}}",
       unknown: "Unknown error occurred: {{command}}",
+      help: {
+        network: "Please check your network connection",
+        api: "Please check the API endpoint",
+        validation: "Please check your input parameters",
+      },
     },
   },
 };

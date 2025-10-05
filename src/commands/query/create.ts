@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
 import { z } from "zod";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { displayAudioQueryInfo } from "@/utils/audio-query-display.js";
 import { createVoicevoxClient } from "@/utils/client.js";
@@ -56,30 +56,28 @@ export type AudioQueryArgs = z.infer<typeof audioQuerySchema>;
 // 音声クエリ作成コマンド
 export const createCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.query.create.name"),
-    description: i18next.t("commands.query.create.description"),
+    name: t("commands.query.create.name"),
+    description: t("commands.query.create.description"),
   },
   args: {
     text: {
       type: "positional",
-      description: i18next.t("commands.query.create.args.text"),
+      description: t("commands.query.create.args.text"),
       required: true,
     },
     speaker: {
       type: "string",
-      description: i18next.t("commands.query.create.args.speaker"),
+      description: t("commands.query.create.args.speaker"),
       alias: "s",
       default: "2",
     },
     "preset-id": {
       type: "string",
-      description: i18next.t("commands.query.create.args.presetId"),
+      description: t("commands.query.create.args.presetId"),
     },
     "enable-katakana-english": {
       type: "boolean",
-      description: i18next.t(
-        "commands.query.create.args.enableKatakanaEnglish",
-      ),
+      description: t("commands.query.create.args.enableKatakanaEnglish"),
     },
     ...commonCommandOptions,
   },
@@ -95,17 +93,17 @@ export const createCommand = defineCommand({
     });
 
     display.info(
-      i18next.t("commands.query.create.querying", { text: validatedArgs.text }),
+      t("commands.query.create.querying", { text: validatedArgs.text }),
     );
     if (validatedArgs.presetId !== undefined) {
       display.info(
-        i18next.t("commands.query.create.usingPreset", {
+        t("commands.query.create.usingPreset", {
           presetId: String(validatedArgs.presetId),
         }),
       );
     } else {
       display.info(
-        i18next.t("commands.query.create.speakerId", {
+        t("commands.query.create.speakerId", {
           speaker: String(validatedArgs.speaker),
         }),
       );
@@ -160,7 +158,7 @@ export const createCommand = defineCommand({
 
       const audioQuery = audioQueryRes.data;
 
-      display.info(i18next.t("commands.query.create.queryComplete"));
+      display.info(t("commands.query.create.queryComplete"));
 
       // JSON形式で出力する場合
       if (validatedArgs.json) {
@@ -170,7 +168,7 @@ export const createCommand = defineCommand({
       }
 
       // 整形して表示（共通ユーティリティ）
-      display.info(i18next.t("commands.query.create.queryResult"));
+      display.info(t("commands.query.create.queryResult"));
       displayAudioQueryInfo(audioQuery as never);
 
       log.debug("Create command completed successfully", {

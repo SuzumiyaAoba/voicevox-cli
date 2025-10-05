@@ -1,5 +1,5 @@
 import { defineCommand } from "citty";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
@@ -26,8 +26,8 @@ import { outputConditional } from "@/utils/output.js";
  */
 export const devicesCommand = defineCommand({
   meta: {
-    name: i18next.t("commands.devices.name"),
-    description: i18next.t("commands.devices.description"),
+    name: t("commands.devices.name"),
+    description: t("commands.devices.description"),
   },
   args: commonCommandOptions,
   async run({ args }) {
@@ -36,14 +36,14 @@ export const devicesCommand = defineCommand({
 
       const client = createClient(args.baseUrl);
 
-      display.info(i18next.t("commands.devices.fetching"));
+      display.info(t("commands.devices.fetching"));
 
       log.debug("Making API request", { baseUrl: args.baseUrl });
 
       const response = await client.GET("/supported_devices");
       const devices = validateResponse(
         response,
-        i18next.t("commands.devices.errorFetching"),
+        t("commands.devices.errorFetching"),
         { baseUrl: args.baseUrl },
       );
 
@@ -55,7 +55,7 @@ export const devicesCommand = defineCommand({
       // 出力処理
       outputConditional(args.json || false, devices, () => {
         // 対応デバイス情報を整形して表示
-        let devicesInfo = `\n${i18next.t("commands.devices.devicesInfo")}:`;
+        let devicesInfo = `\n${t("commands.devices.devicesInfo")}:`;
 
         // デバイス情報を表示
         if (devices && typeof devices === "object") {
@@ -63,7 +63,7 @@ export const devicesCommand = defineCommand({
             devicesInfo += `\n${key}: ${value}`;
           });
         } else {
-          devicesInfo += `\n${i18next.t("commands.devices.noDeviceInfo")}`;
+          devicesInfo += `\n${t("commands.devices.noDeviceInfo")}`;
         }
 
         display.info(devicesInfo);

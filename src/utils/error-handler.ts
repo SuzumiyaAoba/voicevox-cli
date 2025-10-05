@@ -1,4 +1,4 @@
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 
 /**
@@ -109,13 +109,13 @@ const classifyError = (error: unknown): ErrorType => {
 const getErrorMessage = (errorType: ErrorType, command: string): string => {
   switch (errorType) {
     case ErrorType.NETWORK:
-      return i18next.t("errors.network", { command });
+      return t("errors.network", { command });
     case ErrorType.API:
-      return i18next.t("errors.api", { command });
+      return t("errors.api", { command });
     case ErrorType.VALIDATION:
-      return i18next.t("errors.validation", { command });
+      return t("errors.validation", { command });
     default:
-      return i18next.t("errors.unknown", { command });
+      return t("errors.unknown", { command });
   }
 };
 
@@ -141,11 +141,11 @@ const getErrorDetails = (error: unknown): string => {
 const getErrorHelp = (errorType: ErrorType): string | null => {
   switch (errorType) {
     case ErrorType.NETWORK:
-      return i18next.t("errors.help.network");
+      return t("errors.help.network");
     case ErrorType.API:
-      return i18next.t("errors.help.api");
+      return t("errors.help.api");
     case ErrorType.VALIDATION:
-      return i18next.t("errors.help.validation");
+      return t("errors.help.validation");
     default:
       return null;
   }

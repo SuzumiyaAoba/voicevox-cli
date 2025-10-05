@@ -8,7 +8,7 @@
  */
 
 import { spawn } from "node:child_process";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 
 /**
@@ -56,7 +56,7 @@ export const playAudio = (filePath: string): Promise<void> => {
 
     child.on("error", (error) => {
       log.warn("Audio player not found or failed", { error: error.message });
-      display.warn(i18next.t("commands.synthesis.playerNotFound"));
+      display.warn(t("commands.synthesis.playerNotFound"));
       resolve(); // エラーでも処理を続行
     });
 
@@ -65,7 +65,7 @@ export const playAudio = (filePath: string): Promise<void> => {
         resolve();
       } else {
         log.warn("Audio player exited with code", { code });
-        display.warn(i18next.t("commands.synthesis.playerError"));
+        display.warn(t("commands.synthesis.playerError"));
         resolve(); // エラーでも処理を続行
       }
     });

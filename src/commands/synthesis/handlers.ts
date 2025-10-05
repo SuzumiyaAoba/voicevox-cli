@@ -1,7 +1,7 @@
 import type { components, paths } from "@suzumiyaaoba/voicevox-client";
 import type openapiFetch from "openapi-fetch";
 import { z } from "zod";
-import i18next from "@/i18n/config.js";
+import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { validateResponse } from "@/utils/api-helpers.js";
 import { ErrorType, VoicevoxError } from "@/utils/error-handler.js";
@@ -125,12 +125,12 @@ export const executeMultiSynthesis = async (
   }
 
   display.info(
-    i18next.t("commands.synthesis.multiSynthesisComplete", {
+    t("commands.synthesis.multiSynthesisComplete", {
       count: audioQueries.length,
     }),
   );
   display.info(
-    i18next.t("commands.synthesis.synthesisComplete", { output: outputFile }),
+    t("commands.synthesis.synthesisComplete", { output: outputFile }),
   );
 
   log.debug("Multi synthesis command completed successfully", {
@@ -186,7 +186,7 @@ export const executeSingleSynthesis = async (
   }
 
   display.info(
-    i18next.t("commands.synthesis.synthesisComplete", { output: outputFile }),
+    t("commands.synthesis.synthesisComplete", { output: outputFile }),
   );
 
   log.debug("Synthesis command completed successfully", {
