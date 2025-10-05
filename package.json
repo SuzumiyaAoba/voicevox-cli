@@ -23,6 +23,8 @@
     "test:no-docker": "vitest run --config vitest.config.no-docker.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "lint:staged": "lint-staged",
     "docker:up": "docker-compose up -d voicevox-engine",
     "docker:up:proxy": "docker-compose --profile proxy up -d",
