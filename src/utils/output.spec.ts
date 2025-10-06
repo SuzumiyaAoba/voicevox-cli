@@ -2,9 +2,13 @@
  * 出力ユーティリティのテスト
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { outputJson, outputConditional, resolveOutputFormat } from "./output.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { display } from "@/logger.js";
+import {
+  outputConditional,
+  outputJson,
+  resolveOutputFormat,
+} from "./output.js";
 
 // モックの設定
 vi.mock("@/logger.js", () => ({

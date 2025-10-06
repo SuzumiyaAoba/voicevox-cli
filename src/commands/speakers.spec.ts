@@ -2,12 +2,12 @@
  * 話者一覧コマンドのテスト
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { speakersCommand } from "./speakers.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { createTable } from "@/utils/display.js";
 import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
+import { speakersCommand } from "./speakers.js";
 
 // モックの設定
 vi.mock("@/utils/api-helpers.js", () => ({
@@ -43,7 +43,7 @@ vi.mock("@/i18n/config.js", () => ({
       "commands.speakers.description": "List available speakers",
       "commands.speakers.invalidResponse": "Invalid response format",
       "commands.speakers.fetching": "Fetching speakers...",
-      "commands.speakers.totalSpeakers": `Total: ${params?.['count'] || 0} speakers`,
+      "commands.speakers.totalSpeakers": `Total: ${params?.["count"] || 0} speakers`,
       "commands.speakers.tableHeaders.name": "Name",
       "commands.speakers.tableHeaders.uuid": "UUID",
       "commands.speakers.tableHeaders.styleName": "Style",
@@ -70,15 +70,17 @@ describe("speakersCommand", () => {
     {
       name: "ずんだもん",
       speaker_uuid: "speaker-uuid-2",
-      styles: [
-        { name: "ノーマル", id: 3 },
-      ],
+      styles: [{ name: "ノーマル", id: 3 }],
     },
   ];
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (createClient as any).mockReturnValue(mockClient);
+    (
+      createClient as unknown as import("vitest").MockedFunction<
+        typeof createClient
+      >
+    ).mockReturnValue(mockClient as unknown as ReturnType<typeof createClient>);
   });
 
   afterEach(() => {
@@ -89,23 +91,33 @@ describe("speakersCommand", () => {
     const mockResponse = { data: mockSpeakers, response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(mockSpeakers);
-    (createTable as any).mockReturnValue("Mock Table Output");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      mockSpeakers as unknown as ReturnType<typeof validateResponse>,
+    );
+    (
+      createTable as unknown as import("vitest").MockedFunction<
+        typeof createTable
+      >
+    ).mockReturnValue("Mock Table Output");
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     expect(createClient).toHaveBeenCalledWith("http://localhost:50021");
     expect(mockClient.GET).toHaveBeenCalledWith("/speakers");
     expect(validateResponse).toHaveBeenCalledWith(
       mockResponse,
       "Invalid response format",
-      { baseUrl: "http://localhost:50021" }
+      { baseUrl: "http://localhost:50021" },
     );
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       mockSpeakers,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -113,15 +125,21 @@ describe("speakersCommand", () => {
     const mockResponse = { data: mockSpeakers, response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(mockSpeakers);
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      mockSpeakers as unknown as ReturnType<typeof validateResponse>,
+    );
 
     const args = { baseUrl: "http://localhost:50021", json: true, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     expect(outputConditional).toHaveBeenCalledWith(
       true,
       mockSpeakers,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -133,20 +151,33 @@ describe("speakersCommand", () => {
         styles: [],
       },
     ];
-    const mockResponse = { data: speakersWithoutStyles, response: { status: 200 } };
+    const mockResponse = {
+      data: speakersWithoutStyles,
+      response: { status: 200 },
+    };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(speakersWithoutStyles);
-    (createTable as any).mockReturnValue("Mock Table Output");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      speakersWithoutStyles as unknown as ReturnType<typeof validateResponse>,
+    );
+    (
+      createTable as unknown as import("vitest").MockedFunction<
+        typeof createTable
+      >
+    ).mockReturnValue("Mock Table Output");
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     // outputConditionalのテキストフォーマッターが呼ばれることを確認
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       speakersWithoutStyles,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -154,17 +185,27 @@ describe("speakersCommand", () => {
     const mockResponse = { data: mockSpeakers, response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(mockSpeakers);
-    (createTable as any).mockReturnValue("Mock Table Output");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      mockSpeakers as unknown as ReturnType<typeof validateResponse>,
+    );
+    (
+      createTable as unknown as import("vitest").MockedFunction<
+        typeof createTable
+      >
+    ).mockReturnValue("Mock Table Output");
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     // outputConditionalのテキストフォーマッターが呼ばれることを確認
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       mockSpeakers,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -172,16 +213,21 @@ describe("speakersCommand", () => {
     const invalidResponse = { data: "not an array", response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(invalidResponse);
-    (validateResponse as any).mockReturnValue("not an array");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      "not an array" as unknown as ReturnType<typeof validateResponse>,
+    );
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
-    expect(handleError).toHaveBeenCalledWith(
-      expect.any(Error),
-      "speakers",
-      { baseUrl: "http://localhost:50021", json: undefined }
-    );
+    expect(handleError).toHaveBeenCalledWith(expect.any(Error), "speakers", {
+      baseUrl: "http://localhost:50021",
+      json: undefined,
+    });
   });
 
   it("APIエラーが発生した場合にhandleErrorを呼ぶ", async () => {
@@ -189,24 +235,33 @@ describe("speakersCommand", () => {
     mockClient.GET.mockRejectedValue(error);
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
-    expect(handleError).toHaveBeenCalledWith(
-      error,
-      "speakers",
-      { baseUrl: "http://localhost:50021", json: undefined }
-    );
+    expect(handleError).toHaveBeenCalledWith(error, "speakers", {
+      baseUrl: "http://localhost:50021",
+      json: undefined,
+    });
   });
 
   it("デフォルトのベースURLが使用される", async () => {
     const mockResponse = { data: mockSpeakers, response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(mockSpeakers);
-    (createTable as any).mockReturnValue("Mock Table Output");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      mockSpeakers as unknown as ReturnType<typeof validateResponse>,
+    );
+    (
+      createTable as unknown as import("vitest").MockedFunction<
+        typeof createTable
+      >
+    ).mockReturnValue("Mock Table Output");
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     expect(createClient).toHaveBeenCalledWith(undefined);
   });
@@ -215,17 +270,27 @@ describe("speakersCommand", () => {
     const mockResponse = { data: mockSpeakers, response: { status: 200 } };
 
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as any).mockReturnValue(mockSpeakers);
-    (createTable as any).mockReturnValue("Mock Table Output");
+    (
+      validateResponse as unknown as import("vitest").MockedFunction<
+        typeof validateResponse
+      >
+    ).mockReturnValue(
+      mockSpeakers as unknown as ReturnType<typeof validateResponse>,
+    );
+    (
+      createTable as unknown as import("vitest").MockedFunction<
+        typeof createTable
+      >
+    ).mockReturnValue("Mock Table Output");
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await speakersCommand.run!({ args, rawArgs: [], cmd: speakersCommand });
+    await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
     // outputConditionalのテキストフォーマッターが呼ばれることを確認
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       mockSpeakers,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 });

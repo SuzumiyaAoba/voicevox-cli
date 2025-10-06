@@ -2,15 +2,15 @@
  * バリデーションユーティリティのテスト
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import {
   baseUrlSchema,
+  inputFileSchema,
+  outputFileSchema,
+  outputTypeSchema,
   speakerIdSchema,
   textSchema,
-  outputFileSchema,
-  inputFileSchema,
-  outputTypeSchema,
   validateArgs,
 } from "./validation.js";
 
@@ -18,8 +18,12 @@ describe("validation schemas", () => {
   describe("baseUrlSchema", () => {
     it("有効なURLを受け入れる", () => {
       expect(() => baseUrlSchema.parse("http://localhost:50021")).not.toThrow();
-      expect(() => baseUrlSchema.parse("https://api.example.com")).not.toThrow();
-      expect(() => baseUrlSchema.parse("http://192.168.1.1:8080")).not.toThrow();
+      expect(() =>
+        baseUrlSchema.parse("https://api.example.com"),
+      ).not.toThrow();
+      expect(() =>
+        baseUrlSchema.parse("http://192.168.1.1:8080"),
+      ).not.toThrow();
     });
 
     it("無効なURLを拒否する", () => {
@@ -118,7 +122,9 @@ describe("validateArgs", () => {
       email: "invalid-email", // 有効なメールアドレスでない
     };
 
-    expect(() => validateArgs(testSchema, invalidArgs)).toThrow("Validation failed:");
+    expect(() => validateArgs(testSchema, invalidArgs)).toThrow(
+      "Validation failed:",
+    );
   });
 
   it("複数のバリデーションエラーを適切に処理する", () => {
@@ -128,7 +134,9 @@ describe("validateArgs", () => {
       email: "invalid", // 無効なメール
     };
 
-    expect(() => validateArgs(testSchema, invalidArgs)).toThrow("Validation failed:");
+    expect(() => validateArgs(testSchema, invalidArgs)).toThrow(
+      "Validation failed:",
+    );
   });
 
   it("ZodError以外のエラーを再投げする", () => {
@@ -138,7 +146,9 @@ describe("validateArgs", () => {
       }),
     });
 
-    expect(() => validateArgs(schema, { value: "test" })).toThrow("Transform error");
+    expect(() => validateArgs(schema, { value: "test" })).toThrow(
+      "Transform error",
+    );
   });
 
   it("ネストしたオブジェクトのバリデーションエラーを適切に処理する", () => {
@@ -160,6 +170,8 @@ describe("validateArgs", () => {
       },
     };
 
-    expect(() => validateArgs(nestedSchema, invalidArgs)).toThrow("Validation failed:");
+    expect(() => validateArgs(nestedSchema, invalidArgs)).toThrow(
+      "Validation failed:",
+    );
   });
 });

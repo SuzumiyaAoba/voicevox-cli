@@ -2,10 +2,14 @@
  * APIヘルパーのテスト
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createClient, validateResponse, validateResponseResult } from "./api-helpers.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  createClient,
+  validateResponse,
+  validateResponseResult,
+} from "./api-helpers.js";
 import { createVoicevoxClient } from "./client.js";
-import { VoicevoxError, ErrorType } from "./error-handler.js";
+import { ErrorType, VoicevoxError } from "./error-handler.js";
 
 // モックの設定
 vi.mock("./client.js", () => ({
@@ -24,7 +28,13 @@ describe("createClient", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (createVoicevoxClient as any).mockReturnValue(mockClient);
+    (
+      createVoicevoxClient as import("vitest").MockedFunction<
+        typeof createVoicevoxClient
+      >
+    ).mockReturnValue(
+      mockClient as unknown as ReturnType<typeof createVoicevoxClient>,
+    );
   });
 
   it("ベースURLが指定された場合、そのURLでクライアントを作成する", () => {
@@ -75,16 +85,12 @@ describe("validateResponse", () => {
     const errorMessage = "No data found";
     const context = { baseUrl: "http://localhost:50021" };
 
-    // VoicevoxErrorのモックを設定
-    const mockError = new Error("VoicevoxError");
-    (VoicevoxError as any).mockImplementation(() => mockError);
-
     expect(() => validateResponse(response, errorMessage, context)).toThrow();
     expect(VoicevoxError).toHaveBeenCalledWith(
       errorMessage,
       ErrorType.API,
       undefined,
-      context
+      context,
     );
   });
 
@@ -93,8 +99,9 @@ describe("validateResponse", () => {
     const errorMessage = "Null data";
     const context = { baseUrl: "http://localhost:50021" };
 
-    const mockError = new Error("VoicevoxError");
-    (VoicevoxError as any).mockImplementation(() => mockError);
+    const original = VoicevoxError;
+    // @ts-expect-error override for test
+    (VoicevoxError as unknown as { new (...args: unknown[]): Error }).prototype = original.prototype;
 
     expect(() => validateResponse(response, errorMessage, context)).toThrow();
   });
@@ -104,8 +111,9 @@ describe("validateResponse", () => {
     const errorMessage = "Empty data";
     const context = { baseUrl: "http://localhost:50021" };
 
-    const mockError = new Error("VoicevoxError");
-    (VoicevoxError as any).mockImplementation(() => mockError);
+    const original2 = VoicevoxError;
+    // @ts-expect-error override for test
+    (VoicevoxError as unknown as { new (...args: unknown[]): Error }).prototype = original2.prototype;
 
     expect(() => validateResponse(response, errorMessage, context)).toThrow();
   });

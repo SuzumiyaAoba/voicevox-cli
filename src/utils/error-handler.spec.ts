@@ -2,15 +2,15 @@
  * エラーハンドラーのテスト
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { display, log } from "@/logger.js";
 import {
   ErrorType,
-  VoicevoxError,
   handleError,
+  VoicevoxError,
   withErrorHandling,
   withErrorHandlingSync,
 } from "./error-handler.js";
-import { display, log } from "@/logger.js";
 
 // モックの設定
 vi.mock("@/logger.js", () => ({
@@ -25,10 +25,10 @@ vi.mock("@/logger.js", () => ({
 vi.mock("@/i18n/config.js", () => ({
   t: vi.fn((key: string, params?: Record<string, unknown>) => {
     const translations: Record<string, string> = {
-      "errors.network": `Network error in ${params?.['command']}`,
-      "errors.api": `API error in ${params?.['command']}`,
-      "errors.validation": `Validation error in ${params?.['command']}`,
-      "errors.unknown": `Unknown error in ${params?.['command']}`,
+      "errors.network": `Network error in ${params?.command}`,
+      "errors.api": `API error in ${params?.command}`,
+      "errors.validation": `Validation error in ${params?.command}`,
+      "errors.unknown": `Unknown error in ${params?.command}`,
       "errors.help.network": "Check your network connection",
       "errors.help.api": "Check the API endpoint",
       "errors.help.validation": "Check your input parameters",
@@ -48,7 +48,7 @@ describe("VoicevoxError", () => {
       "Test error",
       ErrorType.API,
       new Error("Original error"),
-      { baseUrl: "http://localhost:50021" }
+      { baseUrl: "http://localhost:50021" },
     );
 
     expect(error.message).toBe("Test error");
@@ -82,7 +82,9 @@ describe("handleError", () => {
     const command = "test-command";
     const context = { baseUrl: "http://localhost:50021" };
 
-    expect(() => handleError(error, command, context)).toThrow("process.exit called");
+    expect(() => handleError(error, command, context)).toThrow(
+      "process.exit called",
+    );
 
     expect(log.error).toHaveBeenCalledWith(
       `Error in ${command} command`,
@@ -90,7 +92,7 @@ describe("handleError", () => {
         errorType: ErrorType.API,
         error: "API Error",
         context,
-      })
+      }),
     );
 
     expect(display.error).toHaveBeenCalledWith(`API error in ${command}`);
@@ -108,12 +110,14 @@ describe("handleError", () => {
       `Error in ${command} command`,
       expect.objectContaining({
         errorType: ErrorType.NETWORK,
-      })
+      }),
     );
 
     expect(display.error).toHaveBeenCalledWith(`Network error in ${command}`);
     expect(display.error).toHaveBeenCalledWith("  Network connection failed");
-    expect(display.error).toHaveBeenCalledWith("  Check your network connection");
+    expect(display.error).toHaveBeenCalledWith(
+      "  Check your network connection",
+    );
   });
 
   it("APIエラーを適切に分類する", () => {
@@ -126,7 +130,7 @@ describe("handleError", () => {
       `Error in ${command} command`,
       expect.objectContaining({
         errorType: ErrorType.API,
-      })
+      }),
     );
 
     expect(display.error).toHaveBeenCalledWith(`API error in ${command}`);
@@ -142,10 +146,12 @@ describe("handleError", () => {
       `Error in ${command} command`,
       expect.objectContaining({
         errorType: ErrorType.VALIDATION,
-      })
+      }),
     );
 
-    expect(display.error).toHaveBeenCalledWith(`Validation error in ${command}`);
+    expect(display.error).toHaveBeenCalledWith(
+      `Validation error in ${command}`,
+    );
     expect(display.error).toHaveBeenCalledWith("  Check your input parameters");
   });
 
@@ -159,7 +165,7 @@ describe("handleError", () => {
       `Error in ${command} command`,
       expect.objectContaining({
         errorType: ErrorType.UNKNOWN,
-      })
+      }),
     );
 
     expect(display.error).toHaveBeenCalledWith(`Unknown error in ${command}`);
@@ -176,7 +182,7 @@ describe("handleError", () => {
       expect.objectContaining({
         errorType: ErrorType.UNKNOWN,
         error: "String error",
-      })
+      }),
     );
   });
 
@@ -191,7 +197,7 @@ describe("handleError", () => {
       `Error in ${command} command`,
       expect.objectContaining({
         stack: "Error: Test error\n    at test.js:1:1",
-      })
+      }),
     );
   });
 });
@@ -216,7 +222,9 @@ describe("withErrorHandling", () => {
     const mockFn = vi.fn().mockRejectedValue(error);
     const wrappedFn = withErrorHandling(mockFn, "test-command");
 
-    await expect(() => wrappedFn("arg1")).rejects.toThrow("process.exit called");
+    await expect(() => wrappedFn("arg1")).rejects.toThrow(
+      "process.exit called",
+    );
   });
 });
 

@@ -2,8 +2,7 @@
  * 音声合成コマンドのテスト
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { synthesisCommand } from "./index.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createClient } from "@/utils/api-helpers.js";
 import { playAudio } from "@/utils/audio-player.js";
 import { handleError } from "@/utils/error-handler.js";
@@ -16,6 +15,7 @@ import {
   processInputFile,
   processMultiModeInput,
 } from "./handlers.js";
+import { synthesisCommand } from "./index.js";
 
 // モックの設定
 vi.mock("@/utils/api-helpers.js", () => ({
@@ -104,8 +104,16 @@ describe("synthesisCommand", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (createClient as any).mockReturnValue(mockClient);
-    (resolveOutputFormat as any).mockReturnValue("text");
+    (
+      createClient as unknown as import("vitest").MockedFunction<
+        typeof createClient
+      >
+    ).mockReturnValue(mockClient as unknown as ReturnType<typeof createClient>);
+    (
+      resolveOutputFormat as unknown as import("vitest").MockedFunction<
+        typeof resolveOutputFormat
+      >
+    ).mockReturnValue("text");
   });
 
   afterEach(() => {
@@ -114,8 +122,14 @@ describe("synthesisCommand", () => {
 
   it("コマンドのメタデータが正しく設定されている", () => {
     expect(synthesisCommand.meta).toBeDefined();
-    expect((synthesisCommand as any).meta.name).toBe("synthesis");
-    expect((synthesisCommand as any).meta.description).toBe("Synthesize speech from text");
+    expect(
+      (synthesisCommand.meta as unknown as Record<string, unknown>)["name"],
+    ).toBe("synthesis");
+    expect(
+      (synthesisCommand.meta as unknown as Record<string, unknown>)[
+        "description"
+      ],
+    ).toBe("Synthesize speech from text");
   });
 
   it("基本的な引数が正しく設定されている", () => {
@@ -138,9 +152,23 @@ describe("synthesisCommand", () => {
       play: false,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (createAudioQueryFromText as any).mockResolvedValue(mockAudioQuery);
-    (executeSingleSynthesis as any).mockResolvedValue(undefined);
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      createAudioQueryFromText as unknown as import("vitest").MockedFunction<
+        typeof createAudioQueryFromText
+      >
+    ).mockResolvedValue(mockAudioQuery as any);
+    (
+      executeSingleSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeSingleSynthesis
+      >
+    ).mockResolvedValue(undefined);
 
     const args = {
       text: "こんにちは",
@@ -152,10 +180,10 @@ describe("synthesisCommand", () => {
       json: false,
       play: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(validateArgs).toHaveBeenCalledWith(expect.any(Object), args);
     expect(createClient).toHaveBeenCalledWith("http://localhost:50021");
@@ -163,7 +191,7 @@ describe("synthesisCommand", () => {
       mockClient,
       "こんにちは",
       2,
-      "http://localhost:50021"
+      "http://localhost:50021",
     );
     expect(executeSingleSynthesis).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -174,7 +202,7 @@ describe("synthesisCommand", () => {
         outputFormat: "text",
         text: "こんにちは",
         shouldPlay: false,
-      })
+      }),
     );
   });
 
@@ -193,9 +221,23 @@ describe("synthesisCommand", () => {
       play: false,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (processMultiModeInput as any).mockReturnValue(mockAudioQueries);
-    (executeMultiSynthesis as any).mockResolvedValue({
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      processMultiModeInput as unknown as import("vitest").MockedFunction<
+        typeof processMultiModeInput
+      >
+    ).mockReturnValue(mockAudioQueries as any);
+    (
+      executeMultiSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeMultiSynthesis
+      >
+    ).mockResolvedValue({
       outputFile: "output.zip",
     });
 
@@ -209,10 +251,10 @@ describe("synthesisCommand", () => {
       output: "output.wav",
       json: false,
       play: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(processMultiModeInput).toHaveBeenCalledWith("input.txt");
     expect(executeMultiSynthesis).toHaveBeenCalledWith(
@@ -224,7 +266,7 @@ describe("synthesisCommand", () => {
         outputFormat: "text",
         baseUrl: "http://localhost:50021",
         shouldPlay: false,
-      })
+      }),
     );
   });
 
@@ -238,10 +280,26 @@ describe("synthesisCommand", () => {
       play: true,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (createAudioQueryFromText as any).mockResolvedValue(mockAudioQuery);
-    (executeSingleSynthesis as any).mockResolvedValue(undefined);
-    (playAudio as any).mockResolvedValue(undefined);
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      createAudioQueryFromText as unknown as import("vitest").MockedFunction<
+        typeof createAudioQueryFromText
+      >
+    ).mockResolvedValue(mockAudioQuery as any);
+    (
+      executeSingleSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeSingleSynthesis
+      >
+    ).mockResolvedValue(undefined);
+    (
+      playAudio as unknown as import("vitest").MockedFunction<typeof playAudio>
+    ).mockResolvedValue(undefined);
 
     const args = {
       text: "こんにちは",
@@ -253,15 +311,15 @@ describe("synthesisCommand", () => {
       input: "input.txt",
       json: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(executeSingleSynthesis).toHaveBeenCalledWith(
       expect.objectContaining({
         shouldPlay: true,
-      })
+      }),
     );
     expect(playAudio).toHaveBeenCalledWith("output.wav");
   });
@@ -280,9 +338,23 @@ describe("synthesisCommand", () => {
       play: false,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (processInputFile as any).mockReturnValue(mockResult);
-    (executeSingleSynthesis as any).mockResolvedValue(undefined);
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      processInputFile as unknown as import("vitest").MockedFunction<
+        typeof processInputFile
+      >
+    ).mockReturnValue(mockResult as any);
+    (
+      executeSingleSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeSingleSynthesis
+      >
+    ).mockResolvedValue(undefined);
 
     const args = {
       text: "こんにちは",
@@ -294,10 +366,10 @@ describe("synthesisCommand", () => {
       json: false,
       play: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(processInputFile).toHaveBeenCalledWith("input.json");
     expect(executeSingleSynthesis).toHaveBeenCalledWith(
@@ -309,21 +381,31 @@ describe("synthesisCommand", () => {
         outputFormat: "text",
         input: "input.json",
         shouldPlay: false,
-      })
+      }),
     );
   });
 
   it("エラーが発生した場合にhandleErrorを呼ぶ", async () => {
     const error = new Error("Synthesis error");
     const mockFn = vi.fn().mockRejectedValue(error);
-    (createAudioQueryFromText as any).mockImplementation(mockFn);
+    (
+      createAudioQueryFromText as unknown as import("vitest").MockedFunction<
+        typeof createAudioQueryFromText
+      >
+    ).mockImplementation(mockFn as never);
 
     const validatedArgs = {
       text: "こんにちは",
       speaker: "2",
       baseUrl: "http://localhost:50021",
     };
-    (validateArgs as any).mockReturnValue(validatedArgs);
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
 
     const args = {
       text: "こんにちは",
@@ -335,10 +417,10 @@ describe("synthesisCommand", () => {
       json: false,
       play: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(handleError).toHaveBeenCalledWith(error, "synthesis", {
       speaker: "2",
@@ -358,10 +440,28 @@ describe("synthesisCommand", () => {
       json: true,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (createAudioQueryFromText as any).mockResolvedValue(mockAudioQuery);
-    (executeSingleSynthesis as any).mockResolvedValue(undefined);
-    (resolveOutputFormat as any).mockReturnValue("json");
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      createAudioQueryFromText as unknown as import("vitest").MockedFunction<
+        typeof createAudioQueryFromText
+      >
+    ).mockResolvedValue(mockAudioQuery as any);
+    (
+      executeSingleSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeSingleSynthesis
+      >
+    ).mockResolvedValue(undefined);
+    (
+      resolveOutputFormat as unknown as import("vitest").MockedFunction<
+        typeof resolveOutputFormat
+      >
+    ).mockReturnValue("json");
 
     const args = {
       text: "こんにちは",
@@ -373,16 +473,16 @@ describe("synthesisCommand", () => {
       input: "input.txt",
       play: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(resolveOutputFormat).toHaveBeenCalledWith(undefined, true);
     expect(executeSingleSynthesis).toHaveBeenCalledWith(
       expect.objectContaining({
         outputFormat: "json",
-      })
+      }),
     );
   });
 
@@ -396,9 +496,23 @@ describe("synthesisCommand", () => {
       play: false,
     };
 
-    (validateArgs as any).mockReturnValue(validatedArgs);
-    (createAudioQueryFromText as any).mockResolvedValue(mockAudioQuery);
-    (executeSingleSynthesis as any).mockResolvedValue(undefined);
+    (
+      validateArgs as unknown as import("vitest").MockedFunction<
+        typeof validateArgs
+      >
+    ).mockReturnValue(
+      validatedArgs as unknown as ReturnType<typeof validateArgs>,
+    );
+    (
+      createAudioQueryFromText as unknown as import("vitest").MockedFunction<
+        typeof createAudioQueryFromText
+      >
+    ).mockResolvedValue(mockAudioQuery as any);
+    (
+      executeSingleSynthesis as unknown as import("vitest").MockedFunction<
+        typeof executeSingleSynthesis
+      >
+    ).mockResolvedValue(undefined);
 
     const args = {
       text: "こんにちは",
@@ -410,10 +524,10 @@ describe("synthesisCommand", () => {
       json: false,
       play: false,
       multi: false,
-      _: []
+      _: [],
     };
 
-    await synthesisCommand.run!({ args, rawArgs: [], cmd: synthesisCommand });
+    await synthesisCommand.run?.({ args, rawArgs: [], cmd: synthesisCommand });
 
     expect(createClient).toHaveBeenCalledWith("http://localhost:50021");
   });

@@ -66,31 +66,38 @@ export const speakersCommand = defineCommand({
         const columnWidths = [20, 40, 20, 10];
 
         const rows: string[][] = speakers.flatMap((speaker: unknown) => {
-          const speakerData = speaker as Record<string, unknown>;
+          const speakerData = speaker as Record<string, unknown> & {
+            name?: string;
+            speaker_uuid?: string;
+            styles?: unknown[];
+          };
           log.debug("Processing speaker", {
-            name: speakerData["name"],
-            uuid: speakerData["speaker_uuid"],
-            stylesCount: Array.isArray(speakerData["styles"])
-              ? speakerData["styles"].length
+            name: speakerData.name,
+            uuid: speakerData.speaker_uuid,
+            stylesCount: Array.isArray(speakerData.styles)
+              ? speakerData.styles.length
               : 0,
           });
 
-          if (speakerData["styles"] && Array.isArray(speakerData["styles"])) {
-            return speakerData["styles"].map((style: unknown) => {
-              const styleData = style as Record<string, unknown>;
+          if (speakerData.styles && Array.isArray(speakerData.styles)) {
+            return speakerData.styles.map((style: unknown) => {
+              const styleData = style as Record<string, unknown> & {
+                name?: string;
+                id?: string | number;
+              };
               return [
-                String(speakerData["name"]),
-                String(speakerData["speaker_uuid"]),
-                String(styleData["name"]),
-                String(styleData["id"]),
+                String(speakerData.name),
+                String(speakerData.speaker_uuid),
+                String(styleData.name),
+                String(styleData.id),
               ];
             });
           }
           // スタイルがない場合
           return [
             [
-              String(speakerData["name"]),
-              String(speakerData["speaker_uuid"]),
+              String(speakerData.name),
+              String(speakerData.speaker_uuid),
               "-",
               "-",
             ],

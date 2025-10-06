@@ -61,53 +61,64 @@ export const presetsListCommand = defineCommand({
         );
 
         response.data.forEach((preset: unknown, index: number) => {
-          const presetData = preset as Record<string, unknown>;
+          const presetData = preset as Record<string, unknown> & {
+            name?: string;
+            id?: string | number;
+            speaker_uuid?: string;
+            style_id?: number;
+            speedScale?: number;
+            pitchScale?: number;
+            intonationScale?: number;
+            volumeScale?: number;
+            prePhonemeLength?: number;
+            postPhonemeLength?: number;
+          };
           display.info(
-            `${index + 1}. ${presetData["name"] || t("commands.presets.list.defaultName", { index: index + 1 })}`,
+            `${index + 1}. ${presetData.name || t("commands.presets.list.defaultName", { index: index + 1 })}`,
           );
-          if (presetData["id"]) {
+          if (presetData.id) {
             display.info(
-              `   ${t("commands.presets.list.labels.id")}: ${presetData["id"]}`,
+              `   ${t("commands.presets.list.labels.id")}: ${presetData.id}`,
             );
           }
-          if (presetData["speaker_uuid"]) {
+          if (presetData.speaker_uuid) {
             display.info(
-              `   ${t("commands.presets.list.labels.speakerUuid")}: ${presetData["speaker_uuid"]}`,
+              `   ${t("commands.presets.list.labels.speakerUuid")}: ${presetData.speaker_uuid}`,
             );
           }
-          if (presetData["style_id"]) {
+          if (presetData.style_id) {
             display.info(
-              `   ${t("commands.presets.list.labels.styleId")}: ${presetData["style_id"]}`,
+              `   ${t("commands.presets.list.labels.styleId")}: ${presetData.style_id}`,
             );
           }
-          if (presetData["speedScale"] !== undefined) {
+          if (presetData.speedScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.speed")}: ${presetData["speedScale"]}`,
+              `   ${t("commands.presets.list.labels.speed")}: ${presetData.speedScale}`,
             );
           }
-          if (presetData["pitchScale"] !== undefined) {
+          if (presetData.pitchScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.pitch")}: ${presetData["pitchScale"]}`,
+              `   ${t("commands.presets.list.labels.pitch")}: ${presetData.pitchScale}`,
             );
           }
-          if (presetData["intonationScale"] !== undefined) {
+          if (presetData.intonationScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.intonation")}: ${presetData["intonationScale"]}`,
+              `   ${t("commands.presets.list.labels.intonation")}: ${presetData.intonationScale}`,
             );
           }
-          if (presetData["volumeScale"] !== undefined) {
+          if (presetData.volumeScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.volume")}: ${presetData["volumeScale"]}`,
+              `   ${t("commands.presets.list.labels.volume")}: ${presetData.volumeScale}`,
             );
           }
-          if (presetData["prePhonemeLength"] !== undefined) {
+          if (presetData.prePhonemeLength !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.prePhonemeLength")}: ${presetData["prePhonemeLength"]}`,
+              `   ${t("commands.presets.list.labels.prePhonemeLength")}: ${presetData.prePhonemeLength}`,
             );
           }
-          if (presetData["postPhonemeLength"] !== undefined) {
+          if (presetData.postPhonemeLength !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.postPhonemeLength")}: ${presetData["postPhonemeLength"]}`,
+              `   ${t("commands.presets.list.labels.postPhonemeLength")}: ${presetData.postPhonemeLength}`,
             );
           }
           display.info(""); // 空行を追加

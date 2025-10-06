@@ -2,9 +2,9 @@
  * バージョンコマンドのテスト
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { versionCommand } from "./version.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import packageJson from "../../package.json";
+import { versionCommand } from "./version.js";
 
 // モックの設定
 vi.mock("@/i18n/config.js", () => ({
@@ -21,8 +21,14 @@ describe("versionCommand", () => {
 
   it("コマンドのメタデータが正しく設定されている", () => {
     expect(versionCommand.meta).toBeDefined();
-    expect((versionCommand as any).meta.name).toBe("commands.version.name");
-    expect((versionCommand as any).meta.description).toBe("commands.version.description");
+    expect(
+      (versionCommand.meta as unknown as Record<string, unknown>)["name"],
+    ).toBe("commands.version.name");
+    expect(
+      (versionCommand.meta as unknown as Record<string, unknown>)[
+        "description"
+      ],
+    ).toBe("commands.version.description");
   });
 
   it("引数が空のオブジェクトである", () => {
@@ -33,7 +39,7 @@ describe("versionCommand", () => {
     versionCommand.run?.({ args: { _: [] }, rawArgs: [], cmd: versionCommand });
 
     expect(mockConsoleLog).toHaveBeenCalledWith(
-      `${packageJson.name} v${packageJson.version}`
+      `${packageJson.name} v${packageJson.version}`,
     );
   });
 
@@ -41,18 +47,30 @@ describe("versionCommand", () => {
     versionCommand.run?.({ args: { _: [] }, rawArgs: [], cmd: versionCommand });
 
     expect(mockConsoleLog).toHaveBeenCalledWith(
-      expect.stringContaining(packageJson.name)
+      expect.stringContaining(packageJson.name),
     );
     expect(mockConsoleLog).toHaveBeenCalledWith(
-      expect.stringContaining(packageJson.version)
+      expect.stringContaining(packageJson.version),
     );
   });
 
   it("引数なしで実行できる", () => {
-    expect(() => versionCommand.run?.({ args: { _: [] }, rawArgs: [], cmd: versionCommand })).not.toThrow();
+    expect(() =>
+      versionCommand.run?.({
+        args: { _: [] },
+        rawArgs: [],
+        cmd: versionCommand,
+      }),
+    ).not.toThrow();
   });
 
   it("引数付きで実行できる（引数は無視される）", () => {
-    expect(() => versionCommand.run?.({ args: { someArg: "value", _: [] }, rawArgs: [], cmd: versionCommand })).not.toThrow();
+    expect(() =>
+      versionCommand.run?.({
+        args: { someArg: "value", _: [] },
+        rawArgs: [],
+        cmd: versionCommand,
+      }),
+    ).not.toThrow();
   });
 });

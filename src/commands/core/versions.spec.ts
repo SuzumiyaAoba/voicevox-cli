@@ -2,12 +2,20 @@
  * コアバージョン一覧コマンドのテスト
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach, type MockedFunction } from "vitest";
-import { coreVersionsCommand } from "./versions.js";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type MockedFunction,
+  vi,
+} from "vitest";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
 import { handleError } from "@/utils/error-handler.js";
 import { outputConditional } from "@/utils/output.js";
 import { validateArgs } from "@/utils/validation.js";
+import { coreVersionsCommand } from "./versions.js";
 
 // モックの設定
 vi.mock("@/utils/api-helpers.js", () => ({
@@ -49,7 +57,7 @@ describe("coreVersionsCommand", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (createClient as MockedFunction<typeof createClient>).mockReturnValue(
-      mockClient as unknown as ReturnType<typeof createClient>
+      mockClient as unknown as ReturnType<typeof createClient>,
     );
   });
 
@@ -63,14 +71,20 @@ describe("coreVersionsCommand", () => {
 
     (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue({
       baseUrl: "http://localhost:50021",
-    } as any);
+    } as unknown as ReturnType<typeof validateArgs>);
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as MockedFunction<typeof validateResponse>).mockReturnValue(
-      mockVersions as any
+    (
+      validateResponse as MockedFunction<typeof validateResponse>
+    ).mockReturnValue(
+      mockVersions as unknown as ReturnType<typeof validateResponse>,
     );
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await coreVersionsCommand.run?.({ args, rawArgs: [], cmd: coreVersionsCommand });
+    await coreVersionsCommand.run?.({
+      args,
+      rawArgs: [],
+      cmd: coreVersionsCommand,
+    });
 
     expect(validateArgs).toHaveBeenCalledWith(expect.any(Object), args);
     expect(createClient).toHaveBeenCalledWith("http://localhost:50021");
@@ -78,12 +92,12 @@ describe("coreVersionsCommand", () => {
     expect(validateResponse).toHaveBeenCalledWith(
       mockResponse,
       "Invalid response format from core versions API",
-      { baseUrl: "http://localhost:50021" }
+      { baseUrl: "http://localhost:50021" },
     );
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       mockVersions,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -91,33 +105,45 @@ describe("coreVersionsCommand", () => {
     const mockVersions = ["0.14.0", "0.13.0"];
     const mockResponse = { data: mockVersions, response: { status: 200 } };
 
-    (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue({ 
-      baseUrl: "http://localhost:50021", 
-      json: true 
-    } as any);
+    (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue({
+      baseUrl: "http://localhost:50021",
+      json: true,
+    } as unknown as ReturnType<typeof validateArgs>);
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as MockedFunction<typeof validateResponse>).mockReturnValue(
-      mockVersions as any
+    (
+      validateResponse as MockedFunction<typeof validateResponse>
+    ).mockReturnValue(
+      mockVersions as unknown as ReturnType<typeof validateResponse>,
     );
 
     const args = { baseUrl: "http://localhost:50021", json: true, _: [] };
-    await coreVersionsCommand.run?.({ args, rawArgs: [], cmd: coreVersionsCommand });
+    await coreVersionsCommand.run?.({
+      args,
+      rawArgs: [],
+      cmd: coreVersionsCommand,
+    });
 
     expect(outputConditional).toHaveBeenCalledWith(
       true,
       mockVersions,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
   it("エラーが発生した場合にhandleErrorが呼ばれる", async () => {
     const error = new Error("API Error");
-    (validateArgs as MockedFunction<typeof validateArgs>).mockImplementation(() => {
-      throw error;
-    });
+    (validateArgs as MockedFunction<typeof validateArgs>).mockImplementation(
+      () => {
+        throw error;
+      },
+    );
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await coreVersionsCommand.run?.({ args, rawArgs: [], cmd: coreVersionsCommand });
+    await coreVersionsCommand.run?.({
+      args,
+      rawArgs: [],
+      cmd: coreVersionsCommand,
+    });
 
     expect(handleError).toHaveBeenCalledWith(error, "core-versions", {
       baseUrl: "http://localhost:50021",
@@ -128,14 +154,22 @@ describe("coreVersionsCommand", () => {
     const mockVersions = ["0.14.0"];
     const mockResponse = { data: mockVersions, response: { status: 200 } };
 
-    (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue({} as any);
+    (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue(
+      {} as unknown as ReturnType<typeof validateArgs>,
+    );
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as MockedFunction<typeof validateResponse>).mockReturnValue(
-      mockVersions as any
+    (
+      validateResponse as MockedFunction<typeof validateResponse>
+    ).mockReturnValue(
+      mockVersions as unknown as ReturnType<typeof validateResponse>,
     );
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await coreVersionsCommand.run?.({ args, rawArgs: [], cmd: coreVersionsCommand });
+    await coreVersionsCommand.run?.({
+      args,
+      rawArgs: [],
+      cmd: coreVersionsCommand,
+    });
 
     expect(createClient).toHaveBeenCalledWith(undefined);
   });
@@ -146,19 +180,25 @@ describe("coreVersionsCommand", () => {
 
     (validateArgs as MockedFunction<typeof validateArgs>).mockReturnValue({
       baseUrl: "http://localhost:50021",
-    } as any);
+    } as unknown as ReturnType<typeof validateArgs>);
     mockClient.GET.mockResolvedValue(mockResponse);
-    (validateResponse as MockedFunction<typeof validateResponse>).mockReturnValue(
-      mockVersions as any
+    (
+      validateResponse as MockedFunction<typeof validateResponse>
+    ).mockReturnValue(
+      mockVersions as unknown as ReturnType<typeof validateResponse>,
     );
 
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
-    await coreVersionsCommand.run?.({ args, rawArgs: [], cmd: coreVersionsCommand });
+    await coreVersionsCommand.run?.({
+      args,
+      rawArgs: [],
+      cmd: coreVersionsCommand,
+    });
 
     expect(outputConditional).toHaveBeenCalledWith(
       false,
       mockVersions,
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 });

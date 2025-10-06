@@ -2,9 +2,13 @@
  * コマンドヘルパーのテスト
  */
 
-import { describe, it, expect, vi } from "vitest";
-import { baseUrlOption, commonCommandOptions, type CommandArgs } from "./command-helpers.js";
+import { describe, expect, it, vi } from "vitest";
 import { t } from "@/i18n/config.js";
+import {
+  baseUrlOption,
+  type CommandArgs,
+  commonCommandOptions,
+} from "./command-helpers.js";
 
 // モックの設定
 vi.mock("@/i18n/config.js", () => ({
@@ -16,7 +20,10 @@ describe("baseUrlOption", () => {
     expect(baseUrlOption).toHaveProperty("baseUrl");
     expect(baseUrlOption.baseUrl).toHaveProperty("type", "string");
     expect(baseUrlOption.baseUrl).toHaveProperty("description");
-    expect(baseUrlOption.baseUrl).toHaveProperty("default", "http://localhost:50021");
+    expect(baseUrlOption.baseUrl).toHaveProperty(
+      "default",
+      "http://localhost:50021",
+    );
   });
 
   it("デフォルト値が正しく設定されている", () => {
@@ -64,7 +71,8 @@ describe("CommandArgs型", () => {
       },
       baseUrl: {
         type: "string",
-        description: "VOICEVOX Engine base URL (default: http://localhost:50021)",
+        description:
+          "VOICEVOX Engine base URL (default: http://localhost:50021)",
         default: "http://localhost:50021",
       },
     };

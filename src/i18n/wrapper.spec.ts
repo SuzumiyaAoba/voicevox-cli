@@ -2,9 +2,15 @@
  * i18nラッパーのテスト
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { t, tPlural, getCurrentLocale, changeLocale, hasTranslation } from "./wrapper.js";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import i18next from "./config.js";
+import {
+  changeLocale,
+  getCurrentLocale,
+  hasTranslation,
+  t,
+  tPlural,
+} from "./wrapper.js";
 
 // モックの設定
 vi.mock("./config.js", () => ({
@@ -23,31 +29,46 @@ describe("t", () => {
 
   it("基本的な翻訳キーで翻訳を取得する", () => {
     const mockTranslation = "Test Translation";
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
     const result = t("commands.synthesis.name");
 
-    expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", undefined);
+    expect(i18next.t).toHaveBeenCalledWith(
+      "commands.synthesis.name",
+      undefined,
+    );
     expect(result).toBe(mockTranslation);
   });
 
   it("パラメータ付きで翻訳を取得する", () => {
     const mockTranslation = "Synthesizing: Hello";
     const params = { text: "Hello" };
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
     const result = t("commands.synthesis.synthesizing", params);
 
-    expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.synthesizing", params);
+    expect(i18next.t).toHaveBeenCalledWith(
+      "commands.synthesis.synthesizing",
+      params,
+    );
     expect(result).toBe(mockTranslation);
   });
 
   it("複数のパラメータで翻訳を取得する", () => {
     const mockTranslation = "Speaker 1: Hello World";
     const params = { speaker: "1", text: "Hello World" };
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
-    const result = t("commands.synthesis.name" as any, params);
+    const result = t(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+      params,
+    );
 
     expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", params);
     expect(result).toBe(mockTranslation);
@@ -55,11 +76,18 @@ describe("t", () => {
 
   it("パラメータなしで翻訳を取得する", () => {
     const mockTranslation = "Simple Translation";
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
-    const result = t("commands.synthesis.name" as any);
+    const result = t(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+    );
 
-    expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", undefined);
+    expect(i18next.t).toHaveBeenCalledWith(
+      "commands.synthesis.name",
+      undefined,
+    );
     expect(result).toBe(mockTranslation);
   });
 });
@@ -72,9 +100,15 @@ describe("tPlural", () => {
   it("複数形の翻訳を取得する", () => {
     const mockTranslation = "5 speakers found";
     const params = { count: 5 };
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
-    const result = tPlural("commands.synthesis.name" as any, 5, params);
+    const result = tPlural(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+      5,
+      params,
+    );
 
     expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", {
       count: 5,
@@ -85,9 +119,14 @@ describe("tPlural", () => {
 
   it("パラメータなしで複数形の翻訳を取得する", () => {
     const mockTranslation = "1 speaker found";
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
-    const result = tPlural("commands.synthesis.name" as any, 1);
+    const result = tPlural(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+      1,
+    );
 
     expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", {
       count: 1,
@@ -98,9 +137,15 @@ describe("tPlural", () => {
   it("複数のパラメータで複数形の翻訳を取得する", () => {
     const mockTranslation = "Found 3 speakers in category A";
     const params = { category: "A" };
-    (i18next.t as any).mockReturnValue(mockTranslation);
+    (
+      i18next.t as unknown as import("vitest").MockedFunction<typeof i18next.t>
+    ).mockReturnValue(mockTranslation);
 
-    const result = tPlural("commands.synthesis.name" as any, 3, params);
+    const result = tPlural(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+      3,
+      params,
+    );
 
     expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", {
       count: 3,
@@ -116,7 +161,7 @@ describe("getCurrentLocale", () => {
   });
 
   it("現在のロケールを取得する", () => {
-    (i18next.language as any) = "ja";
+    (i18next.language as unknown as string) = "ja" as string;
 
     const result = getCurrentLocale();
 
@@ -124,7 +169,7 @@ describe("getCurrentLocale", () => {
   });
 
   it("異なるロケールで現在のロケールを取得する", () => {
-    (i18next.language as any) = "en";
+    (i18next.language as unknown as string) = "en" as string;
 
     const result = getCurrentLocale();
 
@@ -162,7 +207,11 @@ describe("hasTranslation", () => {
   });
 
   it("翻訳が存在する場合にtrueを返す", () => {
-    (i18next.exists as any).mockReturnValue(true);
+    (
+      i18next.exists as unknown as import("vitest").MockedFunction<
+        typeof i18next.exists
+      >
+    ).mockReturnValue(true);
 
     const result = hasTranslation("commands.synthesis.name");
 
@@ -171,18 +220,30 @@ describe("hasTranslation", () => {
   });
 
   it("翻訳が存在しない場合にfalseを返す", () => {
-    (i18next.exists as any).mockReturnValue(false);
+    (
+      i18next.exists as unknown as import("vitest").MockedFunction<
+        typeof i18next.exists
+      >
+    ).mockReturnValue(false);
 
-    const result = hasTranslation("commands.synthesis.name" as any);
+    const result = hasTranslation(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+    );
 
     expect(i18next.exists).toHaveBeenCalledWith("commands.synthesis.name");
     expect(result).toBe(false);
   });
 
   it("異なるキーで翻訳の存在を確認する", () => {
-    (i18next.exists as any).mockReturnValue(true);
+    (
+      i18next.exists as unknown as import("vitest").MockedFunction<
+        typeof i18next.exists
+      >
+    ).mockReturnValue(true);
 
-    const result = hasTranslation("commands.synthesis.name" as any);
+    const result = hasTranslation(
+      "commands.synthesis.name" as unknown as import("@/i18n/types.js").TranslationKey,
+    );
 
     expect(i18next.exists).toHaveBeenCalledWith("commands.synthesis.name");
     expect(result).toBe(true);
