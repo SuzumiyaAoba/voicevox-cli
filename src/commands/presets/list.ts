@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { z } from "zod";
 import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createVoicevoxClient } from "@/utils/client.js";
@@ -43,9 +44,34 @@ export const presetsListCommand = defineCommand({
         );
       }
 
+      // Zodでレスポンスを検証し、以降は型安全に扱う
+      const presetSchema = z.object({
+        id: z.union([z.number(), z.string()]).optional(),
+        name: z.string().optional(),
+        speaker_uuid: z.string().optional(),
+        style_id: z.number().optional(),
+        speedScale: z.number().optional(),
+        pitchScale: z.number().optional(),
+        intonationScale: z.number().optional(),
+        volumeScale: z.number().optional(),
+        prePhonemeLength: z.number().optional(),
+        postPhonemeLength: z.number().optional(),
+      });
+      const presetsSchema = z.array(presetSchema);
+      const parsed = presetsSchema.safeParse(response.data);
+      if (!parsed.success) {
+        throw new VoicevoxError(
+          "Invalid response format from presets API",
+          ErrorType.API,
+          undefined,
+          { baseUrl: args.baseUrl },
+        );
+      }
+      const presets = parsed.data;
+
       // JSON形式で出力する場合
       if (args.json) {
-        const output = JSON.stringify(response.data, null, 2);
+        const output = JSON.stringify(presets, null, 2);
         display.info(output);
         return;
       }
@@ -53,72 +79,60 @@ export const presetsListCommand = defineCommand({
       // プレーンテキスト形式で出力
       display.info(t("commands.presets.list.fetching"));
 
-      if (Array.isArray(response.data) && response.data.length > 0) {
+      if (presets.length > 0) {
         display.info(
           t("commands.presets.list.totalPresets", {
-            count: response.data.length,
+            count: presets.length,
           }),
         );
 
-        response.data.forEach((preset: unknown, index: number) => {
-          const presetData = preset as Record<string, unknown> & {
-            name?: string;
-            id?: string | number;
-            speaker_uuid?: string;
-            style_id?: number;
-            speedScale?: number;
-            pitchScale?: number;
-            intonationScale?: number;
-            volumeScale?: number;
-            prePhonemeLength?: number;
-            postPhonemeLength?: number;
-          };
+        presets.forEach((preset, index) => {
           display.info(
-            `${index + 1}. ${presetData.name || t("commands.presets.list.defaultName", { index: index + 1 })}`,
+            `${index + 1}. ${preset.name || t("commands.presets.list.defaultName", { index: index + 1 })}`,
           );
-          if (presetData.id) {
+          if (preset.id !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.id")}: ${presetData.id}`,
+              `   ${t("commands.presets.list.labels.id")}: ${preset.id}`,
             );
           }
-          if (presetData.speaker_uuid) {
+          if (preset.speaker_uuid) {
             display.info(
-              `   ${t("commands.presets.list.labels.speakerUuid")}: ${presetData.speaker_uuid}`,
+              `   ${t("commands.presets.list.labels.speakerUuid")}: ${preset.speaker_uuid}`,
             );
           }
-          if (presetData.style_id) {
+          if (preset.style_id !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.styleId")}: ${presetData.style_id}`,
+              `   ${t("commands.presets.list.labels.styleId")}: ${preset.style_id}`,
             );
           }
-          if (presetData.speedScale !== undefined) {
+          if (preset.speedScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.speed")}: ${presetData.speedScale}`,
+              `   ${t("commands.presets.list.labels.speed")}: ${preset.speedScale}`,
             );
           }
-          if (presetData.pitchScale !== undefined) {
+          if (preset.pitchScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.pitch")}: ${presetData.pitchScale}`,
+              `   ${t("commands.presets.list.labels.pitch")}: ${preset.pitchScale}`,
             );
           }
-          if (presetData.intonationScale !== undefined) {
+          if (preset.intonationScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.intonation")}: ${presetData.intonationScale}`,
+              `   ${t("commands.presets.list.labels.intonation")}: ${preset.intonationScale}`,
             );
           }
-          if (presetData.volumeScale !== undefined) {
+          if (preset.volumeScale !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.volume")}: ${presetData.volumeScale}`,
+              `   ${t("commands.presets.list.labels.volume")}: ${preset.volumeScale}`,
             );
           }
-          if (presetData.prePhonemeLength !== undefined) {
+          if (preset.prePhonemeLength !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.prePhonemeLength")}: ${presetData.prePhonemeLength}`,
+              `   ${t("commands.presets.list.labels.prePhonemeLength")}: ${preset.prePhonemeLength}`,
             );
           }
-          if (presetData.postPhonemeLength !== undefined) {
+          if (preset.postPhonemeLength !== undefined) {
             display.info(
-              `   ${t("commands.presets.list.labels.postPhonemeLength")}: ${presetData.postPhonemeLength}`,
+              `   ${t("commands.presets.list.labels.postPhonemeLength")}: ${preset.postPhonemeLength}`,
             );
           }
           display.info(""); // 空行を追加

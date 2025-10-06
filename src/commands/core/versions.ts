@@ -72,21 +72,29 @@ export const coreVersionsCommand = defineCommand({
         status: response.response?.status,
       });
 
+      // 期待型: 文字列配列 もしくは 単一文字列
+      const versionsSchema = z.union([z.array(z.string()), z.string()]);
+      const parsed = versionsSchema.safeParse(versions);
+      if (!parsed.success) {
+        throw new Error("Invalid response format from core versions API");
+      }
+      const safeVersions = parsed.data;
+
       // 出力処理
-      outputConditional(validatedArgs.json || false, versions, () => {
+      outputConditional(validatedArgs.json || false, safeVersions, () => {
         display.info(t("commands.core.versions.versionsFound"));
 
-        if (Array.isArray(versions)) {
-          versions.forEach((version: unknown, index: number) => {
-            display.info(`${index + 1}. ${String(version)}`);
+        if (Array.isArray(safeVersions)) {
+          safeVersions.forEach((version, index) => {
+            display.info(`${index + 1}. ${version}`);
           });
         } else {
-          display.info(String(versions));
+          display.info(safeVersions);
         }
       });
 
       log.debug("Core versions command completed successfully", {
-        versionsCount: Array.isArray(versions) ? versions.length : 1,
+        versionsCount: Array.isArray(safeVersions) ? safeVersions.length : 1,
       });
     } catch (error) {
       handleError(error, "core-versions", {

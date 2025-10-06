@@ -1,4 +1,5 @@
 import { defineCommand } from "citty";
+import { z } from "zod";
 import { t } from "@/i18n/config.js";
 import { display, log } from "@/logger.js";
 import { createClient, validateResponse } from "@/utils/api-helpers.js";
@@ -50,12 +51,25 @@ export const speakersCommand = defineCommand({
         dataLength: Array.isArray(speakers) ? speakers.length : 0,
       });
 
-      if (!Array.isArray(speakers)) {
+      // OpenAPI の `Speaker` 構造に準拠することを Zod で検証
+      const styleSchema = z.object({
+        name: z.string(),
+        id: z.number(),
+      });
+      const speakerSchema = z.object({
+        name: z.string(),
+        speaker_uuid: z.string(),
+        styles: z.array(styleSchema).optional().default([]),
+      });
+      const speakersSchema = z.array(speakerSchema);
+      const parsed = speakersSchema.safeParse(speakers);
+      if (!parsed.success) {
         throw new Error(t("commands.speakers.invalidResponse"));
       }
+      const safeSpeakers: Array<z.infer<typeof speakerSchema>> = parsed.data;
 
       // 出力処理
-      outputConditional(args.json || false, speakers, () => {
+      outputConditional(args.json || false, safeSpeakers, () => {
         // テーブル形式の出力を構築
         const headers = [
           t("commands.speakers.tableHeaders.name"),
@@ -65,48 +79,28 @@ export const speakersCommand = defineCommand({
         ];
         const columnWidths = [20, 40, 20, 10];
 
-        const rows: string[][] = speakers.flatMap((speaker: unknown) => {
-          const speakerData = speaker as Record<string, unknown> & {
-            name?: string;
-            speaker_uuid?: string;
-            styles?: unknown[];
-          };
+        const rows: string[][] = safeSpeakers.flatMap((speaker) => {
           log.debug("Processing speaker", {
-            name: speakerData.name,
-            uuid: speakerData.speaker_uuid,
-            stylesCount: Array.isArray(speakerData.styles)
-              ? speakerData.styles.length
-              : 0,
+            name: speaker.name,
+            uuid: speaker.speaker_uuid,
+            stylesCount: speaker.styles.length,
           });
 
-          if (speakerData.styles && Array.isArray(speakerData.styles)) {
-            return speakerData.styles.map((style: unknown) => {
-              const styleData = style as Record<string, unknown> & {
-                name?: string;
-                id?: string | number;
-              };
-              return [
-                String(speakerData.name),
-                String(speakerData.speaker_uuid),
-                String(styleData.name),
-                String(styleData.id),
-              ];
-            });
+          if (speaker.styles.length > 0) {
+            return speaker.styles.map((style) => [
+              speaker.name,
+              speaker.speaker_uuid,
+              style.name,
+              String(style.id),
+            ]);
           }
           // スタイルがない場合
-          return [
-            [
-              String(speakerData.name),
-              String(speakerData.speaker_uuid),
-              "-",
-              "-",
-            ],
-          ];
+          return [[speaker.name, speaker.speaker_uuid, "-", "-"]];
         });
 
         // テーブル形式の出力を生成
         const tableOutput = createTable(headers, rows, columnWidths);
-        const fullOutput = `${t("commands.speakers.fetching")}\n\n${tableOutput}\n${t("commands.speakers.totalSpeakers", { count: speakers.length })}\n`;
+        const fullOutput = `${t("commands.speakers.fetching")}\n\n${tableOutput}\n${t("commands.speakers.totalSpeakers", { count: safeSpeakers.length })}\n`;
 
         // 直接出力
         display.info(fullOutput);
