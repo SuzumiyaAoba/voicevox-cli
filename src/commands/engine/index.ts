@@ -11,6 +11,7 @@ import { defineCommand } from "citty";
 import { t } from "@/i18n/config.js";
 import { commonCommandOptions } from "@/utils/command-helpers.js";
 import { engineManifestCommand } from "./manifest.js";
+import { engineVersionCommand } from "./version.js";
 
 /**
  * エンジン情報コマンド定義
@@ -28,6 +29,7 @@ export const engineCommand = defineCommand({
   },
   subCommands: {
     manifest: engineManifestCommand,
+    version: engineVersionCommand,
   },
   args: commonCommandOptions,
 });
