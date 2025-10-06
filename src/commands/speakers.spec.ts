@@ -37,13 +37,13 @@ vi.mock("@/logger.js", () => ({
 }));
 
 vi.mock("@/i18n/config.js", () => ({
-  t: vi.fn((key: string, params?: Record<string, unknown>) => {
+  t: vi.fn((key: string, params?: { count?: number }) => {
     const translations: Record<string, string> = {
       "commands.speakers.name": "speakers",
       "commands.speakers.description": "List available speakers",
       "commands.speakers.invalidResponse": "Invalid response format",
       "commands.speakers.fetching": "Fetching speakers...",
-      "commands.speakers.totalSpeakers": `Total: ${params?.["count"] || 0} speakers`,
+      "commands.speakers.totalSpeakers": `Total: ${params?.count || 0} speakers`,
       "commands.speakers.tableHeaders.name": "Name",
       "commands.speakers.tableHeaders.uuid": "UUID",
       "commands.speakers.tableHeaders.styleName": "Style",

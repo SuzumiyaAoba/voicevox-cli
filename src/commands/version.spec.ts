@@ -22,12 +22,11 @@ describe("versionCommand", () => {
   it("コマンドのメタデータが正しく設定されている", () => {
     expect(versionCommand.meta).toBeDefined();
     expect(
-      (versionCommand.meta as unknown as Record<string, unknown>)["name"],
+      (versionCommand.meta as Record<"name" | "description", unknown>).name,
     ).toBe("commands.version.name");
     expect(
-      (versionCommand.meta as unknown as Record<string, unknown>)[
-        "description"
-      ],
+      (versionCommand.meta as Record<"name" | "description", unknown>)
+        .description,
     ).toBe("commands.version.description");
   });
 

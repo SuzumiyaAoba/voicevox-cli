@@ -21,29 +21,24 @@ vi.mock("./versions.js", () => ({
 describe("coreCommand", () => {
   it("コマンドのメタデータが正しく設定されている", () => {
     expect(coreCommand.meta).toBeDefined();
-    expect((coreCommand.meta as unknown as Record<string, unknown>)["name"]).toBe(
-      "commands.core.name",
-    );
     expect(
-      (coreCommand.meta as unknown as Record<string, unknown>)["description"],
+      (coreCommand.meta as Record<"name" | "description", unknown>).name,
+    ).toBe("commands.core.name");
+    expect(
+      (coreCommand.meta as Record<"name" | "description", unknown>).description,
     ).toBe("commands.core.description");
   });
 
   it("versionsサブコマンドが正しく設定されている", () => {
     expect(coreCommand.subCommands).toBeDefined();
     expect(
-      (coreCommand.subCommands as unknown as Record<string, unknown>)[
-        "versions"
-      ],
+      (coreCommand.subCommands as Record<"versions", unknown>).versions,
     ).toBeDefined();
   });
 
   it("サブコマンドの構造が正しい", () => {
-    const subCommands = (coreCommand.subCommands as unknown as Record<
-      string,
-      unknown
-    >) as Record<string, unknown>;
+    const subCommands = coreCommand.subCommands as Record<"versions", unknown>;
     expect(subCommands).toHaveProperty("versions");
-    expect((subCommands as Record<string, unknown>)["versions"]).toBeDefined();
+    expect(subCommands.versions).toBeDefined();
   });
 });

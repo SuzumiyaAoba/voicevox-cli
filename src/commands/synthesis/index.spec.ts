@@ -79,7 +79,7 @@ vi.mock("@/logger.js", () => ({
 }));
 
 vi.mock("@/i18n/config.js", () => ({
-  t: vi.fn((key: string, params?: Record<string, unknown>) => {
+  t: vi.fn((key: string, params?: { text?: string }) => {
     const translations: Record<string, string> = {
       "commands.synthesis.name": "synthesis",
       "commands.synthesis.description": "Synthesize speech from text",
@@ -90,7 +90,7 @@ vi.mock("@/i18n/config.js", () => ({
       "commands.synthesis.args.play": "Play audio after synthesis",
       "commands.synthesis.args.type": "Output type",
       "commands.synthesis.args.multi": "Multi-mode synthesis",
-      "commands.synthesis.synthesizing": `Synthesizing: ${params?.["text"] || ""}`,
+      "commands.synthesis.synthesizing": `Synthesizing: ${params?.text || ""}`,
     };
     return translations[key] || key;
   }),
@@ -123,12 +123,11 @@ describe("synthesisCommand", () => {
   it("コマンドのメタデータが正しく設定されている", () => {
     expect(synthesisCommand.meta).toBeDefined();
     expect(
-      (synthesisCommand.meta as unknown as Record<string, unknown>)["name"],
+      (synthesisCommand.meta as Record<"name" | "description", unknown>).name,
     ).toBe("synthesis");
     expect(
-      (synthesisCommand.meta as unknown as Record<string, unknown>)[
-        "description"
-      ],
+      (synthesisCommand.meta as Record<"name" | "description", unknown>)
+        .description,
     ).toBe("Synthesize speech from text");
   });
 
@@ -163,12 +162,16 @@ describe("synthesisCommand", () => {
       createAudioQueryFromText as unknown as import("vitest").MockedFunction<
         typeof createAudioQueryFromText
       >
-    ).mockResolvedValue(mockAudioQuery as any);
+    ).mockResolvedValue(
+      mockAudioQuery as unknown as Awaited<
+        ReturnType<typeof createAudioQueryFromText>
+      >,
+    );
     (
       executeSingleSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeSingleSynthesis
       >
-    ).mockResolvedValue(undefined);
+    ).mockResolvedValue({ outputFile: "output.wav" });
 
     const args = {
       text: "こんにちは",
@@ -232,7 +235,9 @@ describe("synthesisCommand", () => {
       processMultiModeInput as unknown as import("vitest").MockedFunction<
         typeof processMultiModeInput
       >
-    ).mockReturnValue(mockAudioQueries as any);
+    ).mockReturnValue(
+      mockAudioQueries as unknown as ReturnType<typeof processMultiModeInput>,
+    );
     (
       executeMultiSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeMultiSynthesis
@@ -291,12 +296,16 @@ describe("synthesisCommand", () => {
       createAudioQueryFromText as unknown as import("vitest").MockedFunction<
         typeof createAudioQueryFromText
       >
-    ).mockResolvedValue(mockAudioQuery as any);
+    ).mockResolvedValue(
+      mockAudioQuery as unknown as Awaited<
+        ReturnType<typeof createAudioQueryFromText>
+      >,
+    );
     (
       executeSingleSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeSingleSynthesis
       >
-    ).mockResolvedValue(undefined);
+    ).mockResolvedValue({ outputFile: "output.zip" });
     (
       playAudio as unknown as import("vitest").MockedFunction<typeof playAudio>
     ).mockResolvedValue(undefined);
@@ -349,12 +358,14 @@ describe("synthesisCommand", () => {
       processInputFile as unknown as import("vitest").MockedFunction<
         typeof processInputFile
       >
-    ).mockReturnValue(mockResult as any);
+    ).mockReturnValue(
+      mockResult as unknown as ReturnType<typeof processInputFile>,
+    );
     (
       executeSingleSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeSingleSynthesis
       >
-    ).mockResolvedValue(undefined);
+    ).mockResolvedValue({ outputFile: "output.wav" });
 
     const args = {
       text: "こんにちは",
@@ -451,12 +462,16 @@ describe("synthesisCommand", () => {
       createAudioQueryFromText as unknown as import("vitest").MockedFunction<
         typeof createAudioQueryFromText
       >
-    ).mockResolvedValue(mockAudioQuery as any);
+    ).mockResolvedValue(
+      mockAudioQuery as unknown as Awaited<
+        ReturnType<typeof createAudioQueryFromText>
+      >,
+    );
     (
       executeSingleSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeSingleSynthesis
       >
-    ).mockResolvedValue(undefined);
+    ).mockResolvedValue({ outputFile: "output.wav" });
     (
       resolveOutputFormat as unknown as import("vitest").MockedFunction<
         typeof resolveOutputFormat
@@ -507,12 +522,16 @@ describe("synthesisCommand", () => {
       createAudioQueryFromText as unknown as import("vitest").MockedFunction<
         typeof createAudioQueryFromText
       >
-    ).mockResolvedValue(mockAudioQuery as any);
+    ).mockResolvedValue(
+      mockAudioQuery as unknown as Awaited<
+        ReturnType<typeof createAudioQueryFromText>
+      >,
+    );
     (
       executeSingleSynthesis as unknown as import("vitest").MockedFunction<
         typeof executeSingleSynthesis
       >
-    ).mockResolvedValue(undefined);
+    ).mockResolvedValue({ outputFile: "output.wav" });
 
     const args = {
       text: "こんにちは",

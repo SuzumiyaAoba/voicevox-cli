@@ -99,9 +99,7 @@ describe("validateResponse", () => {
     const errorMessage = "Null data";
     const context = { baseUrl: "http://localhost:50021" };
 
-    const original = VoicevoxError;
-    // @ts-expect-error override for test
-    (VoicevoxError as unknown as { new (...args: unknown[]): Error }).prototype = original.prototype;
+    // VoicevoxError 自体は置き換えず、例外発生のみを確認
 
     expect(() => validateResponse(response, errorMessage, context)).toThrow();
   });
@@ -111,9 +109,7 @@ describe("validateResponse", () => {
     const errorMessage = "Empty data";
     const context = { baseUrl: "http://localhost:50021" };
 
-    const original2 = VoicevoxError;
-    // @ts-expect-error override for test
-    (VoicevoxError as unknown as { new (...args: unknown[]): Error }).prototype = original2.prototype;
+    // VoicevoxError 自体は置き換えず、例外発生のみを確認
 
     expect(() => validateResponse(response, errorMessage, context)).toThrow();
   });

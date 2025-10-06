@@ -23,7 +23,7 @@ vi.mock("@/logger.js", () => ({
 }));
 
 vi.mock("@/i18n/config.js", () => ({
-  t: vi.fn((key: string, params?: Record<string, unknown>) => {
+  t: vi.fn((key: string, params?: { command?: string }) => {
     const translations: Record<string, string> = {
       "errors.network": `Network error in ${params?.command}`,
       "errors.api": `API error in ${params?.command}`,
