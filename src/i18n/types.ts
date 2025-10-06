@@ -278,8 +278,6 @@ export type TranslationData = {
       versions: {
         name: string;
         description: string;
-        fetching: string;
-        versionsFound: string;
         args: {
           json: string;
         };
@@ -514,8 +512,6 @@ export type TranslationKey =
   | "commands.core.description"
   | "commands.core.versions.name"
   | "commands.core.versions.description"
-  | "commands.core.versions.fetching"
-  | "commands.core.versions.versionsFound"
   | "commands.core.versions.args.json"
   | "commands.core.versions.errorFetching"
   | "commands.core.versions.makeSureEngineRunning"

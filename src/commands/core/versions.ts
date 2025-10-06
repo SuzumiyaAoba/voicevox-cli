@@ -58,8 +58,6 @@ export const coreVersionsCommand = defineCommand({
 
       const client = createClient(validatedArgs.baseUrl);
 
-      display.info(t("commands.core.versions.fetching"));
-
       const response = await client.GET("/core_versions");
       const versions = validateResponse(
         response,
@@ -82,11 +80,9 @@ export const coreVersionsCommand = defineCommand({
 
       // 出力処理
       outputConditional(validatedArgs.json || false, safeVersions, () => {
-        display.info(t("commands.core.versions.versionsFound"));
-
         if (Array.isArray(safeVersions)) {
           safeVersions.forEach((version, index) => {
-            display.info(`${index + 1}. ${version}`);
+            display.info(`[${index + 1}]: ${version}`);
           });
         } else {
           display.info(safeVersions);

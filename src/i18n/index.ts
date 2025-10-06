@@ -8,13 +8,7 @@
  * @module i18n
  */
 
-/**
- * 翻訳データの型定義
- *
- * 厳密な型定義の代わりに、より柔軟で保守しやすい型を使用します。
- * ネストされた翻訳キーをサポートします。
- */
-type TranslationData = Record<string, unknown>;
+import type { TranslationData } from "./types";
 
 /**
  * サポートされているロケールの定数
@@ -353,8 +347,6 @@ export const translations: Record<Locale, TranslationData> = {
         versions: {
           name: "versions",
           description: "利用可能なコアバージョン一覧を表示",
-          fetching: "コアバージョン一覧を取得中...",
-          versionsFound: "利用可能なコアバージョン:",
           args: {
             json: "JSON形式で出力",
           },
@@ -663,8 +655,6 @@ export const translations: Record<Locale, TranslationData> = {
         versions: {
           name: "versions",
           description: "Display available core versions",
-          fetching: "Fetching core versions...",
-          versionsFound: "Available core versions:",
           args: {
             json: "Output in JSON format",
           },
