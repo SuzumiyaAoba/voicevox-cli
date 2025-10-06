@@ -330,7 +330,6 @@ export const translations: Record<Locale, TranslationData> = {
         version: {
           name: "version",
           description: "VOICEVOX Engineのバージョン情報を表示",
-          engineVersion: "VOICEVOX Engine バージョン: {{version}}",
           invalidResponse: "無効なレスポンス形式",
           errorFetching: "エンジンバージョンの取得中にエラーが発生しました:",
           makeSureEngineRunning:
@@ -638,7 +637,6 @@ export const translations: Record<Locale, TranslationData> = {
         version: {
           name: "version",
           description: "Show VOICEVOX Engine version information",
-          engineVersion: "VOICEVOX Engine Version: {{version}}",
           invalidResponse: "Invalid response format",
           errorFetching: "Error fetching engine version:",
           makeSureEngineRunning:

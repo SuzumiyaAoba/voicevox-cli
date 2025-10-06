@@ -52,10 +52,7 @@ export const engineVersionCommand = defineCommand({
 
       // プレーンテキスト形式で出力
       const versionInfo = response.data;
-      const output = t("commands.engine.version.engineVersion", {
-        version: versionInfo || t("common.unknown"),
-      });
-      display.info(output);
+      display.info(versionInfo);
 
       log.debug("Engine-version command completed successfully");
     } catch (error) {

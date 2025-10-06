@@ -262,7 +262,6 @@ export type TranslationData = {
       version: {
         name: string;
         description: string;
-        engineVersion: string;
         invalidResponse: string;
         errorFetching: string;
         makeSureEngineRunning: string;
@@ -502,7 +501,6 @@ export type TranslationKey =
   | "commands.engine.manifest.makeSureEngineRunning"
   | "commands.engine.version.name"
   | "commands.engine.version.description"
-  | "commands.engine.version.engineVersion"
   | "commands.engine.version.invalidResponse"
   | "commands.engine.version.errorFetching"
   | "commands.engine.version.makeSureEngineRunning"
