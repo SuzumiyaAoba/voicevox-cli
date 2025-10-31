@@ -119,7 +119,10 @@
           
           src = ./.;
           
-          npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # This will need to be updated
+          # To get the correct hash, build the package and paste the expected hash here.
+          # For example:
+          # nix build .# --override-inputs 'nixpkgs' 'github:NixOS/nixpkgs/nixpkgs-unstable'
+          npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
           
           buildInputs = with pkgs; [
             nodejs
