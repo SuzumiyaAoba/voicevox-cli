@@ -112,7 +112,6 @@ describe("tPlural", () => {
 
     expect(i18next.t).toHaveBeenCalledWith("commands.synthesis.name", {
       count: 5,
-      category: "A",
     });
     expect(result).toBe(mockTranslation);
   });

@@ -226,7 +226,7 @@ describe("speakersCommand", () => {
 
     expect(handleError).toHaveBeenCalledWith(expect.any(Error), "speakers", {
       baseUrl: "http://localhost:50021",
-      json: undefined,
+      json: false,
     });
   });
 
@@ -239,7 +239,7 @@ describe("speakersCommand", () => {
 
     expect(handleError).toHaveBeenCalledWith(error, "speakers", {
       baseUrl: "http://localhost:50021",
-      json: undefined,
+      json: false,
     });
   });
 
@@ -263,7 +263,7 @@ describe("speakersCommand", () => {
     const args = { baseUrl: "http://localhost:50021", json: false, _: [] };
     await speakersCommand.run?.({ args, rawArgs: [], cmd: speakersCommand });
 
-    expect(createClient).toHaveBeenCalledWith(undefined);
+    expect(createClient).toHaveBeenCalledWith("http://localhost:50021");
   });
 
   it("テーブル出力が正しく生成される", async () => {
