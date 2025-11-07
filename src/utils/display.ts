@@ -100,7 +100,7 @@ export const centerText = (
   paddingChar: string = " ",
 ): string => {
   const messageWidth = getDisplayWidth(message);
-  const totalPadding = width - messageWidth;
+  const totalPadding = Math.max(0, width - messageWidth);
   const leftPadding = Math.floor(totalPadding / 2);
   const rightPadding = totalPadding - leftPadding;
 
