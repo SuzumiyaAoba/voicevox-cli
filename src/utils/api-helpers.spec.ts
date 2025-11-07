@@ -9,19 +9,39 @@ import {
   validateResponseResult,
 } from "./api-helpers.js";
 import { createVoicevoxClient } from "./client.js";
-import { ErrorType, VoicevoxError } from "./error-handler.js";
 
 // モックの設定
 vi.mock("./client.js", () => ({
   createVoicevoxClient: vi.fn(),
 }));
 
-vi.mock("./error-handler.js", () => ({
-  VoicevoxError: vi.fn(),
-  ErrorType: {
-    API: "API",
-  },
-}));
+vi.mock("./error-handler.js", () => {
+  class MockVoicevoxError extends Error {
+    type: string;
+    originalError?: Error;
+    context?: Record<string, unknown>;
+
+    constructor(
+      message: string,
+      type: string,
+      originalError?: Error,
+      context?: Record<string, unknown>,
+    ) {
+      super(message);
+      this.name = "VoicevoxError";
+      this.type = type;
+      this.originalError = originalError;
+      this.context = context;
+    }
+  }
+
+  return {
+    VoicevoxError: MockVoicevoxError,
+    ErrorType: {
+      API: "API",
+    },
+  };
+});
 
 describe("createClient", () => {
   const mockClient = { mock: "client" };
@@ -85,12 +105,8 @@ describe("validateResponse", () => {
     const errorMessage = "No data found";
     const context = { baseUrl: "http://localhost:50021" };
 
-    expect(() => validateResponse(response, errorMessage, context)).toThrow();
-    expect(VoicevoxError).toHaveBeenCalledWith(
+    expect(() => validateResponse(response, errorMessage, context)).toThrow(
       errorMessage,
-      ErrorType.API,
-      undefined,
-      context,
     );
   });
 

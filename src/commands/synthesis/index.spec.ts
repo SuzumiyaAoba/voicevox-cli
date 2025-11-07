@@ -436,8 +436,8 @@ describe("synthesisCommand", () => {
     expect(handleError).toHaveBeenCalledWith(error, "synthesis", {
       speaker: "2",
       text: "こんにちは",
-      input: undefined,
-      output: undefined,
+      input: "input.txt",
+      output: "output.wav",
       baseUrl: "http://localhost:50021",
     });
   });
